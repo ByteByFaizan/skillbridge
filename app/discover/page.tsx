@@ -187,7 +187,7 @@ export default function DiscoverPage() {
       
       router.push("/results");
     } catch (err) {
-      console.error("Discovery error:", err);
+      console.error("Discovery error:", err instanceof Error ? err.message : "Unknown error");
       setError("Network error. Please check your connection and try again.");
     } finally {
       setLoading(false);

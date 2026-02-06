@@ -1,3 +1,5 @@
+"use server";
+
 import { createServiceClient } from "@/lib/supabase";
 
 export async function getOrCreateUserProfile(userId: string, userData?: {
@@ -32,13 +34,13 @@ export async function getOrCreateUserProfile(userId: string, userData?: {
       .single();
 
     if (error) {
-      console.error("Error creating user profile:", error);
+      console.error("Error creating user profile:", error.message || "Unknown database error");
       return null;
     }
 
     return data;
   } catch (err) {
-    console.error("Error in getOrCreateUserProfile:", err);
+    console.error("Error in getOrCreateUserProfile:", err instanceof Error ? err.message : "Unknown error");
     return null;
   }
 }
@@ -65,13 +67,13 @@ export async function updateUserSkills(userId: string, skills: Array<{ skill_nam
       .insert(skillInserts);
 
     if (error) {
-      console.error("Error updating skills:", error);
+      console.error("Error updating skills:", error.message || "Unknown database error");
       return false;
     }
 
     return true;
   } catch (err) {
-    console.error("Error in updateUserSkills:", err);
+    console.error("Error in updateUserSkills:", err instanceof Error ? err.message : "Unknown error");
     return false;
   }
 }

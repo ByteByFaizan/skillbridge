@@ -1,3 +1,5 @@
+"use server";
+
 import type { ParsedCareerResponse } from "@/types/ai-response";
 import { createServiceClient } from "@/lib/supabase";
 
@@ -22,7 +24,7 @@ export async function saveCareerRecommendation(
       .select();
 
     if (careerError || !careers) {
-      console.error("Error saving careers:", careerError);
+      console.error("Error saving careers:", careerError?.message || "Unknown database error");
       return null;
     }
 
@@ -113,7 +115,7 @@ export async function saveCareerRecommendation(
 
     return careers[0].id;
   } catch (err) {
-    console.error("Error in saveCareerRecommendation:", err);
+    console.error("Error in saveCareerRecommendation:", err instanceof Error ? err.message : "Unknown error");
     return null;
   }
 }
@@ -139,7 +141,7 @@ export async function getLatestRecommendation(userId: string) {
       .limit(3);
 
     if (error || !careers) {
-      console.error("Error fetching careers:", error);
+      console.error("Error fetching careers:", error?.message || "Unknown database error");
       return null;
     }
 
@@ -195,7 +197,7 @@ export async function getLatestRecommendation(userId: string) {
       personalizedAdvice: advice?.map((a: any) => a.advice) || [],
     };
   } catch (err) {
-    console.error("Error in getLatestRecommendation:", err);
+    console.error("Error in getLatestRecommendation:", err instanceof Error ? err.message : "Unknown error");
     return null;
   }
 }
@@ -214,13 +216,13 @@ export async function getSavedCareers(userId: string) {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Error fetching saved careers:", error);
+      console.error("Error fetching saved careers:", error.message || "Unknown database error");
       return [];
     }
 
     return data || [];
   } catch (err) {
-    console.error("Error in getSavedCareers:", err);
+    console.error("Error in getSavedCareers:", err instanceof Error ? err.message : "Unknown error");
     return [];
   }
 }
@@ -237,13 +239,13 @@ export async function saveCareer(userId: string, careerId: string) {
       });
 
     if (error) {
-      console.error("Error saving career:", error);
+      console.error("Error saving career:", error.message || "Unknown database error");
       return false;
     }
 
     return true;
   } catch (err) {
-    console.error("Error in saveCareer:", err);
+    console.error("Error in saveCareer:", err instanceof Error ? err.message : "Unknown error");
     return false;
   }
 }
