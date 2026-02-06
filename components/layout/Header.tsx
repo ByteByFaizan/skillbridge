@@ -4,10 +4,11 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { APP_NAME, NAV_LINKS } from "@/lib/constants";
 import { getCurrentUser, signOut } from "@/lib/auth";
+import type { User } from "@supabase/supabase-js";
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

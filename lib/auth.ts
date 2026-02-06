@@ -88,6 +88,13 @@ export async function getUserFromRequest(request: Request) {
     }
 
     const token = authHeader.substring(7);
+    
+    // Validate token format (should be a JWT-like string)
+    if (!token || token.length < 20 || !token.includes(".")) {
+      console.error("Invalid token format");
+      return null;
+    }
+    
     const supabase = await createServerSupabaseClient();
     
     // Set the session using the token, then get user

@@ -1,14 +1,45 @@
 "use server";
 
 import type { ParsedCareerResponse } from "@/types/ai-response";
-import { createServiceClient } from "@/lib/supabase";
+import { createServerSupabaseClient } from "@/lib/supabase";
+
+// Database record types
+interface SkillGapRecord {
+  skill_name: string;
+  gap_type: string;
+  priority: string;
+}
+
+interface RoadmapStepRecord {
+  month_number: number;
+  topics: string[];
+  tools: string[];
+  resources: string[];
+}
+
+interface JobOpportunityRecord {
+  role_type: string;
+  title: string;
+  description: string;
+}
+
+interface CareerGrowthPathRecord {
+  year_range: string;
+  role_title: string;
+  salary_range: string | null;
+}
+
+interface PersonalizedAdviceRecord {
+  advice: string;
+}
 
 export async function saveCareerRecommendation(
   userId: string,
   data: ParsedCareerResponse
 ): Promise<string | null> {
   try {
-    const supabase = createServiceClient();
+    // Use user session instead of service role to respect RLS
+    const supabase = await createServerSupabaseClient();
 
     // Save each career recommendation
     const careerInserts = data.careerOverview.map(career => ({
@@ -122,7 +153,8 @@ export async function saveCareerRecommendation(
 
 export async function getLatestRecommendation(userId: string) {
   try {
-    const supabase = createServiceClient();
+    // Use user session instead of service role to respect RLS
+    const supabase = await createServerSupabaseClient();
 
     const { data: careers, error } = await supabase
       .from("career_recommendations")
@@ -162,18 +194,18 @@ export async function getLatestRecommendation(userId: string) {
       skillGapAnalysis: careers.map(c => ({
         career_title: c.career_title,
         existing_skills: c.skill_gap_analysis
-          ?.filter((s: any) => s.gap_type === "Existing")
-          .map((s: any) => s.skill_name) || [],
+          ?.filter((s: SkillGapRecord) => s.gap_type === "Existing")
+          .map((s: SkillGapRecord) => s.skill_name) || [],
         missing_skills: c.skill_gap_analysis
-          ?.filter((s: any) => s.gap_type === "Missing")
-          .map((s: any) => ({
+          ?.filter((s: SkillGapRecord) => s.gap_type === "Missing")
+          .map((s: SkillGapRecord) => ({
             name: s.skill_name,
             priority: s.priority as "High" | "Medium" | "Low",
           })) || [],
       })),
       learningRoadmap: {
         duration_months: careers[0]?.learning_roadmaps?.[0]?.duration_months || 6,
-        steps: careers[0]?.learning_roadmaps?.[0]?.roadmap_steps?.map((step: any) => ({
+        steps: careers[0]?.learning_roadmaps?.[0]?.roadmap_steps?.map((step: RoadmapStepRecord) => ({
           month: step.month_number,
           topics: step.topics,
           tools: step.tools,
@@ -181,20 +213,20 @@ export async function getLatestRecommendation(userId: string) {
         })) || [],
       },
       jobRolesAndOpportunities: careers.flatMap(c => 
-        c.job_opportunities?.map((j: any) => ({
+        c.job_opportunities?.map((j: JobOpportunityRecord) => ({
           role_type: j.role_type,
           title: j.title,
           description: j.description,
         })) || []
       ),
       careerGrowthPath: careers.flatMap(c =>
-        c.career_growth_paths?.map((g: any) => ({
+        c.career_growth_paths?.map((g: CareerGrowthPathRecord) => ({
           year_range: g.year_range,
           role_title: g.role_title,
           salary_range: g.salary_range,
         })) || []
       ),
-      personalizedAdvice: advice?.map((a: any) => a.advice) || [],
+      personalizedAdvice: advice?.map((a: PersonalizedAdviceRecord) => a.advice) || [],
     };
   } catch (err) {
     console.error("Error in getLatestRecommendation:", err instanceof Error ? err.message : "Unknown error");
@@ -204,7 +236,8 @@ export async function getLatestRecommendation(userId: string) {
 
 export async function getSavedCareers(userId: string) {
   try {
-    const supabase = createServiceClient();
+    // Use user session instead of service role to respect RLS
+    const supabase = await createServerSupabaseClient();
 
     const { data, error } = await supabase
       .from("saved_careers")
@@ -229,7 +262,8 @@ export async function getSavedCareers(userId: string) {
 
 export async function saveCareer(userId: string, careerId: string) {
   try {
-    const supabase = createServiceClient();
+    // Use user session instead of service role to respect RLS
+    const supabase = await createServerSupabaseClient();
 
     const { error } = await supabase
       .from("saved_careers")

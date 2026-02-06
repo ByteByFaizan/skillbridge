@@ -44,7 +44,9 @@ export async function POST(request: Request) {
     const validation = validateDiscoveryInput({ 
       education: sanitizedEducation, 
       skills: sanitizedSkills, 
-      interests: sanitizedInterests 
+      interests: sanitizedInterests,
+      name: sanitizedName,
+      goal: sanitizedGoal,
     });
     
     if (!validation.valid) {
