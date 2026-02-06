@@ -8,6 +8,7 @@ import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import { EDUCATION_LEVELS } from "@/lib/constants";
 import { validateDiscoveryInput } from "@/utils/validators";
+import { storage } from "@/utils/storage";
 
 const SKILL_SUGGESTIONS = ["Python", "Excel", "SQL", "Communication", "Writing", "Figma"] as const;
 const INTEREST_SUGGESTIONS = ["Data", "Design", "Tech", "Writing", "Business", "Research"] as const;
@@ -173,21 +174,21 @@ export default function DiscoverPage() {
           goal: goal || undefined,
         }),
       });
-      const data = await res.json();
+
       if (!res.ok) {
+        const data = await res.json();
         setError(data.error ?? "Something went wrong.");
         setLoading(false);
         return;
       }
+
+      const data = await res.json();
       
       // Store result in sessionStorage using safe storage utility
-      if (typeof window !== "undefined") {
-        sessionStorage.setItem("skillbridge_result", JSON.stringify(data));
-      }
+      storage.setJSON("skillbridge_result", data);
       
       router.push("/results");
     } catch (err) {
-      console.error("Discovery error:", err instanceof Error ? err.message : "Unknown error");
       setError("Network error. Please check your connection and try again.");
     } finally {
       setLoading(false);

@@ -18,6 +18,7 @@ function getStoredResult(): ParsedCareerResponse | null {
 export default function ResultsPage() {
   const [data] = useState<ParsedCareerResponse | null>(() => getStoredResult());
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState(false);
 
   const handlePrint = () => {
     window.print();
@@ -40,9 +41,11 @@ export default function ResultsPage() {
     try {
       await navigator.clipboard.writeText(window.location.href);
       setCopied(true);
+      setCopyError(false);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error("Failed to copy:", err);
+      setCopyError(true);
+      setTimeout(() => setCopyError(false), 2000);
     }
   };
 
@@ -96,11 +99,13 @@ export default function ResultsPage() {
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 {copied ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                ) : copyError ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 ) : (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 )}
               </svg>
-              {copied ? "Copied!" : "Copy Link"}
+              {copied ? "Copied!" : copyError ? "Failed" : "Copy Link"}
             </Button>
             <Button
               variant="outline"
