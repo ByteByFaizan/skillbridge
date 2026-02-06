@@ -31,8 +31,8 @@ export default function SignupPage() {
       await signUpWithEmail(email, password, fullName);
       router.push("/dashboard");
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || "Failed to create account");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create account");
     } finally {
       setLoading(false);
     }
@@ -42,8 +42,8 @@ export default function SignupPage() {
     setError("");
     try {
       await signInWithGoogle();
-    } catch (err: any) {
-      setError(err.message || "Failed to sign up with Google");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to sign up with Google");
     }
   };
 

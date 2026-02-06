@@ -1,6 +1,6 @@
 "use server";
 
-import { createServiceClient } from "@/lib/supabase";
+import { createServerSupabaseClient } from "@/lib/supabase";
 
 export async function getOrCreateUserProfile(userId: string, userData?: {
   full_name?: string;
@@ -8,7 +8,8 @@ export async function getOrCreateUserProfile(userId: string, userData?: {
   interests?: string[];
 }) {
   try {
-    const supabase = createServiceClient();
+    // Use user session instead of service role to respect RLS
+    const supabase = await createServerSupabaseClient();
 
     // Check if profile exists
     const { data: existing } = await supabase
@@ -47,7 +48,8 @@ export async function getOrCreateUserProfile(userId: string, userData?: {
 
 export async function updateUserSkills(userId: string, skills: Array<{ skill_name: string; proficiency_level?: string }>) {
   try {
-    const supabase = createServiceClient();
+    // Use user session instead of service role to respect RLS
+    const supabase = await createServerSupabaseClient();
 
     // Delete existing skills
     await supabase

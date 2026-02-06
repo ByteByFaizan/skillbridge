@@ -7,18 +7,17 @@ interface EnvConfig {
   OPENROUTER_API_KEY: string;
   NEXT_PUBLIC_SUPABASE_URL: string;
   NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
-  SUPABASE_SERVICE_ROLE_KEY: string;
 }
 
 interface OptionalEnvConfig {
   NEXT_PUBLIC_APP_URL: string;
+  SUPABASE_SERVICE_ROLE_KEY: string;
 }
 
 const requiredEnvVars = [
   "OPENROUTER_API_KEY",
   "NEXT_PUBLIC_SUPABASE_URL",
   "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-  "SUPABASE_SERVICE_ROLE_KEY",
 ] as const;
 
 /**
@@ -48,7 +47,7 @@ export function validateEnv(): void {
  * @returns The environment variable value
  * @throws Error if the environment variable is not set
  */
-export function getEnv(key: keyof EnvConfig): string {
+export function getEnv(key: keyof EnvConfig | keyof OptionalEnvConfig): string {
   const value = process.env[key];
   if (!value) {
     throw new Error(`Environment variable ${key} is not set`);

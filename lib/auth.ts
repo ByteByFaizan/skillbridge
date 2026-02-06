@@ -88,6 +88,14 @@ export async function getUserFromRequest(request: Request) {
     }
 
     const token = authHeader.substring(7);
+    
+    // Validate JWT structure (should have 3 parts separated by dots)
+    const parts = token.split(".");
+    if (parts.length !== 3 || parts.some(part => !part)) {
+      console.error("Invalid JWT structure");
+      return null;
+    }
+    
     const supabase = await createServerSupabaseClient();
     
     // Set the session using the token, then get user
