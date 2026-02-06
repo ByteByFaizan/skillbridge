@@ -11,6 +11,9 @@ export const supabase =
     : null;
 
 // Server-side Supabase client with service role (for API routes only)
+// WARNING: This client bypasses Row Level Security (RLS) policies.
+// Only use for admin operations that require elevated permissions.
+// For normal database operations, use createServerSupabaseClient() instead.
 export function createServiceClient() {
   // Only validate on server-side
   if (typeof window !== "undefined") {
