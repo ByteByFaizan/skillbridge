@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Card, { CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Link from "next/link";
+import { storage } from "@/utils/storage";
 
 interface CareerData {
   id: string | number;
@@ -31,19 +32,12 @@ export default function SavedCareers({ userId }: SavedCareersProps) {
     async function loadCareers() {
       if (!userId) {
         // Fall back to sessionStorage if no userId (not authenticated)
-        try {
-          const raw = sessionStorage.getItem("skillbridge_result");
-          if (raw) {
-            const data = JSON.parse(raw);
-            if (data.careerOverview) {
-              setCareers(data.careerOverview.map((c: CareerOverviewItem, i: number) => ({
-                id: i,
-                career: { career_title: c.title, demand_level: c.demand }
-              })));
-            }
-          }
-        } catch (err) {
-          console.error("Error loading from session:", err instanceof Error ? err.message : "Unknown error");
+        const data = storage.getJSON<{ careerOverview?: CareerOverviewItem[] }>("skillbridge_result");
+        if (data?.careerOverview) {
+          setCareers(data.careerOverview.map((c: CareerOverviewItem, i: number) => ({
+            id: i,
+            career: { career_title: c.title, demand_level: c.demand }
+          })));
         }
         setLoading(false);
         return;
@@ -73,8 +67,8 @@ export default function SavedCareers({ userId }: SavedCareersProps) {
           const result = await response.json();
           setCareers(result.careers || []);
         }
-      } catch (err) {
-        console.error("Error loading saved careers:", err instanceof Error ? err.message : "Unknown error");
+      } catch (_err) {
+        // Silently handle error - user may see empty list
       } finally {
         setLoading(false);
       }
