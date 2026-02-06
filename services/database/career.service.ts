@@ -115,7 +115,7 @@ export async function saveCareerRecommendation(
 
     return careers[0].id;
   } catch (err) {
-    console.error("Error in saveCareerRecommendation:", err);
+    console.error("Error in saveCareerRecommendation:", err instanceof Error ? err.message : "Unknown error");
     return null;
   }
 }
@@ -197,7 +197,7 @@ export async function getLatestRecommendation(userId: string) {
       personalizedAdvice: advice?.map((a: any) => a.advice) || [],
     };
   } catch (err) {
-    console.error("Error in getLatestRecommendation:", err);
+    console.error("Error in getLatestRecommendation:", err instanceof Error ? err.message : "Unknown error");
     return null;
   }
 }
@@ -222,7 +222,7 @@ export async function getSavedCareers(userId: string) {
 
     return data || [];
   } catch (err) {
-    console.error("Error in getSavedCareers:", err);
+    console.error("Error in getSavedCareers:", err instanceof Error ? err.message : "Unknown error");
     return [];
   }
 }
@@ -245,7 +245,7 @@ export async function saveCareer(userId: string, careerId: string) {
 
     return true;
   } catch (err) {
-    console.error("Error in saveCareer:", err);
+    console.error("Error in saveCareer:", err instanceof Error ? err.message : "Unknown error");
     return false;
   }
 }

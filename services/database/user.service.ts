@@ -40,7 +40,7 @@ export async function getOrCreateUserProfile(userId: string, userData?: {
 
     return data;
   } catch (err) {
-    console.error("Error in getOrCreateUserProfile:", err);
+    console.error("Error in getOrCreateUserProfile:", err instanceof Error ? err.message : "Unknown error");
     return null;
   }
 }
@@ -73,7 +73,7 @@ export async function updateUserSkills(userId: string, skills: Array<{ skill_nam
 
     return true;
   } catch (err) {
-    console.error("Error in updateUserSkills:", err);
+    console.error("Error in updateUserSkills:", err instanceof Error ? err.message : "Unknown error");
     return false;
   }
 }

@@ -97,7 +97,7 @@ export async function POST(request: Request) {
           career_id: savedId,
         });
       } catch (dbError) {
-        console.error("Database save error:", dbError);
+        console.error("Database save error:", dbError instanceof Error ? dbError.message : "Unknown database error");
         // Return AI result even if database save fails
         return NextResponse.json({
           ...parsed,
@@ -114,7 +114,7 @@ export async function POST(request: Request) {
     });
   } catch (err) {
     const message = getErrorMessage(err);
-    console.error("Career API Error:", message, err);
+    console.error("Career API Error:", message);
     return NextResponse.json(
       { error: message || "An unexpected error occurred. Please try again." },
       { status: 500 }

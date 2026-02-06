@@ -1,5 +1,7 @@
 "use server";
 
+import { getEnv, getOptionalEnv } from "@/lib/env";
+
 /**
  * OpenRouter API client for SkillBridge career analysis.
  * Uses GPT-4 or compatible model (Tech Stack: GPT-5.2 when available; fallback to openai/gpt-4o).
@@ -49,17 +51,14 @@ export async function chat(
   messages: OpenRouterMessage[],
   options?: { model?: string; maxTokens?: number }
 ): Promise<string> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) {
-    throw new Error("OPENROUTER_API_KEY is not configured");
-  }
+  const apiKey = getEnv("OPENROUTER_API_KEY");
 
   const res = await fetchWithRetry(OPENROUTER_URL, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
-      "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+      "HTTP-Referer": getOptionalEnv("NEXT_PUBLIC_APP_URL", "http://localhost:3000"),
     },
     body: JSON.stringify({
       model: options?.model ?? DEFAULT_MODEL,

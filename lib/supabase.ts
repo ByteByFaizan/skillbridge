@@ -1,8 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
+import { getEnv } from "./env";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
 
 // Client-side Supabase client (safe to use in browser)
 export const supabase =
@@ -12,10 +12,15 @@ export const supabase =
 
 // Server-side Supabase client with service role (for API routes only)
 export function createServiceClient() {
-  if (!supabaseUrl || !supabaseServiceKey) {
-    throw new Error("Supabase service configuration missing");
+  // Only validate on server-side
+  if (typeof window !== "undefined") {
+    throw new Error("Service client cannot be created on client-side");
   }
-  return createClient(supabaseUrl, supabaseServiceKey, {
+  
+  const url = getEnv("NEXT_PUBLIC_SUPABASE_URL");
+  const serviceKey = getEnv("SUPABASE_SERVICE_ROLE_KEY");
+  
+  return createClient(url, serviceKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
