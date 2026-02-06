@@ -1,0 +1,12 @@
+/* SkillBridge design tokens (Design Doc / Pixelia-inspired) */
+:root {
+  --sb-section-bg: #f8f9fb;
+  --sb-card-bg: #ffffff;
+  --sb-primary: #4f46e5;
+  --sb-primary-hover: #4338ca;
+  --sb-secondary: #059669;
+  --sb-warning: #d97706;
+  --sb-radius: 14px;
+  --sb-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --sb-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
