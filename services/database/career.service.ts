@@ -24,7 +24,7 @@ export async function saveCareerRecommendation(
       .select();
 
     if (careerError || !careers) {
-      console.error("Error saving careers:", careerError);
+      console.error("Error saving careers:", careerError?.message || "Unknown database error");
       return null;
     }
 
@@ -141,7 +141,7 @@ export async function getLatestRecommendation(userId: string) {
       .limit(3);
 
     if (error || !careers) {
-      console.error("Error fetching careers:", error);
+      console.error("Error fetching careers:", error?.message || "Unknown database error");
       return null;
     }
 
@@ -216,7 +216,7 @@ export async function getSavedCareers(userId: string) {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Error fetching saved careers:", error);
+      console.error("Error fetching saved careers:", error.message || "Unknown database error");
       return [];
     }
 
@@ -239,7 +239,7 @@ export async function saveCareer(userId: string, careerId: string) {
       });
 
     if (error) {
-      console.error("Error saving career:", error);
+      console.error("Error saving career:", error.message || "Unknown database error");
       return false;
     }
 

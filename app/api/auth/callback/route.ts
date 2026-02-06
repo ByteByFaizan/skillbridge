@@ -12,11 +12,11 @@ export async function GET(request: NextRequest) {
       const { error } = await supabase.auth.exchangeCodeForSession(code);
       
       if (error) {
-        console.error("Auth callback error:", error);
+        console.error("Auth callback error:", error.message || "Unknown auth error");
         return NextResponse.redirect(`${origin}/login?error=auth_failed`);
       }
     } catch (err) {
-      console.error("Auth exchange error:", err);
+      console.error("Auth exchange error:", err instanceof Error ? err.message : "Unknown error");
       return NextResponse.redirect(`${origin}/login?error=auth_failed`);
     }
   }

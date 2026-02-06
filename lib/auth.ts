@@ -20,7 +20,7 @@ export async function getServerUser() {
     } = await supabase.auth.getUser();
     return user;
   } catch (err) {
-    console.error("Error getting server user:", err);
+    console.error("Error getting server user:", err instanceof Error ? err.message : "Unknown error");
     return null;
   }
 }
@@ -98,7 +98,7 @@ export async function getUserFromRequest(request: Request) {
 
     return user;
   } catch (err) {
-    console.error("Error getting user from request:", err);
+    console.error("Error getting user from request:", err instanceof Error ? err.message : "Unknown error");
     return null;
   }
 }
