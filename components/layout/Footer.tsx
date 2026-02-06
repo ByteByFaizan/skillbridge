@@ -18,6 +18,9 @@ export default function Footer() {
         <p className="mt-6 text-center text-sm text-[var(--muted)]">
           Personalized career guidance for students and early-career learners.
         </p>
+        <p className="mt-2 text-center text-xs text-[var(--muted)]/80">
+          Free to start · No sign-up required for your first roadmap
+        </p>
       </div>
     </footer>
   );

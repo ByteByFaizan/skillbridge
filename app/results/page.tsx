@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import type { ParsedCareerResponse } from "@/types/ai-response";
 import CareerCard from "@/components/career/CareerCard";
@@ -10,31 +10,37 @@ import RoadmapTimeline from "@/components/roadmap/RoadmapTimeline";
 import Card, { CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 
-export default function ResultsPage() {
-  const [data, setData] = useState<ParsedCareerResponse | null>(null);
+function getStoredResult(): ParsedCareerResponse | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = sessionStorage.getItem("skillbridge_result");
+    return raw ? (JSON.parse(raw) as ParsedCareerResponse) : null;
+  } catch {
+    return null;
+  }
+}
 
-  useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem("skillbridge_result");
-      if (raw) setData(JSON.parse(raw) as ParsedCareerResponse);
-    } catch {
-      setData(null);
-    }
-  }, []);
+export default function ResultsPage() {
+  const [data] = useState<ParsedCareerResponse | null>(() => getStoredResult());
 
   if (data === null) {
     return (
       <div className="section-bg flex min-h-screen flex-col items-center justify-center px-4 py-16">
         <Card className="max-w-md text-center">
           <CardHeader>
-            <CardTitle>No results yet</CardTitle>
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--primary)]/10">
+              <svg className="h-8 w-8 text-[var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </div>
+            <CardTitle>Let&apos;s find your first career path!</CardTitle>
             <p className="mt-2 text-[var(--muted)]">
-              Complete the career discovery form to see your personalized career paths and roadmap.
+              Complete the quick form to get personalized career suggestions and a 6-month learning roadmap — takes less than a minute.
             </p>
           </CardHeader>
           <CardContent>
             <Link href="/discover">
-              <Button fullWidth>Get My Career Roadmap</Button>
+              <Button fullWidth size="lg">Get My Career Roadmap</Button>
             </Link>
           </CardContent>
         </Card>
@@ -55,7 +61,7 @@ export default function ResultsPage() {
         </p>
 
         {/* Section 1: Career Overview */}
-        <section className="mt-12">
+        <section className="mt-12" id="overview">
           <h2 className="text-xl font-semibold text-[var(--foreground)]">Career Overview</h2>
           <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {careerOverview.map((career, i) => (
@@ -65,7 +71,7 @@ export default function ResultsPage() {
         </section>
 
         {/* Section 2: Skill Gap Analysis */}
-        <section className="mt-14">
+        <section className="mt-14" id="skill-gap">
           <h2 className="text-xl font-semibold text-[var(--foreground)]">Skill Gap Analysis</h2>
           <div className="mt-4 space-y-6">
             {skillGapAnalysis.map((analysis, i) => (
@@ -75,13 +81,13 @@ export default function ResultsPage() {
         </section>
 
         {/* Section 3: 6-Month Roadmap */}
-        <section className="mt-14">
+        <section className="mt-14" id="roadmap">
           <RoadmapTimeline steps={learningRoadmap.steps} />
         </section>
 
         {/* Section 4: Job Roles & Opportunities */}
         {jobRolesAndOpportunities.length > 0 && (
-          <section className="mt-14">
+          <section className="mt-14" id="opportunities">
             <h2 className="text-xl font-semibold text-[var(--foreground)]">Job Roles & Opportunities</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {jobRolesAndOpportunities.map((role, i) => (
@@ -105,14 +111,14 @@ export default function ResultsPage() {
 
         {/* Section 5: Career Growth Path */}
         {careerGrowthPath.length > 0 && (
-          <section className="mt-14">
+          <section className="mt-14" id="growth">
             <GrowthPath steps={careerGrowthPath} />
           </section>
         )}
 
         {/* Section 6: Personalized Advice */}
         {personalizedAdvice.length > 0 && (
-          <section className="mt-14">
+          <section className="mt-14" id="advice">
             <Card className="border-l-4 border-l-[var(--primary)] bg-[var(--primary)]/5">
               <CardHeader>
                 <div className="flex items-center gap-2">

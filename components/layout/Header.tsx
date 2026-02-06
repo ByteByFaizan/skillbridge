@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState } from "react";
 import { APP_NAME, NAV_LINKS } from "@/lib/constants";
-import Button from "@/components/ui/Button";
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);

@@ -164,18 +164,50 @@ export default function DiscoverPage() {
                   ))}
                 </select>
               </div>
-              <TagInput
-                label="Current skills"
-                value={skills}
-                onChange={setSkills}
-                placeholder="e.g. Python, Excel, Communication"
-              />
-              <TagInput
-                label="Interests"
-                value={interests}
-                onChange={setInterests}
-                placeholder="e.g. Data, Design, Writing"
-              />
+              <div>
+                <TagInput
+                  label="Current skills"
+                  value={skills}
+                  onChange={setSkills}
+                  placeholder="e.g. Python, Excel, Communication"
+                />
+                <p className="mt-1.5 text-xs text-[var(--muted)]">Quick add:</p>
+                <div className="mt-1 flex flex-wrap gap-1.5">
+                  {["Python", "Excel", "SQL", "Communication", "Writing", "Figma"].map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => !skills.includes(s) && setSkills([...skills, s])}
+                      disabled={skills.includes(s)}
+                      className="rounded-full border border-[var(--border)] bg-white px-2.5 py-1 text-xs text-[var(--muted)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      + {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <TagInput
+                  label="Interests"
+                  value={interests}
+                  onChange={setInterests}
+                  placeholder="e.g. Data, Design, Writing"
+                />
+                <p className="mt-1.5 text-xs text-[var(--muted)]">Quick add:</p>
+                <div className="mt-1 flex flex-wrap gap-1.5">
+                  {["Data", "Design", "Tech", "Writing", "Business", "Research"].map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => !interests.includes(s) && setInterests([...interests, s])}
+                      disabled={interests.includes(s)}
+                      className="rounded-full border border-[var(--border)] bg-white px-2.5 py-1 text-xs text-[var(--muted)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      + {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <Input
                 label="Career goal (optional)"
                 value={goal}

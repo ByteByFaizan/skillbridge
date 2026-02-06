@@ -37,7 +37,7 @@ export async function chat(
     body: JSON.stringify({
       model: options?.model ?? DEFAULT_MODEL,
       messages,
-      max_tokens: options?.maxTokens ?? 4096,
+      max_tokens: options?.maxTokens ?? 3400, // Keep under free-tier limit (~3592); increase after adding credits at openrouter.ai/settings/credits
       temperature: 0.6,
     }),
   });

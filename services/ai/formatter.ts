@@ -19,9 +19,6 @@ function splitSections(text: string): Record<string, string> {
   const lines = text.split("\n");
 
   for (const line of lines) {
-    const isHeader = SECTION_HEADERS.some(
-      (h) => line.trim() === h || line.trim().startsWith(h + "\n") || line === h
-    );
     const matchedHeader = SECTION_HEADERS.find((h) => line.includes(h) && line.trim().length < 50);
 
     if (matchedHeader && (line.trim() === matchedHeader || line.trim().startsWith(matchedHeader))) {
@@ -42,7 +39,6 @@ function splitSections(text: string): Record<string, string> {
 
 function parseCareerOverview(s: string): CareerPath[] {
   const careers: CareerPath[] = [];
-  const blocks = s.split(/(?=\d\.|-\s+[A-Z][a-z]+ [A-Za-z]+\s*:)/).filter(Boolean);
   let current: Partial<CareerPath> = {};
   const lines = s.split("\n").filter((l) => l.trim());
 
@@ -96,7 +92,6 @@ function parseSkillGap(s: string, careerTitles: string[]): SkillGapAnalysis[] {
   for (const title of careerTitles) {
     const existing: string[] = [];
     const missing: Array<{ name: string; priority: "High" | "Medium" | "Low" }> = [];
-    const lower = s.toLowerCase();
     const parts = s.split(/\n\n+|(?=Skills? (?:you |they )?(?:already have|to learn|missing))/i);
     for (const part of parts) {
       if (/already have|existing|current skills/i.test(part)) {

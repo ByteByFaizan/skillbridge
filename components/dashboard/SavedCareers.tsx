@@ -1,24 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Card, { CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import type { CareerPath } from "@/types/career";
 
-export default function SavedCareers() {
-  const [careers, setCareers] = useState<CareerPath[]>([]);
+function getStoredCareers(): CareerPath[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = sessionStorage.getItem("skillbridge_result");
+    if (!raw) return [];
+    const data = JSON.parse(raw);
+    return data.careerOverview?.length ? data.careerOverview : [];
+  } catch {
+    return [];
+  }
+}
 
-  useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem("skillbridge_result");
-      if (raw) {
-        const data = JSON.parse(raw);
-        if (data.careerOverview?.length) setCareers(data.careerOverview);
-      }
-    } catch {
-      setCareers([]);
-    }
-  }, []);
+export default function SavedCareers() {
+  const [careers] = useState<CareerPath[]>(() => getStoredCareers());
 
   if (careers.length === 0) {
     return (
