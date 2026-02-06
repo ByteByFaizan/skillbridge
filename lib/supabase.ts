@@ -38,9 +38,13 @@ export async function createServerSupabaseClient() {
   const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
   
+  // Validate environment variables
+  const url = getEnv("NEXT_PUBLIC_SUPABASE_URL");
+  const anonKey = getEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY");
+  
   return createServerClient(
-    supabaseUrl,
-    supabaseAnonKey,
+    url,
+    anonKey,
     {
       cookies: {
         get(name: string) {
