@@ -98,7 +98,7 @@ export async function POST(request: Request) {
           return NextResponse.json({
             ...parsed,
             saved: false,
-            warning: "Results generated but not saved to your account. Check server logs for details.",
+            warning: "Results generated but not saved. Please try again or contact support if the issue persists.",
           });
         }
 
@@ -114,7 +114,7 @@ export async function POST(request: Request) {
         return NextResponse.json({
           ...parsed,
           saved: false,
-          warning: "Results generated but not saved to your account. Check server logs for details.",
+          warning: "Results generated but not saved. Please try again or contact support if the issue persists.",
         });
       }
     }

@@ -56,9 +56,7 @@ export async function saveCareerRecommendation(
 
     if (careerError || !careers) {
       console.error("Error saving careers:", careerError?.message || "Unknown database error");
-      if (careerError) {
-        console.error("Full error details:", JSON.stringify(careerError, null, 2));
-      }
+      console.error("Full error details:", JSON.stringify(careerError, null, 2));
       return null;
     }
 
