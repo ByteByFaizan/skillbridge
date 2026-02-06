@@ -114,7 +114,7 @@ body {
     background: white !important;
   }
   
-  .print\\:hidden {
+  .no-print {
     display: none !important;
   }
   

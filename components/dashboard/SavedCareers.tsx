@@ -98,22 +98,3 @@ export default function SavedCareers({ userId }: SavedCareersProps) {
     </Card>
   );
 }
-              <Link
-                href="/results"
-                className="block rounded-lg py-2 px-3 text-[var(--foreground)] hover:bg-[var(--section-bg)]"
-              >
-                {c.title}
-              </Link>
-            </li>
-          ))}
-        </ul>
-        <Link
-          href="/results"
-          className="mt-3 inline-block text-sm font-medium text-[var(--primary)] hover:underline"
-        >
-          View full results →
-        </Link>
-      </CardContent>
-    </Card>
-  );
-}

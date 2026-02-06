@@ -1,18 +1,16 @@
 import { createClient } from "@supabase/supabase-js";
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
 
-// Client-side Supabase client
+// Client-side Supabase client (safe to use in browser)
 export const supabase =
   supabaseUrl && supabaseAnonKey
     ? createClient(supabaseUrl, supabaseAnonKey)
     : null;
 
-// Server-side Supabase client with service role (for API routes)
+// Server-side Supabase client with service role (for API routes only)
 export function createServiceClient() {
   if (!supabaseUrl || !supabaseServiceKey) {
     throw new Error("Supabase service configuration missing");
@@ -27,6 +25,8 @@ export function createServiceClient() {
 
 // Server-side Supabase client with user session (for server components)
 export async function createServerSupabaseClient() {
+  const { createServerClient } = await import("@supabase/ssr");
+  const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
   
   return createServerClient(

@@ -85,7 +85,7 @@ export default function ResultsPage() {
               Personalized for you. Save or revisit from your dashboard.
             </p>
           </div>
-          <div className="flex gap-2 print:hidden">
+          <div className="flex gap-2 no-print">
             <Button
               variant="outline"
               size="sm"
@@ -186,7 +186,7 @@ export default function ResultsPage() {
             </div>
           </section>
         )}
- print:hidden
+
         {/* Section 5: Career Growth Path */}
         {careerGrowthPath.length > 0 && (
           <section className="mt-14" id="growth" aria-labelledby="growth-heading">
