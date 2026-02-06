@@ -89,9 +89,10 @@ export async function getUserFromRequest(request: Request) {
 
     const token = authHeader.substring(7);
     
-    // Validate token format (should be a JWT-like string)
-    if (!token || token.length < 20 || !token.includes(".")) {
-      console.error("Invalid token format");
+    // Validate JWT structure (should have 3 parts separated by dots)
+    const parts = token.split(".");
+    if (parts.length !== 3 || parts.some(part => !part)) {
+      console.error("Invalid JWT structure");
       return null;
     }
     

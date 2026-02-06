@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import type { CookieOptions } from "@supabase/ssr";
 import { getEnv } from "./env";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
@@ -45,10 +46,10 @@ export async function createServerSupabaseClient() {
         get(name: string) {
           return cookieStore.get(name)?.value;
         },
-        set(name: string, value: string, options: Record<string, unknown>) {
+        set(name: string, value: string, options: CookieOptions) {
           cookieStore.set({ name, value, ...options });
         },
-        remove(name: string, options: Record<string, unknown>) {
+        remove(name: string, options: CookieOptions) {
           cookieStore.set({ name, value: "", ...options });
         },
       },
