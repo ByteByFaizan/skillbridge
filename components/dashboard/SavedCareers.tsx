@@ -4,12 +4,22 @@ import { useEffect, useState } from "react";
 import Card, { CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Link from "next/link";
 
+interface CareerData {
+  id: string | number;
+  career?: {
+    career_title?: string;
+    demand_level?: string;
+  };
+  title?: string;
+  demand?: string;
+}
+
 interface SavedCareersProps {
   userId?: string;
 }
 
 export default function SavedCareers({ userId }: SavedCareersProps) {
-  const [careers, setCareers] = useState<any[]>([]);
+  const [careers, setCareers] = useState<CareerData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,25 +31,45 @@ export default function SavedCareers({ userId }: SavedCareersProps) {
           if (raw) {
             const data = JSON.parse(raw);
             if (data.careerOverview) {
-              setCareers(data.careerOverview.map((c: any, i: number) => ({
+              setCareers(data.careerOverview.map((c: { title: string; demand: string }, i: number) => ({
                 id: i,
                 career: { career_title: c.title, demand_level: c.demand }
               })));
             }
           }
         } catch (err) {
-          console.error("Error loading from session:", err);
+          console.error("Error loading from session:", err instanceof Error ? err.message : "Unknown error");
         }
         setLoading(false);
         return;
       }
 
       try {
-        const { getSavedCareers } = await import("@/services/database/career.service");
-        const data = await getSavedCareers(userId);
-        setCareers(data);
+        // Fetch from API route instead of directly calling service
+        const { supabase } = await import("@/lib/supabase");
+        if (!supabase) {
+          setLoading(false);
+          return;
+        }
+
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.access_token) {
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch("/api/dashboard/saved-careers", {
+          headers: {
+            "Authorization": `Bearer ${session.access_token}`,
+          },
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          setCareers(result.careers || []);
+        }
       } catch (err) {
-        console.error("Error loading saved careers:", err);
+        console.error("Error loading saved careers:", err instanceof Error ? err.message : "Unknown error");
       } finally {
         setLoading(false);
       }
@@ -69,7 +99,7 @@ export default function SavedCareers({ userId }: SavedCareersProps) {
       <CardContent>
         {careers.length > 0 ? (
           <ul className="space-y-3">
-            {careers.map((item: any) => (
+            {careers.map((item: CareerData) => (
               <li
                 key={item.id}
                 className="rounded-lg border border-[var(--border)] p-3 hover:bg-[var(--section-bg)] transition"

@@ -1,3 +1,5 @@
+"use server";
+
 import type { ParsedCareerResponse } from "@/types/ai-response";
 import { createServiceClient } from "@/lib/supabase";
 

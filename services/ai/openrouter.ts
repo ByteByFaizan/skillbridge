@@ -1,3 +1,5 @@
+"use server";
+
 /**
  * OpenRouter API client for SkillBridge career analysis.
  * Uses GPT-4 or compatible model (Tech Stack: GPT-5.2 when available; fallback to openai/gpt-4o).

@@ -8,11 +8,11 @@ import ProgressTracker from "@/components/dashboard/ProgressTracker";
 import Card, { CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { getCurrentUser } from "@/lib/auth";
-import { getLatestRecommendation } from "@/services/database/career.service";
+import type { User } from "@supabase/supabase-js";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [latestAdvice, setLatestAdvice] = useState<string[]>([]);
 
@@ -27,14 +27,34 @@ export default function DashboardPage() {
 
       setUser(currentUser);
 
-      // Fetch latest career recommendations
+      // Fetch latest career recommendations from API route
       try {
-        const data = await getLatestRecommendation(currentUser.id);
-        if (data) {
-          setLatestAdvice(data.personalizedAdvice.slice(0, 3));
+        const { supabase } = await import("@/lib/supabase");
+        if (!supabase) {
+          setLoading(false);
+          return;
+        }
+
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.access_token) {
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch("/api/dashboard/latest-recommendation", {
+          headers: {
+            "Authorization": `Bearer ${session.access_token}`,
+          },
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.data?.personalizedAdvice) {
+            setLatestAdvice(result.data.personalizedAdvice.slice(0, 3));
+          }
         }
       } catch (err) {
-        console.error("Error loading dashboard data:", err);
+        console.error("Error loading dashboard data:", err instanceof Error ? err.message : "Unknown error");
       }
 
       setLoading(false);
