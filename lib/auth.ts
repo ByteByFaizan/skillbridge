@@ -1,7 +1,9 @@
 import { supabase } from "./supabase";
 import { createServerSupabaseClient } from "./supabase";
 
+// CLIENT-ONLY: Get current user from browser session
 export async function getCurrentUser() {
+  if (typeof window === "undefined") return null;
   if (!supabase) return null;
   const {
     data: { user },
@@ -9,6 +11,7 @@ export async function getCurrentUser() {
   return user;
 }
 
+// SERVER-ONLY: Get user from server session (cookies)
 export async function getServerUser() {
   try {
     const supabase = await createServerSupabaseClient();
@@ -22,12 +25,14 @@ export async function getServerUser() {
   }
 }
 
+// CLIENT-ONLY: Sign out
 export async function signOut() {
   if (!supabase) return;
   await supabase.auth.signOut();
   window.location.href = "/";
 }
 
+// CLIENT-ONLY: Sign in with email
 export async function signInWithEmail(email: string, password: string) {
   if (!supabase) throw new Error("Supabase not initialized");
   
@@ -40,6 +45,7 @@ export async function signInWithEmail(email: string, password: string) {
   return data;
 }
 
+// CLIENT-ONLY: Sign up with email
 export async function signUpWithEmail(email: string, password: string, fullName?: string) {
   if (!supabase) throw new Error("Supabase not initialized");
   
@@ -57,13 +63,14 @@ export async function signUpWithEmail(email: string, password: string, fullName?
   return data;
 }
 
+// CLIENT-ONLY: Sign in with Google
 export async function signInWithGoogle() {
   if (!supabase) throw new Error("Supabase not initialized");
   
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${window.location.origin}/auth/callback`,
+      redirectTo: `${window.location.origin}/api/auth/callback`,
     },
   });
 
@@ -71,6 +78,7 @@ export async function signInWithGoogle() {
   return data;
 }
 
+// SERVER-ONLY: Get user from API request Authorization header
 export async function getUserFromRequest(request: Request) {
   try {
     const authHeader = request.headers.get("Authorization");
@@ -81,6 +89,7 @@ export async function getUserFromRequest(request: Request) {
     const token = authHeader.substring(7);
     const supabase = await createServerSupabaseClient();
     
+    // Set the session using the token, then get user
     const { data: { user }, error } = await supabase.auth.getUser(token);
     
     if (error || !user) {
