@@ -64,6 +64,7 @@ export async function signUpWithEmail(email: string, password: string, fullName?
 }
 
 // CLIENT-ONLY: Sign in with Google
+// Note: Ensure /api/auth/callback is added to Supabase OAuth allowed redirect URLs
 export async function signInWithGoogle() {
   if (!supabase) throw new Error("Supabase not initialized");
   

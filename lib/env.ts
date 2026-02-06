@@ -10,6 +10,10 @@ interface EnvConfig {
   SUPABASE_SERVICE_ROLE_KEY: string;
 }
 
+interface OptionalEnvConfig {
+  NEXT_PUBLIC_APP_URL: string;
+}
+
 const requiredEnvVars = [
   "OPENROUTER_API_KEY",
   "NEXT_PUBLIC_SUPABASE_URL",
@@ -54,10 +58,10 @@ export function getEnv(key: keyof EnvConfig): string {
 
 /**
  * Safely gets an optional environment variable
- * @param key - Environment variable key
+ * @param key - Environment variable key (must be a known optional env var)
  * @param defaultValue - Default value if not set
  * @returns The environment variable value or default
  */
-export function getOptionalEnv(key: string, defaultValue: string = ""): string {
+export function getOptionalEnv(key: keyof OptionalEnvConfig, defaultValue = ""): string {
   return process.env[key] || defaultValue;
 }

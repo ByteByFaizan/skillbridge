@@ -14,6 +14,11 @@ interface CareerData {
   demand?: string;
 }
 
+interface CareerOverviewItem {
+  title: string;
+  demand: string;
+}
+
 interface SavedCareersProps {
   userId?: string;
 }
@@ -31,7 +36,7 @@ export default function SavedCareers({ userId }: SavedCareersProps) {
           if (raw) {
             const data = JSON.parse(raw);
             if (data.careerOverview) {
-              setCareers(data.careerOverview.map((c: { title: string; demand: string }, i: number) => ({
+              setCareers(data.careerOverview.map((c: CareerOverviewItem, i: number) => ({
                 id: i,
                 career: { career_title: c.title, demand_level: c.demand }
               })));
