@@ -16,7 +16,7 @@ Personalized career guidance for students and early-career learners. Get 2–3 c
 - **Frontend:** Next.js (App Router), React, TypeScript, Tailwind CSS
 - **Backend:** Next.js API Routes (serverless)
 - **AI:** OpenRouter (e.g. GPT-4o)
-- **Database/Auth:** Supabase (optional; MVP uses session storage)
+- **Database/Auth:** Supabase (required for saving career data; environment variables must be configured)
 
 ## Getting Started
 
@@ -27,7 +27,11 @@ Personalized career guidance for students and early-career learners. Get 2–3 c
 
 2. **Environment variables**
    - Copy `.env.example` to `.env.local`
-   - Set `OPENROUTER_API_KEY` (get one at [openrouter.ai](https://openrouter.ai))
+   - Set `OPENROUTER_API_KEY` (required - get one at [openrouter.ai](https://openrouter.ai))
+   - Set Supabase credentials (required for database persistence):
+     - `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
+     - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anon/public key
+     - `SUPABASE_SERVICE_ROLE_KEY` (optional) - Service role key for admin operations
 
 3. **Run development server**
    ```bash
