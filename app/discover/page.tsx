@@ -188,7 +188,7 @@ export default function DiscoverPage() {
       storage.setJSON("skillbridge_result", data);
       
       router.push("/results");
-    } catch (err) {
+    } catch (_err) {
       setError("Network error. Please check your connection and try again.");
     } finally {
       setLoading(false);

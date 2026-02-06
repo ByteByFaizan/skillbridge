@@ -67,7 +67,7 @@ export default function SavedCareers({ userId }: SavedCareersProps) {
           const result = await response.json();
           setCareers(result.careers || []);
         }
-      } catch (err) {
+      } catch (_err) {
         // Silently handle error - user may see empty list
       } finally {
         setLoading(false);

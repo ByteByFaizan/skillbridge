@@ -43,7 +43,7 @@ export default function ResultsPage() {
       setCopied(true);
       setCopyError(false);
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
+    } catch (_err) {
       setCopyError(true);
       setTimeout(() => setCopyError(false), 2000);
     }
