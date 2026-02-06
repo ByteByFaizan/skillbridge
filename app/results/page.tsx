@@ -9,19 +9,42 @@ import GrowthPath from "@/components/career/GrowthPath";
 import RoadmapTimeline from "@/components/roadmap/RoadmapTimeline";
 import Card, { CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
+import { storage } from "@/utils/storage";
 
 function getStoredResult(): ParsedCareerResponse | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = sessionStorage.getItem("skillbridge_result");
-    return raw ? (JSON.parse(raw) as ParsedCareerResponse) : null;
-  } catch {
-    return null;
-  }
+  return storage.getJSON<ParsedCareerResponse>("skillbridge_result");
 }
 
 export default function ResultsPage() {
   const [data] = useState<ParsedCareerResponse | null>(() => getStoredResult());
+  const [copied, setCopied] = useState(false);
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleDownload = () => {
+    if (!data) return;
+    
+    const dataStr = JSON.stringify(data, null, 2);
+    const dataBlob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `skillbridge-career-guidance-${new Date().toISOString().split("T")[0]}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
 
   if (data === null) {
     return (
@@ -53,26 +76,78 @@ export default function ResultsPage() {
   return (
     <div className="min-h-screen section-bg">
       <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
-        <h1 className="text-2xl font-bold text-[var(--foreground)] md:text-3xl">
-          Your Career Guidance
-        </h1>
-        <p className="mt-1 text-[var(--muted)]">
-          Personalized for you. Save or revisit from your dashboard.
-        </p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-[var(--foreground)] md:text-3xl">
+              Your Career Guidance
+            </h1>
+            <p className="mt-1 text-[var(--muted)]">
+              Personalized for you. Save or revisit from your dashboard.
+            </p>
+          </div>
+          <div className="flex gap-2 print:hidden">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCopyLink}
+              className="flex items-center gap-2"
+              aria-label="Copy link to results"
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                {copied ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                )}
+              </svg>
+              {copied ? "Copied!" : "Copy Link"}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePrint}
+              className="flex items-center gap-2"
+              aria-label="Print career guidance"
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+              </svg>
+              Print
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownload}
+              className="flex items-center gap-2"
+              aria-label="Download as JSON"
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Save
+            </Button>
+          </div>
+        </div>
 
         {/* Section 1: Career Overview */}
-        <section className="mt-12" id="overview">
-          <h2 className="text-xl font-semibold text-[var(--foreground)]">Career Overview</h2>
-          <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <section className="mt-12" id="overview" aria-labelledby="overview-heading">
+          <h2 id="overview-heading" className="text-xl font-semibold text-[var(--foreground)]">
+            Career Overview
+          </h2>
+          <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" role="list">
             {careerOverview.map((career, i) => (
-              <CareerCard key={i} career={career} />
+              <div key={i} role="listitem">
+                <CareerCard career={career} />
+              </div>
             ))}
           </div>
         </section>
 
         {/* Section 2: Skill Gap Analysis */}
-        <section className="mt-14" id="skill-gap">
-          <h2 className="text-xl font-semibold text-[var(--foreground)]">Skill Gap Analysis</h2>
+        <section className="mt-14" id="skill-gap" aria-labelledby="skill-gap-heading">
+          <h2 id="skill-gap-heading" className="text-xl font-semibold text-[var(--foreground)]">
+            Skill Gap Analysis
+          </h2>
           <div className="mt-4 space-y-6">
             {skillGapAnalysis.map((analysis, i) => (
               <SkillGapCard key={i} analysis={analysis} />
@@ -81,14 +156,17 @@ export default function ResultsPage() {
         </section>
 
         {/* Section 3: 6-Month Roadmap */}
-        <section className="mt-14" id="roadmap">
+        <section className="mt-14" id="roadmap" aria-labelledby="roadmap-heading">
+          <h2 id="roadmap-heading" className="sr-only">Learning Roadmap</h2>
           <RoadmapTimeline steps={learningRoadmap.steps} />
         </section>
 
         {/* Section 4: Job Roles & Opportunities */}
         {jobRolesAndOpportunities.length > 0 && (
-          <section className="mt-14" id="opportunities">
-            <h2 className="text-xl font-semibold text-[var(--foreground)]">Job Roles & Opportunities</h2>
+          <section className="mt-14" id="opportunities" aria-labelledby="opportunities-heading">
+            <h2 id="opportunities-heading" className="text-xl font-semibold text-[var(--foreground)]">
+              Job Roles & Opportunities
+            </h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {jobRolesAndOpportunities.map((role, i) => (
                 <Card key={i}>
@@ -108,22 +186,23 @@ export default function ResultsPage() {
             </div>
           </section>
         )}
-
+ print:hidden
         {/* Section 5: Career Growth Path */}
         {careerGrowthPath.length > 0 && (
-          <section className="mt-14" id="growth">
+          <section className="mt-14" id="growth" aria-labelledby="growth-heading">
+            <h2 id="growth-heading" className="sr-only">Career Growth Path</h2>
             <GrowthPath steps={careerGrowthPath} />
           </section>
         )}
 
         {/* Section 6: Personalized Advice */}
         {personalizedAdvice.length > 0 && (
-          <section className="mt-14" id="advice">
+          <section className="mt-14" id="advice" aria-labelledby="advice-heading">
             <Card className="border-l-4 border-l-[var(--primary)] bg-[var(--primary)]/5">
               <CardHeader>
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl" aria-hidden>💡</span>
-                  <CardTitle>Personalized Advice</CardTitle>
+                  <span className="text-2xl" aria-hidden="true">💡</span>
+                  <CardTitle id="advice-heading">Personalized Advice</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>

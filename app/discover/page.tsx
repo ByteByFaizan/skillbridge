@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo, memo } from "react";
 import { useRouter } from "next/navigation";
 import Card, { CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { LoaderOverlay } from "@/components/ui/Loader";
@@ -9,17 +9,22 @@ import Input from "@/components/ui/Input";
 import { EDUCATION_LEVELS } from "@/lib/constants";
 import { validateDiscoveryInput } from "@/utils/validators";
 
-function TagInput({
-  value,
-  onChange,
-  placeholder,
-  label,
-}: {
+const SKILL_SUGGESTIONS = ["Python", "Excel", "SQL", "Communication", "Writing", "Figma"] as const;
+const INTEREST_SUGGESTIONS = ["Data", "Design", "Tech", "Writing", "Business", "Research"] as const;
+
+interface TagInputProps {
   value: string[];
   onChange: (tags: string[]) => void;
   placeholder: string;
   label: string;
-}) {
+}
+
+const TagInput = memo(function TagInput({
+  value,
+  onChange,
+  placeholder,
+  label,
+}: TagInputProps) {
   const [input, setInput] = useState("");
 
   const addTag = useCallback(
@@ -78,7 +83,42 @@ function TagInput({
       </div>
     </div>
   );
+});
+
+interface QuickAddButtonsProps {
+  suggestions: readonly string[];
+  currentValues: string[];
+  onAdd: (value: string) => void;
 }
+
+const QuickAddButtons = memo(function QuickAddButtons({ 
+  suggestions, 
+  currentValues, 
+  onAdd 
+}: QuickAddButtonsProps) {
+  return (
+    <>
+      <p className="mt-1.5 text-xs text-[var(--muted)]">Quick add:</p>
+      <div className="mt-1 flex flex-wrap gap-1.5">
+        {suggestions.map((s) => {
+          const isAdded = currentValues.includes(s);
+          return (
+            <button
+              key={s}
+              type="button"
+              onClick={() => !isAdded && onAdd(s)}
+              disabled={isAdded}
+              className="rounded-full border border-[var(--border)] bg-white px-2.5 py-1 text-xs text-[var(--muted)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label={`Add ${s}`}
+            >
+              + {s}
+            </button>
+          );
+        })}
+      </div>
+    </>
+  );
+});
 
 export default function DiscoverPage() {
   const router = useRouter();
@@ -89,6 +129,14 @@ export default function DiscoverPage() {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const handleAddSkill = useCallback((skill: string) => {
+    setSkills(prev => [...prev, skill]);
+  }, []);
+
+  const handleAddInterest = useCallback((interest: string) => {
+    setInterests(prev => [...prev, interest]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,9 +149,22 @@ export default function DiscoverPage() {
 
     setLoading(true);
     try {
+      // Get auth token if user is logged in
+      const headers: HeadersInit = { "Content-Type": "application/json" };
+      
+      if (typeof window !== "undefined") {
+        const { supabase } = await import("@/lib/supabase");
+        if (supabase) {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.access_token) {
+            headers["Authorization"] = `Bearer ${session.access_token}`;
+          }
+        }
+      }
+
       const res = await fetch("/api/career", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           name: name || undefined,
           education,
@@ -118,10 +179,16 @@ export default function DiscoverPage() {
         setLoading(false);
         return;
       }
-      sessionStorage.setItem("skillbridge_result", JSON.stringify(data));
+      
+      // Store result in sessionStorage using safe storage utility
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("skillbridge_result", JSON.stringify(data));
+      }
+      
       router.push("/results");
-    } catch {
-      setError("Network error. Please try again.");
+    } catch (err) {
+      console.error("Discovery error:", err);
+      setError("Network error. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -171,20 +238,11 @@ export default function DiscoverPage() {
                   onChange={setSkills}
                   placeholder="e.g. Python, Excel, Communication"
                 />
-                <p className="mt-1.5 text-xs text-[var(--muted)]">Quick add:</p>
-                <div className="mt-1 flex flex-wrap gap-1.5">
-                  {["Python", "Excel", "SQL", "Communication", "Writing", "Figma"].map((s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => !skills.includes(s) && setSkills([...skills, s])}
-                      disabled={skills.includes(s)}
-                      className="rounded-full border border-[var(--border)] bg-white px-2.5 py-1 text-xs text-[var(--muted)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      + {s}
-                    </button>
-                  ))}
-                </div>
+                <QuickAddButtons 
+                  suggestions={SKILL_SUGGESTIONS}
+                  currentValues={skills}
+                  onAdd={handleAddSkill}
+                />
               </div>
               <div>
                 <TagInput
@@ -193,20 +251,11 @@ export default function DiscoverPage() {
                   onChange={setInterests}
                   placeholder="e.g. Data, Design, Writing"
                 />
-                <p className="mt-1.5 text-xs text-[var(--muted)]">Quick add:</p>
-                <div className="mt-1 flex flex-wrap gap-1.5">
-                  {["Data", "Design", "Tech", "Writing", "Business", "Research"].map((s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => !interests.includes(s) && setInterests([...interests, s])}
-                      disabled={interests.includes(s)}
-                      className="rounded-full border border-[var(--border)] bg-white px-2.5 py-1 text-xs text-[var(--muted)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      + {s}
-                    </button>
-                  ))}
-                </div>
+                <QuickAddButtons 
+                  suggestions={INTEREST_SUGGESTIONS}
+                  currentValues={interests}
+                  onAdd={handleAddInterest}
+                />
               </div>
               <Input
                 label="Career goal (optional)"

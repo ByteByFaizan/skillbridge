@@ -54,6 +54,19 @@ body {
   outline-offset: 2px;
 }
 
+/* Screen reader only - accessible but visually hidden */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 /* Subtle fade-in for above-the-fold content */
 @keyframes fade-in-up {
   from {
@@ -89,4 +102,37 @@ body {
   left: 1rem;
   outline: 2px solid white;
   outline-offset: 2px;
+}
+
+/* Print styles for career guidance results */
+@media print {
+  @page {
+    margin: 1cm;
+  }
+  
+  body {
+    background: white !important;
+  }
+  
+  .print\\:hidden {
+    display: none !important;
+  }
+  
+  .section-bg {
+    background: white !important;
+  }
+  
+  .skillbridge-card {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+    page-break-inside: avoid;
+  }
+  
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+  
+  header, footer, nav {
+    display: none !important;
+  }
 }

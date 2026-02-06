@@ -20,3 +20,13 @@ export function validateDiscoveryInput(input: {
   }
   return { valid: true };
 }
+
+export function sanitizeInput(input: string): string {
+  return input.trim().replace(/[<>"']/g, "");
+}
+
+export function sanitizeArray(arr: string[]): string[] {
+  return arr
+    .map((item) => sanitizeInput(item))
+    .filter((item) => item.length > 0 && item.length < 100);
+}

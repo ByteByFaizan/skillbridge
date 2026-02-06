@@ -1,11 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { APP_NAME, NAV_LINKS } from "@/lib/constants";
+import { getCurrentUser, signOut } from "@/lib/auth";
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getCurrentUser().then(u => {
+      setUser(u);
+      setLoading(false);
+    });
+  }, []);
+
+  const handleSignOut = async () => {
+    await signOut();
+    setUser(null);
+  };
 
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
@@ -36,12 +51,31 @@ export default function Header() {
           >
             Get Career Guidance
           </Link>
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center justify-center rounded-[var(--radius)] px-4 py-2 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--section-bg)]"
-          >
-            Login
-          </Link>
+          {!loading && (
+            user ? (
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center justify-center rounded-[var(--radius)] px-4 py-2 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--section-bg)]"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={handleSignOut}
+                  className="inline-flex items-center justify-center rounded-[var(--radius)] px-4 py-2 text-sm font-medium text-[var(--muted)] hover:bg-[var(--section-bg)]"
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="inline-flex items-center justify-center rounded-[var(--radius)] px-4 py-2 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--section-bg)]"
+              >
+                Login
+              </Link>
+            )
+          )}
         </div>
 
         <button
@@ -80,6 +114,27 @@ export default function Header() {
             >
               Get Career Guidance
             </Link>
+            {!loading && (
+              user ? (
+                <button
+                  onClick={() => {
+                    handleSignOut();
+                    setMobileOpen(false);
+                  }}
+                  className="mt-2 block rounded-lg bg-[var(--section-bg)] px-3 py-3 text-center text-sm font-medium text-[var(--foreground)]"
+                >
+                  Sign Out
+                </button>
+              ) : (
+                <Link
+                  href="/login"
+                  className="mt-2 block rounded-lg bg-[var(--section-bg)] px-3 py-3 text-center text-sm font-medium text-[var(--foreground)]"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Login
+                </Link>
+              )
+            )}
           </nav>
         </div>
       )}

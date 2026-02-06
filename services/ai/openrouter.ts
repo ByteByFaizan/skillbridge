@@ -18,16 +18,41 @@ export interface OpenRouterResponse {
   }>;
 }
 
+async function fetchWithRetry(
+  url: string,
+  options: RequestInit,
+  retries = 2
+): Promise<Response> {
+  for (let i = 0; i <= retries; i++) {
+    try {
+      const res = await fetch(url, options);
+      if (res.ok || res.status === 400 || res.status === 401) {
+        return res;
+      }
+      if (i < retries && (res.status === 429 || res.status >= 500)) {
+        const delay = Math.min(1000 * Math.pow(2, i), 5000);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
+      }
+      return res;
+    } catch (err) {
+      if (i === retries) throw err;
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+  }
+  throw new Error("Max retries reached");
+}
+
 export async function chat(
   messages: OpenRouterMessage[],
   options?: { model?: string; maxTokens?: number }
 ): Promise<string> {
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
-    throw new Error("OPENROUTER_API_KEY is not set");
+    throw new Error("OPENROUTER_API_KEY is not configured");
   }
 
-  const res = await fetch(OPENROUTER_URL, {
+  const res = await fetchWithRetry(OPENROUTER_URL, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
@@ -44,6 +69,12 @@ export async function chat(
 
   if (!res.ok) {
     const err = await res.text();
+    if (res.status === 401) {
+      throw new Error("Invalid API key. Please check your OpenRouter configuration.");
+    }
+    if (res.status === 429) {
+      throw new Error("Rate limited by OpenRouter. Please try again in a moment.");
+    }
     throw new Error(`OpenRouter API error: ${res.status} ${err}`);
   }
 
