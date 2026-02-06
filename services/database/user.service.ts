@@ -36,6 +36,7 @@ export async function getOrCreateUserProfile(userId: string, userData?: {
 
     if (error) {
       console.error("Error creating user profile:", error.message || "Unknown database error");
+      console.error("Full error details:", JSON.stringify(error, null, 2));
       return null;
     }
 
@@ -70,6 +71,7 @@ export async function updateUserSkills(userId: string, skills: Array<{ skill_nam
 
     if (error) {
       console.error("Error updating skills:", error.message || "Unknown database error");
+      console.error("Full error details:", JSON.stringify(error, null, 2));
       return false;
     }
 

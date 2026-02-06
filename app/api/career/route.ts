@@ -93,6 +93,15 @@ export async function POST(request: Request) {
 
         const savedId = await saveCareerRecommendation(user.id, parsed);
 
+        if (!savedId) {
+          console.error("Failed to save career recommendation - savedId is null");
+          return NextResponse.json({
+            ...parsed,
+            saved: false,
+            warning: "Results generated but not saved. Please try again or contact support if the issue persists.",
+          });
+        }
+
         return NextResponse.json({
           ...parsed,
           saved: true,
@@ -100,11 +109,12 @@ export async function POST(request: Request) {
         });
       } catch (dbError) {
         console.error("Database save error:", dbError instanceof Error ? dbError.message : "Unknown database error");
+        console.error("Full database error:", dbError);
         // Return AI result even if database save fails
         return NextResponse.json({
           ...parsed,
           saved: false,
-          warning: "Results generated but not saved to your account",
+          warning: "Results generated but not saved. Please try again or contact support if the issue persists.",
         });
       }
     }
