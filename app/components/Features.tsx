@@ -39,37 +39,37 @@ const features = [
 
 export default function Features() {
   return (
-    <section id="features" className="relative py-24 sm:py-32 bg-bg-card">
-      <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
+    <section id="features" className="py-16 sm:py-20">
+      <div className="max-w-[1060px] mx-auto px-4">
         <RevealOnScroll>
-          <p className="text-sm font-medium uppercase tracking-widest text-muted">
+          <p className="text-[#605A57] text-sm font-medium uppercase tracking-widest">
             Features
           </p>
-          <h2 className="mt-3 font-display text-3xl tracking-tight text-cream sm:text-4xl">
+          <h2 className="mt-3 text-[#49423D] text-3xl sm:text-4xl font-semibold leading-tight tracking-tight">
             Everything you need to plan your career
           </h2>
-          <p className="mt-4 max-w-2xl text-base text-muted">
+          <p className="mt-4 max-w-[506px] text-[#605A57] text-base font-medium leading-7">
             SkillBridge gives you clear, actionable guidance — not generic
             advice.
           </p>
         </RevealOnScroll>
 
-        <div className="mt-16 grid gap-6 sm:grid-cols-2">
+        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4">
           {features.map((feature, i) => (
             <RevealOnScroll key={feature.title} delay={i * 100}>
-              <div className="group relative h-full rounded-2xl border border-border bg-white p-8 transition-all hover:border-border-hover hover:shadow-sm">
-                <div className="mb-5 inline-flex rounded-xl bg-bg-elevated p-3">
-                  <feature.icon className="h-6 w-6 text-cream" />
+              <div className="p-6 border border-[#e0dedb] bg-white hover:shadow-sm transition-all h-full">
+                <div className="mb-4 inline-flex rounded-lg bg-[#f7f5f3] p-2.5">
+                  <feature.icon className="h-5 w-5 text-[#49423D]" />
                 </div>
-                <h3 className="flex items-center gap-2 text-lg font-semibold text-cream">
+                <h3 className="flex items-center gap-2 text-[#49423D] text-sm font-semibold leading-6">
                   {feature.title}
                   {feature.comingSoon && (
-                    <span className="rounded-full bg-bg-elevated px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted">
+                    <span className="px-2 py-0.5 bg-[#f7f5f3] border border-[#e0dedb] text-[10px] font-semibold uppercase tracking-wider text-[#605A57] rounded-full">
                       Coming soon
                     </span>
                   )}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
+                <p className="mt-1.5 text-[#605A57] text-sm leading-[22px]">
                   {feature.description}
                 </p>
               </div>

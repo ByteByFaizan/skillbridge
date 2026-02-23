@@ -1,56 +1,38 @@
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden pt-32 pb-20 sm:pt-44 sm:pb-28">
-      <div className="relative mx-auto max-w-4xl px-5 text-center sm:px-8">
-        {/* Badge */}
-        <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-border bg-bg-card px-4 py-1.5 text-xs font-medium text-muted animate-fade-in-up">
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-cream animate-pulse" />
-          AI-powered career guidance
-        </div>
+    <section className="relative pt-24 pb-16 sm:pt-36 sm:pb-20">
+      <div className="max-w-[1060px] mx-auto px-4">
+        <div className="flex flex-col items-center gap-12">
+          {/* Hero Content */}
+          <div className="max-w-[937px] flex flex-col items-center gap-6">
+            <h1 className="max-w-[748px] text-center text-[#37322f] text-4xl sm:text-5xl md:text-[80px] font-normal leading-tight md:leading-[96px] font-display animate-fade-in-up">
+              Find a career path that fits you — and a plan to get started
+            </h1>
+            <p className="max-w-[506px] text-center text-[#37322f]/80 text-lg font-medium leading-7 animate-fade-in-up animation-delay-100">
+              Answer a few questions about your education, skills, and interests.
+              Get 2–3 realistic career options, your skill gaps, and a
+              month-by-month roadmap.
+            </p>
+          </div>
 
-        {/* Headline */}
-        <h1 className="font-display text-4xl leading-[1.15] tracking-tight text-cream sm:text-5xl md:text-6xl lg:text-7xl animate-fade-in-up animation-delay-100">
-          Find a career path that fits you — and a 6&#x2011;month plan to get
-          started
-        </h1>
-
-        {/* Subtitle */}
-        <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted sm:text-lg animate-fade-in-up animation-delay-200">
-          Answer a few questions about your education, skills, and interests.
-          Get 2–3 realistic career options, your skill gaps, and a
-          month-by-month roadmap.
-        </p>
-
-        {/* CTA */}
-        <div className="mt-10 flex flex-col items-center gap-4 animate-fade-in-up animation-delay-300">
-          <a
-            href="/discover"
-            className="group inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-medium text-white transition-all hover:bg-accent-hover hover:scale-[1.02] active:scale-[0.98]"
-          >
-            Start Career Discovery
-            <svg
-              className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
+          {/* CTA Button */}
+          <div className="flex flex-col items-center gap-4 animate-fade-in-up animation-delay-200">
+            <a
+              href="/discover"
+              className="h-10 px-12 bg-[#37322f] hover:bg-[#2A2520] text-white rounded-full font-medium text-sm transition-colors inline-flex items-center shadow-[0px_0px_0px_2.5px_rgba(255,255,255,0.08)_inset]"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-              />
-            </svg>
-          </a>
-          <p className="text-sm text-dim">
-            No sign-up required · Takes under 2 minutes
+              Start Career Discovery
+            </a>
+            <p className="text-[#605A57] text-sm font-medium">
+              No sign-up required · Takes under 2 minutes
+            </p>
+          </div>
+
+          {/* Trust line */}
+          <p className="text-[#605A57] text-sm font-medium animate-fade-in-up animation-delay-300">
+            Built for students and early careers. Simple language. Fast results.
           </p>
         </div>
-
-        {/* Trust line */}
-        <p className="mt-16 text-sm text-dim animate-fade-in-up animation-delay-400">
-          Built for students and early careers. Simple language. Fast results.
-        </p>
       </div>
     </section>
   );

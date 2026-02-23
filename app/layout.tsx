@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-import { Instrument_Serif, Geist } from "next/font/google";
+import { Inter, Instrument_Serif } from "next/font/google";
 import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 const instrumentSerif = Instrument_Serif({
   weight: "400",
   variable: "--font-instrument-serif",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
   subsets: ["latin"],
   display: "swap",
 });
@@ -33,10 +33,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${instrumentSerif.variable} ${geistSans.variable} antialiased`}
-      >
+    <html lang="en" className={`${inter.variable} ${instrumentSerif.variable} antialiased`}>
+      <body className="font-body antialiased">
         {children}
       </body>
     </html>

@@ -13,72 +13,77 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
-        {/* Wordmark */}
-        <a
-          href="/"
-          className="font-display text-xl tracking-tight text-cream"
-        >
-          SkillBridge
-        </a>
-
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-8 md:flex">
-          {navLinks.map((link) => (
+    <header className="w-full bg-[#f7f5f3] pt-4 pb-2">
+      <div className="max-w-[1060px] mx-auto px-4">
+        <nav className="flex items-center justify-between rounded-full border border-[#37322f]/8 bg-white/60 backdrop-blur-sm shadow-[0_1px_3px_rgba(0,0,0,0.04)] px-6 py-2.5">
+          {/* Left: Brand + nav links */}
+          <div className="flex items-center gap-8">
             <a
-              key={link.href}
-              href={link.href}
-              className="text-sm text-muted transition-colors hover:text-cream"
+              href="/"
+              className="text-[#37322f] font-semibold text-xl tracking-tight select-none"
+              style={{ fontFamily: "'DM Serif Display', 'Georgia', serif" }}
             >
-              {link.label}
+              SkillBridge
             </a>
-          ))}
+            <div className="hidden md:flex items-center gap-6">
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="text-[#37322f]/70 hover:text-[#37322f] text-sm font-medium transition-colors"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Right: Log in button (desktop) */}
+          <div className="hidden md:flex items-center">
+            <a
+              href="/login"
+              className="rounded-full border border-[#37322f]/10 bg-white px-5 py-1.5 text-sm font-medium text-[#37322f] shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:bg-[#37322f]/[0.03] hover:shadow-[0_1px_4px_rgba(0,0,0,0.07)] transition-all"
+            >
+              Log in
+            </a>
+          </div>
+
+          {/* Mobile menu toggle */}
+          <button
+            className="inline-flex items-center justify-center rounded-full p-2 text-[#37322f] hover:bg-[#37322f]/5 md:hidden"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          >
+            {mobileOpen ? (
+              <XMarkIcon className="h-6 w-6" />
+            ) : (
+              <Bars3Icon className="h-6 w-6" />
+            )}
+          </button>
         </nav>
-
-        {/* Desktop CTA */}
-        <a
-          href="/discover"
-          className="hidden rounded-full bg-accent px-5 py-2 text-sm font-medium text-white transition-all hover:bg-accent-hover hover:scale-[1.02] active:scale-[0.98] md:inline-flex"
-        >
-          Start Career Discovery
-        </a>
-
-        {/* Mobile menu toggle */}
-        <button
-          className="inline-flex items-center justify-center rounded-lg p-2 text-muted hover:text-cream md:hidden"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label={mobileOpen ? "Close menu" : "Open menu"}
-        >
-          {mobileOpen ? (
-            <XMarkIcon className="h-6 w-6" />
-          ) : (
-            <Bars3Icon className="h-6 w-6" />
-          )}
-        </button>
       </div>
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="border-t border-border bg-white/95 backdrop-blur-lg md:hidden animate-fade-in">
-          <nav className="mx-auto flex max-w-6xl flex-col gap-1 px-5 py-4">
+        <div className="border-t border-[#37322f]/6 bg-[#f7f5f3] md:hidden animate-fade-in">
+          <div className="max-w-[1060px] mx-auto flex flex-col gap-1 px-4 py-4">
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="rounded-lg px-4 py-3 text-sm text-muted transition-colors hover:bg-bg-elevated hover:text-cream"
+                className="rounded-md px-4 py-3 text-sm font-medium text-[#37322f] transition-colors hover:bg-[#37322f]/5"
               >
                 {link.label}
               </a>
             ))}
             <a
-              href="/discover"
-              className="mt-2 rounded-full bg-accent px-5 py-3 text-center text-sm font-medium text-white transition-all hover:bg-accent-hover"
+              href="/login"
+              className="rounded-md px-4 py-3 text-sm font-medium text-[#37322f] transition-colors hover:bg-[#37322f]/5"
             >
-              Start Career Discovery
+              Log in
             </a>
-          </nav>
+          </div>
         </div>
       )}
     </header>

@@ -43,38 +43,41 @@ const faqs = [
 
 export default function FAQ() {
   return (
-    <section id="faq" className="py-24 sm:py-32">
-      <div className="mx-auto max-w-3xl px-5 sm:px-8">
-        <RevealOnScroll>
-          <p className="text-sm font-medium uppercase tracking-widest text-muted">
-            FAQ
-          </p>
-          <h2 className="mt-3 font-display text-3xl tracking-tight text-cream sm:text-4xl">
-            Common questions
-          </h2>
-        </RevealOnScroll>
+    <section id="faq" className="py-16 sm:py-20 border-t border-[#e0dedb]">
+      <div className="max-w-[1060px] mx-auto px-4">
+        <div className="grid gap-10 sm:grid-cols-[280px_1fr] sm:gap-16">
+          {/* Left column */}
+          <RevealOnScroll>
+            <div>
+              <p className="text-[#605A57] text-sm font-medium uppercase tracking-widest">
+                FAQ
+              </p>
+              <h2 className="mt-3 text-[#49423D] text-3xl sm:text-4xl font-semibold leading-tight tracking-tight">
+                Common questions
+              </h2>
+            </div>
+          </RevealOnScroll>
 
-        <div className="mt-12 space-y-3">
-          {faqs.map((faq, i) => (
-            <RevealOnScroll key={i} delay={i * 60}>
-              <Disclosure
-                as="div"
-                className="rounded-xl border border-border bg-white transition-colors data-[open]:border-border-hover data-[open]:bg-bg-card"
-              >
-                <DisclosureButton className="group flex w-full items-center justify-between px-6 py-5 text-left">
-                  <span className="pr-4 text-sm font-semibold text-cream sm:text-base">
-                    {faq.question}
-                  </span>
-                  <ChevronDownIcon className="h-4 w-4 flex-shrink-0 text-muted transition-transform duration-200 group-data-[open]:rotate-180" />
-                </DisclosureButton>
-                <DisclosurePanel className="px-6 pb-5">
-                  <p className="text-sm leading-relaxed text-muted">
-                    {faq.answer}
-                  </p>
-                </DisclosurePanel>
-              </Disclosure>
-            </RevealOnScroll>
-          ))}
+          {/* Right column — accordion */}
+          <div>
+            {faqs.map((faq, i) => (
+              <RevealOnScroll key={i} delay={i * 60}>
+                <Disclosure as="div" className="border-b border-[rgba(73,66,61,0.16)]">
+                  <DisclosureButton className="group flex w-full items-center justify-between py-5 text-left">
+                    <span className="pr-4 text-[#49423D] text-sm font-semibold sm:text-base">
+                      {faq.question}
+                    </span>
+                    <ChevronDownIcon className="h-4 w-4 flex-shrink-0 text-[#605A57] transition-transform duration-200 group-data-[open]:rotate-180" />
+                  </DisclosureButton>
+                  <DisclosurePanel className="pb-5">
+                    <p className="text-sm leading-relaxed text-[#605A57]">
+                      {faq.answer}
+                    </p>
+                  </DisclosurePanel>
+                </Disclosure>
+              </RevealOnScroll>
+            ))}
+          </div>
         </div>
       </div>
     </section>

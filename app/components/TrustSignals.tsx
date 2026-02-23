@@ -25,21 +25,21 @@ const signals = [
 
 export default function TrustSignals() {
   return (
-    <section className="py-24 sm:py-32">
-      <div className="mx-auto max-w-6xl px-5 sm:px-8">
+    <section className="py-16 sm:py-20">
+      <div className="max-w-[1060px] mx-auto px-4">
         <RevealOnScroll>
-          <div className="rounded-2xl border border-border bg-bg-card p-8 sm:p-12">
-            <div className="grid gap-10 sm:grid-cols-3 sm:gap-8">
+          <div className="border border-[#e0dedb] bg-white p-8 sm:p-10">
+            <div className="grid gap-8 sm:grid-cols-3 sm:gap-6">
               {signals.map((signal) => (
-                <div key={signal.title} className="flex gap-4">
+                <div key={signal.title} className="flex gap-3.5">
                   <div className="flex-shrink-0">
-                    <div className="inline-flex rounded-lg bg-bg-elevated p-2.5">
-                      <signal.icon className="h-5 w-5 text-cream" />
+                    <div className="inline-flex rounded-lg bg-[#f7f5f3] p-2.5">
+                      <signal.icon className="h-5 w-5 text-[#49423D]" />
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-cream">{signal.title}</h3>
-                    <p className="mt-1 text-sm leading-relaxed text-muted">
+                    <h3 className="text-sm font-semibold text-[#49423D]">{signal.title}</h3>
+                    <p className="mt-1 text-sm leading-[22px] text-[#605A57]">
                       {signal.description}
                     </p>
                   </div>
