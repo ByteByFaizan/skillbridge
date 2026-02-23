@@ -93,3 +93,13 @@ body {
 .text-pretty {
   text-wrap: pretty;
 }
+
+/* Progress bar animation for HowItWorks */
+@keyframes progress-bar {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+.animate-progress-bar {
+  animation: progress-bar 2.8s linear forwards;
+}
