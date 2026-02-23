@@ -13,8 +13,10 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="w-full pt-4 pb-2">
-      <div className="max-w-[1060px] mx-auto px-4">
+    <header className="relative w-full pt-4 pb-2">
+      {/* Full-width horizontal line through the middle of the navbar */}
+      <div className="absolute top-1/2 left-0 right-0 h-[2px] bg-[#37322f]/[0.08]" />
+      <div className="relative max-w-[1060px] mx-auto px-4">
         <nav className="flex items-center justify-between rounded-full border border-[#37322f]/8 bg-white/60 backdrop-blur-sm shadow-[0_1px_3px_rgba(0,0,0,0.04)] px-6 py-2.5">
           {/* Left: Brand + nav links */}
           <div className="flex items-center gap-8">
