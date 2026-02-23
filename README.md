@@ -5,8 +5,6 @@ SkillBridge is an in-development AI career guidance platform for students and ea
 
 ## What SkillBridge will do
 
-Based on the project PRD, the MVP focuses on:
-
 - **Smart Career Discovery:** Suggest 2–3 best-fit career paths from your profile, with an explanation for each.
 - **Skill Gap Analysis:** Show what you already have vs what you’re missing (with priorities) for each career.
 - **Personalized Learning Roadmap:** Generate a **month-by-month plan for exactly 6 months**, including topics, tools, and at least one learning platform per month.
