@@ -1,0 +1,49 @@
+# dependencies
+/node_modules
+
+# Next.js build output
+/.next
+/out
+
+# environment variables
+.env
+.env.local
+.env.production
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# TypeScript
+*.tsbuildinfo
+.next-env.d.ts
+
+# ESLint
+.eslintcache
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# editor settings
+.vscode/
+.idea/
+
+# Supabase local
+.supabase/
+
+# Vercel
+.vercel/
+
+# testing
+coverage/
+
+# Turbopack
+.turbo/
+
+FINAL AI PROMPT SET.txt
+Product Requirements Document (PRD).txt
+Project Folder Str.txt
+Tech Stack.txt
