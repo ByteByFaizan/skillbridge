@@ -63,3 +63,7 @@ Product Requirements Document (PRD).txt
 Project Folder Str.txt
 Tech Stack.txt
 plan-skillBridge.prompt.md
+
+# Skills.sh (local-only)
+.agents/
+skills-lock.json
