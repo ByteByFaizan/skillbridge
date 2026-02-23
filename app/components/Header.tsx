@@ -13,7 +13,7 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="w-full bg-[#f7f5f3] pt-4 pb-2">
+    <header className="w-full pt-4 pb-2">
       <div className="max-w-[1060px] mx-auto px-4">
         <nav className="flex items-center justify-between rounded-full border border-[#37322f]/8 bg-white/60 backdrop-blur-sm shadow-[0_1px_3px_rgba(0,0,0,0.04)] px-6 py-2.5">
           {/* Left: Brand + nav links */}
