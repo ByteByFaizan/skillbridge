@@ -22,9 +22,15 @@ export default function Header() {
           <div className="flex items-center gap-8">
             <a
               href="/"
-              className="text-[#37322f] font-semibold text-xl tracking-tight select-none"
+              className="inline-flex items-center gap-2 text-[#37322f] font-semibold text-xl tracking-tight select-none"
               style={{ fontFamily: "'DM Serif Display', 'Georgia', serif" }}
             >
+              <div className="w-8 h-8 rounded-lg bg-[#37322f] flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                </svg>
+              </div>
               SkillBridge
             </a>
             <div className="hidden md:flex items-center gap-6">
