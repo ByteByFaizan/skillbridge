@@ -218,10 +218,34 @@ export default function DiscoverPage() {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulate API call — replace with actual /api/career call
-    await new Promise((r) => setTimeout(r, 3200));
-    // Navigate to dashboard with career results
-    window.location.href = "/dashboard";
+    try {
+      const res = await fetch("/api/career", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          education: formData.education,
+          skills: formData.skills,
+          interests: formData.interests,
+          goal: formData.goal || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.error("API error:", data);
+        alert(data?.error?.message ?? "Something went wrong. Please try again.");
+        setIsSubmitting(false);
+        return;
+      }
+      // Persist the runId so the dashboard can fetch the full report
+      if (data.runId) {
+        localStorage.setItem("sb_last_run_id", data.runId);
+      }
+      window.location.href = "/dashboard";
+    } catch (err) {
+      console.error("Network error:", err);
+      alert("Network error. Please check your connection and try again.");
+      setIsSubmitting(false);
+    }
   };
 
   /* ── Tag helpers ─────────────────────────────────────── */

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import Link from "next/link";
 
 /* ═══════════════════════════════════════════════════════
-   DATA
+   TYPES
    ═══════════════════════════════════════════════════════ */
 
 type MilestoneStatus = "completed" | "in-progress" | "upcoming";
@@ -23,105 +24,164 @@ interface Milestone {
   details?: string[];
 }
 
-const milestones: Milestone[] = [
-  {
-    id: 1,
-    month: "Month 1",
-    date: "Jan 2026",
-    title: "Foundation & Setup",
-    description: "Master HTML/CSS fundamentals, set up dev environment, and complete first responsive layout project.",
-    status: "completed",
-    progress: 100,
-    skills: ["HTML5", "CSS3", "Flexbox", "Git Basics"],
-    tasks: 12,
-    tasksDone: 12,
-    accent: "#7B9E87",
-    details: [
-      "✓ Built 3 responsive layouts with CSS Grid & Flexbox",
-      "✓ Set up VS Code, Git, and terminal workflow",
-      "✓ Deployed first static site to Vercel",
-    ],
-  },
-  {
-    id: 2,
-    month: "Month 2",
-    date: "Feb 2026",
-    title: "JavaScript Mastery",
-    description: "Deep-dive into JavaScript ES6+, DOM manipulation, async patterns, and build 3 interactive projects.",
-    status: "in-progress",
-    progress: 68,
-    skills: ["JavaScript", "ES6+", "DOM API", "Fetch/Async"],
-    tasks: 15,
-    tasksDone: 10,
-    accent: "#C4956A",
-    details: [
-      "✓ Completed ES6+ modules & destructuring",
-      "✓ DOM manipulation mini-projects done",
-      "→ Working on async/await & Fetch API",
-      "○ Todo app with localStorage pending",
-      "○ Weather dashboard project pending",
-    ],
-  },
-  {
-    id: 3,
-    month: "Month 3",
-    date: "Mar 2026",
-    title: "React Fundamentals",
-    description: "Learn React core concepts: components, hooks, state management, and build a full single-page app.",
-    status: "upcoming",
-    progress: 0,
-    skills: ["React", "JSX", "Hooks", "State Mgmt"],
-    tasks: 14,
-    tasksDone: 0,
-    accent: "#8B7EC8",
-  },
-  {
-    id: 4,
-    month: "Month 4",
-    date: "Apr 2026",
-    title: "Backend & APIs",
-    description: "Node.js, Express, RESTful APIs, database fundamentals with PostgreSQL, and authentication flows.",
-    status: "upcoming",
-    progress: 0,
-    skills: ["Node.js", "Express", "PostgreSQL", "Auth"],
-    tasks: 16,
-    tasksDone: 0,
-    accent: "#D4836D",
-  },
-  {
-    id: 5,
-    month: "Month 5",
-    date: "May 2026",
-    title: "Full-Stack Integration",
-    description: "Connect frontend and backend, deploy with CI/CD, testing strategies, and performance optimization.",
-    status: "upcoming",
-    progress: 0,
-    skills: ["Next.js", "CI/CD", "Testing", "Deploy"],
-    tasks: 13,
-    tasksDone: 0,
-    accent: "#6B9BBF",
-  },
-  {
-    id: 6,
-    month: "Month 6",
-    date: "Jun 2026",
-    title: "Portfolio & Career Prep",
-    description: "Build capstone portfolio project, practice system design, prepare for technical interviews and networking.",
-    status: "upcoming",
-    progress: 0,
-    skills: ["Portfolio", "System Design", "Interviews", "Networking"],
-    tasks: 11,
-    tasksDone: 0,
-    accent: "#B8856C",
-  },
-];
+interface CareerOverviewItem {
+  title: string;
+  why: string;
+  demandLevel: "High" | "Medium" | "Low";
+}
 
-const stats = [
-  { label: "Overall Progress", value: "28%", sub: "of 6-month plan", icon: "chart", trend: "+5% this week" },
-  { label: "Skills Acquired", value: "8", sub: "of 24 total", icon: "star", trend: "+2 this month" },
-  { label: "Tasks Completed", value: "22", sub: "of 81 total", icon: "check", trend: "3 this week" },
-  { label: "Current Streak", value: "14d", sub: "best: 21 days", icon: "fire", trend: "🔥 on fire!" },
-];
+interface SkillGapItem {
+  careerTitle: string;
+  existingSkills: { name: string }[];
+  missingSkills: { name: string; priority: string }[];
+}
+
+interface RoadmapMonth {
+  month: number;
+  topics: string[];
+  tools: string[];
+  platforms: string[];
+}
+
+interface LearningRoadmap {
+  durationMonths: number;
+  months: RoadmapMonth[];
+}
+
+interface JobRoles {
+  entryLevelRoles: string[];
+  internships: string[];
+  freelanceOrProjectIdeas: string[];
+}
+
+interface CareerGrowthStep {
+  yearRange: string;
+  roleTitle: string;
+  salaryRange: string;
+  specializations?: string[];
+}
+
+interface CareerGrowthPathItem {
+  careerTitle: string;
+  steps: CareerGrowthStep[];
+}
+
+interface CareerReport {
+  careerOverview: CareerOverviewItem[];
+  skillGapAnalysis: SkillGapItem[];
+  learningRoadmap: LearningRoadmap;
+  jobRolesAndOpportunities: JobRoles;
+  careerGrowthPath: CareerGrowthPathItem[];
+  personalizedAdvice: string[];
+}
+
+interface RunData {
+  runId: string;
+  createdAt: string;
+  input: {
+    education: string;
+    skills: string[];
+    interests: string[];
+    goal?: string;
+    name?: string;
+  };
+  report: CareerReport;
+}
+
+/* ═══════════════════════════════════════════════════════
+   HELPERS
+   ═══════════════════════════════════════════════════════ */
+
+const MONTH_ACCENTS = ["#7B9E87", "#C4956A", "#8B7EC8", "#D4836D", "#6B9BBF", "#B8856C"];
+
+function buildMilestones(roadmap: LearningRoadmap): Milestone[] {
+  const now = new Date();
+  return roadmap.months
+    .slice()
+    .sort((a, b) => a.month - b.month)
+    .map((m, i) => {
+      const startDate = new Date(now);
+      startDate.setMonth(startDate.getMonth() + i);
+      const monthName = startDate.toLocaleString("default", { month: "short" });
+      const year = startDate.getFullYear();
+
+      const skills = [...m.topics.slice(0, 2), ...m.tools.slice(0, 2)];
+      const taskCount = m.topics.length + m.tools.length;
+
+      // First month is in-progress, rest upcoming (no tracking yet)
+      const status: MilestoneStatus = i === 0 ? "in-progress" : "upcoming";
+
+      return {
+        id: m.month,
+        month: `Month ${m.month}`,
+        date: `${monthName} ${year}`,
+        title: m.topics[0] ?? `Month ${m.month} Focus`,
+        description: `Focus on ${m.topics.join(", ")}. Tools: ${m.tools.join(", ")}. Learn via ${m.platforms.join(", ")}.`,
+        status,
+        progress: 0,
+        skills,
+        tasks: taskCount,
+        tasksDone: 0,
+        accent: MONTH_ACCENTS[i % MONTH_ACCENTS.length],
+        details: [
+          ...m.topics.map((t) => `○ ${t}`),
+          ...m.tools.map((t) => `🔧 ${t}`),
+          ...m.platforms.map((p) => `📚 ${p}`),
+        ],
+      };
+    });
+}
+
+function buildStats(report: CareerReport) {
+  const totalSkills = new Set<string>();
+  report.skillGapAnalysis.forEach((sg) => {
+    sg.existingSkills.forEach((s) => totalSkills.add(s.name));
+    sg.missingSkills.forEach((s) => totalSkills.add(s.name));
+  });
+  const existingSkills = new Set<string>();
+  report.skillGapAnalysis.forEach((sg) => {
+    sg.existingSkills.forEach((s) => existingSkills.add(s.name));
+  });
+  const missingSkills = new Set<string>();
+  report.skillGapAnalysis.forEach((sg) => {
+    sg.missingSkills.forEach((s) => missingSkills.add(s.name));
+  });
+  const totalTopics = report.learningRoadmap.months.reduce(
+    (sum, m) => sum + m.topics.length + m.tools.length,
+    0
+  );
+
+  return [
+    {
+      label: "Career Paths",
+      value: String(report.careerOverview.length),
+      sub: "matched for you",
+      icon: "chart" as const,
+      trend: report.careerOverview.map((c) => c.title).join(", "),
+    },
+    {
+      label: "Skills You Have",
+      value: String(existingSkills.size),
+      sub: `of ${totalSkills.size} total`,
+      icon: "star" as const,
+      trend: `${missingSkills.size} to learn`,
+    },
+    {
+      label: "Topics to Learn",
+      value: String(totalTopics),
+      sub: "across 6 months",
+      icon: "check" as const,
+      trend: "Personalized plan",
+    },
+    {
+      label: "Advice Tips",
+      value: String(report.personalizedAdvice.length),
+      sub: "from AI mentor",
+      icon: "fire" as const,
+      trend: "Tailored for you",
+    },
+  ];
+}
 
 /* ═══════════════════════════════════════════════════════
    SCROLL REVEAL HOOK
@@ -161,13 +221,11 @@ function useAnimatedCounter(target: number, isVisible: boolean, duration = 1200)
 
   useEffect(() => {
     if (!isVisible) return;
-    let start = 0;
     const startTime = performance.now();
 
     const step = (now: number) => {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      // ease-out cubic
       const eased = 1 - Math.pow(1 - progress, 3);
       const current = Math.round(eased * target);
       setCount(current);
@@ -181,12 +239,105 @@ function useAnimatedCounter(target: number, isVisible: boolean, duration = 1200)
 }
 
 /* ═══════════════════════════════════════════════════════
-   COMPONENT
+   EMPTY STATE COMPONENT
+   ═══════════════════════════════════════════════════════ */
+
+function EmptyState() {
+  return (
+    <div className="min-h-[70vh] flex items-center justify-center p-5">
+      <div className="text-center max-w-md">
+        <div className="w-20 h-20 rounded-2xl bg-[#F3F0EC] flex items-center justify-center mx-auto mb-6">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9B8E85" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </div>
+        <h2
+          className="text-[#1E1B18] text-2xl lg:text-3xl font-bold tracking-tight mb-3"
+          style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
+        >
+          No career results yet
+        </h2>
+        <p className="text-[#635B55] text-[15px] leading-relaxed mb-8">
+          Complete the career discovery questionnaire to get your personalized AI-powered roadmap, skill gap analysis, and career recommendations.
+        </p>
+        <Link
+          href="/discover"
+          className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl bg-[#2C2623] text-white text-sm font-bold hover:bg-[#1E1B18] transition-all duration-200 shadow-lg shadow-[#2C2623]/15 active:scale-[0.96] hover:shadow-xl hover:shadow-[#2C2623]/20"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          Start Career Discovery
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   LOADING STATE
+   ═══════════════════════════════════════════════════════ */
+
+function LoadingState() {
+  return (
+    <div className="min-h-[70vh] flex items-center justify-center p-5">
+      <div className="text-center">
+        <div className="w-12 h-12 rounded-full border-[3px] border-[#E5E0DB] border-t-[#C4956A] animate-spin mx-auto mb-5" />
+        <p className="text-[#635B55] text-sm font-medium">Loading your career roadmap…</p>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   ERROR STATE
+   ═══════════════════════════════════════════════════════ */
+
+function ErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
+  return (
+    <div className="min-h-[70vh] flex items-center justify-center p-5">
+      <div className="text-center max-w-md">
+        <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-5">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D4836D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="15" y1="9" x2="9" y2="15" />
+            <line x1="9" y1="9" x2="15" y2="15" />
+          </svg>
+        </div>
+        <h3 className="text-[#1E1B18] text-lg font-bold mb-2">Something went wrong</h3>
+        <p className="text-[#635B55] text-sm mb-5">{message}</p>
+        <div className="flex items-center justify-center gap-3">
+          <button
+            onClick={onRetry}
+            className="px-5 py-2.5 rounded-xl bg-[#2C2623] text-white text-sm font-medium hover:bg-[#1E1B18] transition-all"
+          >
+            Try Again
+          </button>
+          <Link
+            href="/discover"
+            className="px-5 py-2.5 rounded-xl border border-[#D5CFC9] text-[#635B55] text-sm font-medium hover:border-[#2C2623]/25 transition-all"
+          >
+            New Discovery
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   MAIN COMPONENT
    ═══════════════════════════════════════════════════════ */
 
 export default function DashboardPage() {
   const [mounted, setMounted] = useState(false);
-  const [expandedCard, setExpandedCard] = useState<number | null>(2); // month 2 open by default
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [runData, setRunData] = useState<RunData | null>(null);
+
+  const [expandedCard, setExpandedCard] = useState<number | null>(null);
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [animatedProgress, setAnimatedProgress] = useState<Record<number, number>>({});
 
@@ -195,12 +346,73 @@ export default function DashboardPage() {
   const statsReveal = useScrollReveal(0.1);
   const progressReveal = useScrollReveal(0.2);
   const timelineReveal = useScrollReveal(0.05);
+  const careerReveal = useScrollReveal(0.1);
+  const adviceReveal = useScrollReveal(0.1);
   const ctaReveal = useScrollReveal(0.2);
 
-  // Animated counter for stats
-  const progressCount = useAnimatedCounter(28, statsReveal.isVisible);
-  const skillsCount = useAnimatedCounter(8, statsReveal.isVisible);
-  const tasksCount = useAnimatedCounter(22, statsReveal.isVisible);
+  // Derived data
+  const milestones = runData ? buildMilestones(runData.report.learningRoadmap) : [];
+  const stats = runData ? buildStats(runData.report) : [];
+
+  // Animated counters for stats
+  const counter0 = useAnimatedCounter(
+    runData ? parseInt(stats[0]?.value ?? "0", 10) || 0 : 0,
+    statsReveal.isVisible
+  );
+  const counter1 = useAnimatedCounter(
+    runData ? parseInt(stats[1]?.value ?? "0", 10) || 0 : 0,
+    statsReveal.isVisible
+  );
+  const counter2 = useAnimatedCounter(
+    runData ? parseInt(stats[2]?.value ?? "0", 10) || 0 : 0,
+    statsReveal.isVisible
+  );
+  const counter3 = useAnimatedCounter(
+    runData ? parseInt(stats[3]?.value ?? "0", 10) || 0 : 0,
+    statsReveal.isVisible
+  );
+
+  const getAnimatedValue = (index: number) => {
+    if (index === 0) return `${counter0}`;
+    if (index === 1) return `${counter1}`;
+    if (index === 2) return `${counter2}`;
+    return `${counter3}`;
+  };
+
+  /* ── Fetch report data ─────────────────────────────── */
+  const fetchReport = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    const runId = localStorage.getItem("sb_last_run_id");
+    if (!runId) {
+      setLoading(false);
+      return; // No run — show empty state
+    }
+
+    try {
+      const res = await fetch(`/api/recommendations/${runId}`);
+      if (!res.ok) {
+        if (res.status === 404) {
+          localStorage.removeItem("sb_last_run_id");
+          setLoading(false);
+          return;
+        }
+        throw new Error("Failed to load your career report.");
+      }
+      const data: RunData = await res.json();
+      setRunData(data);
+      setExpandedCard(1); // Expand first month by default
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchReport();
+  }, [fetchReport]);
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 80);
@@ -209,7 +421,7 @@ export default function DashboardPage() {
 
   /* Animate progress bars when visible */
   useEffect(() => {
-    if (!timelineReveal.isVisible) return;
+    if (!timelineReveal.isVisible || milestones.length === 0) return;
     const timers: NodeJS.Timeout[] = [];
     milestones.forEach((m, i) => {
       const t = setTimeout(() => {
@@ -218,7 +430,7 @@ export default function DashboardPage() {
       timers.push(t);
     });
     return () => timers.forEach(clearTimeout);
-  }, [timelineReveal.isVisible]);
+  }, [timelineReveal.isVisible, milestones]);
 
   const toggleCard = useCallback((id: number) => {
     setExpandedCard((prev) => (prev === id ? null : id));
@@ -238,12 +450,16 @@ export default function DashboardPage() {
     return { bg: "rgba(155,142,133,0.08)", color: "#8A7E76", text: "Upcoming" };
   };
 
-  const getAnimatedValue = (index: number) => {
-    if (index === 0) return `${progressCount}%`;
-    if (index === 1) return `${skillsCount}`;
-    if (index === 2) return `${tasksCount}`;
-    return "14d";
-  };
+  /* ── Conditional rendering ─────────────────────────── */
+
+  if (loading) return <LoadingState />;
+  if (error) return <ErrorState message={error} onRetry={fetchReport} />;
+  if (!runData) return <EmptyState />;
+
+  const { report } = runData;
+  const completedCount = milestones.filter((m) => m.status === "completed").length;
+  const inProgressCount = milestones.filter((m) => m.status === "in-progress").length;
+  const upcomingCount = milestones.filter((m) => m.status === "upcoming").length;
 
   return (
     <div className="min-h-screen p-5 pt-16 lg:pt-6 lg:p-10 overflow-x-hidden">
@@ -261,24 +477,21 @@ export default function DashboardPage() {
               Your Career Milestones
             </h1>
             <p className="text-[#635B55] text-[15px] mt-2.5 max-w-lg leading-relaxed">
-              6-month frontend engineering track — personalized by AI based on your skills and goals.
+              {report.learningRoadmap.durationMonths}-month personalized learning plan — built by AI based on your skills and goals.
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="group h-10 px-5 rounded-xl bg-[#2C2623] text-white text-sm font-medium hover:bg-[#1E1B18] transition-all duration-200 shadow-lg shadow-[#2C2623]/15 active:scale-[0.96] hover:shadow-xl hover:shadow-[#2C2623]/20">
+            <Link
+              href="/discover"
+              className="group h-10 px-5 rounded-xl bg-[#2C2623] text-white text-sm font-medium hover:bg-[#1E1B18] transition-all duration-200 shadow-lg shadow-[#2C2623]/15 active:scale-[0.96] hover:shadow-xl hover:shadow-[#2C2623]/20 flex items-center"
+            >
               <span className="flex items-center gap-2">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="group-hover:rotate-90 transition-transform duration-300">
                   <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
-                Add Task
+                New Discovery
               </span>
-            </button>
-            <button className="h-10 w-10 rounded-xl border border-[#D5CFC9] bg-white flex items-center justify-center text-[#7A706A] hover:text-[#2C2623] hover:border-[#2C2623]/25 hover:shadow-md transition-all duration-200 active:scale-95">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 20h9" />
-                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-              </svg>
-            </button>
+            </Link>
           </div>
         </div>
       </header>
@@ -291,7 +504,6 @@ export default function DashboardPage() {
             className="group relative bg-white rounded-2xl p-5 border border-[#E5E0DB] hover:border-[#C4956A]/40 transition-all duration-300 cursor-default overflow-hidden stat-card-hover"
             style={revealStyle(statsReveal.isVisible, i, 0.1)}
           >
-            {/* Animated background glow on hover */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
               <div className="absolute -top-8 -right-8 w-24 h-24 bg-[#C4956A]/[0.06] rounded-full blur-xl" />
             </div>
@@ -336,6 +548,49 @@ export default function DashboardPage() {
         ))}
       </div>
 
+      {/* ── CAREER OVERVIEW ── */}
+      <div ref={careerReveal.ref} className="mb-10">
+        <div className="flex items-center gap-4 mb-5" style={revealStyle(careerReveal.isVisible, 0, 0)}>
+          <h2
+            className="text-[#1E1B18] text-xl lg:text-2xl font-bold tracking-tight"
+            style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
+          >
+            Recommended Careers
+          </h2>
+          <div className="flex-1 h-px bg-gradient-to-r from-[#D5CFC9] to-transparent" />
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {report.careerOverview.map((career, i) => (
+            <div
+              key={career.title}
+              className="bg-white rounded-2xl p-5 border border-[#E5E0DB] hover:border-[#C4956A]/40 transition-all duration-300 hover:shadow-lg"
+              style={revealStyle(careerReveal.isVisible, i, 0.1)}
+            >
+              <div className="flex items-start justify-between mb-3">
+                <h3 className="text-[#1E1B18] text-base font-bold tracking-tight">{career.title}</h3>
+                <span
+                  className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full whitespace-nowrap"
+                  style={{
+                    backgroundColor:
+                      career.demandLevel === "High" ? "rgba(123,158,135,0.12)" :
+                      career.demandLevel === "Medium" ? "rgba(196,149,106,0.12)" :
+                      "rgba(155,142,133,0.08)",
+                    color:
+                      career.demandLevel === "High" ? "#5A8A6A" :
+                      career.demandLevel === "Medium" ? "#B07D4F" :
+                      "#8A7E76",
+                  }}
+                >
+                  {career.demandLevel === "High" && <span className="w-1.5 h-1.5 rounded-full bg-[#5A8A6A]" />}
+                  {career.demandLevel} Demand
+                </span>
+              </div>
+              <p className="text-[#635B55] text-sm leading-relaxed">{career.why}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* ── OVERALL PROGRESS BAR ── */}
       <div
         ref={progressReveal.ref}
@@ -348,15 +603,15 @@ export default function DashboardPage() {
               <div className="w-3 h-3 rounded-full bg-[#C4956A]" />
               <div className="absolute inset-0 w-3 h-3 rounded-full bg-[#C4956A] animate-ping opacity-30" />
             </div>
-            <p className="text-[#1E1B18] text-sm font-bold">6-Month Plan Progress</p>
+            <p className="text-[#1E1B18] text-sm font-bold">{report.learningRoadmap.durationMonths}-Month Plan Progress</p>
           </div>
-          <p className="text-[#C4956A] text-lg font-bold tabular-nums">{progressCount}%</p>
+          <p className="text-[#C4956A] text-lg font-bold tabular-nums">0%</p>
         </div>
         <div className="w-full h-3 bg-[#ECE8E3] rounded-full overflow-hidden">
           <div
             className="h-full rounded-full relative overflow-hidden"
             style={{
-              width: progressReveal.isVisible ? "28%" : "0%",
+              width: "0%",
               background: "linear-gradient(90deg, #7B9E87 0%, #C4956A 60%, #D4A87A 100%)",
               transition: "width 2.2s cubic-bezier(0.16,1,0.3,1) 0.3s",
             }}
@@ -367,22 +622,20 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between mt-3.5">
           <div className="flex items-center gap-5">
             <span className="flex items-center gap-2 text-xs text-[#5A8A6A] font-medium">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#7B9E87]" /> 1 Completed
+              <span className="w-2.5 h-2.5 rounded-full bg-[#7B9E87]" /> {completedCount} Completed
             </span>
             <span className="flex items-center gap-2 text-xs text-[#B07D4F] font-medium">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#C4956A]" /> 1 In Progress
+              <span className="w-2.5 h-2.5 rounded-full bg-[#C4956A]" /> {inProgressCount} In Progress
             </span>
             <span className="flex items-center gap-2 text-xs text-[#8A7E76] font-medium">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#D5CFC9]" /> 4 Upcoming
+              <span className="w-2.5 h-2.5 rounded-full bg-[#D5CFC9]" /> {upcomingCount} Upcoming
             </span>
           </div>
-          <p className="text-[#8A7E76] text-xs font-medium">Est. completion: Jun 2026</p>
         </div>
       </div>
 
       {/* ── TIMELINE ── */}
       <div ref={timelineReveal.ref} className="relative">
-        {/* Section header */}
         <div className="flex items-center gap-4 mb-8" style={revealStyle(timelineReveal.isVisible, 0, 0)}>
           <h2
             className="text-[#1E1B18] text-xl lg:text-2xl font-bold tracking-tight"
@@ -392,24 +645,14 @@ export default function DashboardPage() {
           </h2>
           <div className="flex-1 h-px bg-gradient-to-r from-[#D5CFC9] to-transparent" />
           <span className="text-[#8A7E76] text-xs font-semibold">
-            {milestones.filter((m) => m.status === "completed").length}/{milestones.length} milestones
+            {completedCount}/{milestones.length} milestones
           </span>
         </div>
 
         <div className="relative">
           {/* Vertical timeline line */}
           <div className="absolute left-[27px] top-0 bottom-0 w-[2px] overflow-hidden">
-            {/* Background line */}
             <div className="absolute inset-0 bg-[#E5E0DB]" />
-            {/* Animated fill */}
-            <div
-              className="absolute top-0 left-0 w-full rounded-full"
-              style={{
-                height: timelineReveal.isVisible ? "33%" : "0%",
-                background: "linear-gradient(180deg, #7B9E87 0%, #C4956A 100%)",
-                transition: "height 2.5s cubic-bezier(0.16,1,0.3,1) 0.5s",
-              }}
-            />
           </div>
 
           {/* Milestone cards */}
@@ -461,7 +704,6 @@ export default function DashboardPage() {
                         <div className="w-2.5 h-2.5 rounded-full bg-[#C4956A] timeline-node-pulse" />
                       )}
                     </div>
-                    {/* Connector */}
                     <div
                       className="h-[2px] transition-all duration-300"
                       style={{
@@ -494,9 +736,7 @@ export default function DashboardPage() {
                   <div
                     className="bg-white rounded-2xl border overflow-hidden transition-all duration-300 cursor-pointer"
                     style={{
-                      borderColor: isHovered
-                        ? `${milestone.accent}50`
-                        : "#E5E0DB",
+                      borderColor: isHovered ? `${milestone.accent}50` : "#E5E0DB",
                       boxShadow: isHovered
                         ? `0 8px 30px -8px ${milestone.accent}18, 0 2px 8px rgba(0,0,0,0.04)`
                         : "0 1px 3px rgba(0,0,0,0.03)",
@@ -590,7 +830,7 @@ export default function DashboardPage() {
                       <div className="flex items-center gap-4">
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-1.5">
-                            <span className="text-[#7A706A] text-xs font-semibold">Tasks</span>
+                            <span className="text-[#7A706A] text-xs font-semibold">Topics & Tools</span>
                             <span className="text-[#4A433E] text-xs font-bold tabular-nums">
                               {milestone.tasksDone}/{milestone.tasks}
                             </span>
@@ -599,7 +839,7 @@ export default function DashboardPage() {
                             <div
                               className="h-full rounded-full relative overflow-hidden"
                               style={{
-                                width: `${(animatedProgress[milestone.id] ?? 0) === 0 && milestone.status === "upcoming" ? 0 : animatedProgress[milestone.id] ?? 0}%`,
+                                width: `${(animatedProgress[milestone.id] ?? 0)}%`,
                                 backgroundColor: milestone.accent,
                                 transition: "width 1.5s cubic-bezier(0.16,1,0.3,1)",
                               }}
@@ -611,14 +851,12 @@ export default function DashboardPage() {
                           </div>
                         </div>
 
-                        {/* Action button */}
+                        {/* Status button */}
                         <button
                           className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 hover:shadow-lg active:scale-[0.95]"
                           style={{
                             backgroundColor:
-                              milestone.status === "completed"
-                                ? "#7B9E87"
-                                : milestone.status === "in-progress"
+                              milestone.status === "in-progress"
                                 ? "#C4956A"
                                 : "#ECE8E3",
                             color:
@@ -630,21 +868,12 @@ export default function DashboardPage() {
                           }}
                           onClick={(e) => e.stopPropagation()}
                         >
-                          {milestone.status === "completed" && (
-                            <>
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                                <circle cx="12" cy="12" r="3" />
-                              </svg>
-                              Review
-                            </>
-                          )}
                           {milestone.status === "in-progress" && (
                             <>
                               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                 <polygon points="5 3 19 12 5 21 5 3" />
                               </svg>
-                              Continue
+                              Start
                             </>
                           )}
                           {milestone.status === "upcoming" && (
@@ -684,58 +913,18 @@ export default function DashboardPage() {
                       }}
                     >
                       <div className="border-t border-[#ECE8E3] bg-gradient-to-b from-[#FDFCFB] to-[#F9F7F4] px-5 lg:px-6 py-4">
-                        {/* Detail items */}
                         {milestone.details && (
                           <div className="mb-3 space-y-1.5">
                             {milestone.details.map((detail, di) => (
                               <p
                                 key={di}
-                                className="text-[13px] leading-relaxed"
-                                style={{
-                                  color: detail.startsWith("✓")
-                                    ? "#5A8A6A"
-                                    : detail.startsWith("→")
-                                    ? "#B07D4F"
-                                    : "#8A7E76",
-                                  fontWeight: detail.startsWith("→") ? 600 : 400,
-                                }}
+                                className="text-[13px] leading-relaxed text-[#635B55]"
                               >
                                 {detail}
                               </p>
                             ))}
                           </div>
                         )}
-
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="flex -space-x-2">
-                              {[milestone.accent, "#7B9E87", "#8B7EC8"].map((c, j) => (
-                                <div
-                                  key={j}
-                                  className="w-7 h-7 rounded-full border-2 border-white flex items-center justify-center text-[9px] font-bold text-white shadow-sm hover:scale-110 hover:z-10 transition-transform cursor-pointer"
-                                  style={{ backgroundColor: c, zIndex: 3 - j }}
-                                >
-                                  {["AI", "JS", "R"][j]}
-                                </div>
-                              ))}
-                            </div>
-                            <span className="text-[#7A706A] text-xs font-medium">3 resources</span>
-                          </div>
-                          {milestone.status === "in-progress" && (
-                            <div className="flex items-center gap-1.5 text-xs font-bold" style={{ color: milestone.accent }}>
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <circle cx="12" cy="12" r="10" />
-                                <polyline points="12 6 12 12 16 14" />
-                              </svg>
-                              ~12 days remaining
-                            </div>
-                          )}
-                          {milestone.status === "completed" && (
-                            <span className="text-[#5A8A6A] text-xs font-bold">
-                              Completed on Jan 28
-                            </span>
-                          )}
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -746,6 +935,223 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* ── SKILL GAP ANALYSIS ── */}
+      {report.skillGapAnalysis.length > 0 && (
+        <div className="mt-10">
+          <div className="flex items-center gap-4 mb-6">
+            <h2
+              className="text-[#1E1B18] text-xl lg:text-2xl font-bold tracking-tight"
+              style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
+            >
+              Skill Gap Analysis
+            </h2>
+            <div className="flex-1 h-px bg-gradient-to-r from-[#D5CFC9] to-transparent" />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {report.skillGapAnalysis.map((sg) => (
+              <div key={sg.careerTitle} className="bg-white rounded-2xl p-5 border border-[#E5E0DB]">
+                <h3 className="text-[#1E1B18] text-base font-bold mb-3">{sg.careerTitle}</h3>
+                {sg.existingSkills.length > 0 && (
+                  <div className="mb-3">
+                    <p className="text-[#7A706A] text-[11px] font-semibold uppercase tracking-wider mb-1.5">You have</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {sg.existingSkills.map((s) => (
+                        <span key={s.name} className="px-2 py-0.5 rounded-md text-[11px] font-medium bg-[#7B9E87]/10 text-[#5A8A6A]">
+                          {s.name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {sg.missingSkills.length > 0 && (
+                  <div>
+                    <p className="text-[#7A706A] text-[11px] font-semibold uppercase tracking-wider mb-1.5">To learn</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {sg.missingSkills.map((s) => (
+                        <span
+                          key={s.name}
+                          className="px-2 py-0.5 rounded-md text-[11px] font-medium"
+                          style={{
+                            backgroundColor:
+                              s.priority === "High" ? "rgba(212,131,109,0.12)" :
+                              s.priority === "Medium" ? "rgba(196,149,106,0.12)" :
+                              "rgba(155,142,133,0.08)",
+                            color:
+                              s.priority === "High" ? "#D4836D" :
+                              s.priority === "Medium" ? "#B07D4F" :
+                              "#8A7E76",
+                          }}
+                        >
+                          {s.name}
+                          <span className="opacity-60 ml-1">({s.priority})</span>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── JOB ROLES & OPPORTUNITIES ── */}
+      <div className="mt-10">
+        <div className="flex items-center gap-4 mb-6">
+          <h2
+            className="text-[#1E1B18] text-xl lg:text-2xl font-bold tracking-tight"
+            style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
+          >
+            Job Roles & Opportunities
+          </h2>
+          <div className="flex-1 h-px bg-gradient-to-r from-[#D5CFC9] to-transparent" />
+        </div>
+        <div className="grid gap-4 sm:grid-cols-3">
+          {/* Entry Level */}
+          <div className="bg-white rounded-2xl p-5 border border-[#E5E0DB]">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-8 h-8 rounded-lg bg-[#7B9E87]/10 flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5A8A6A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                </svg>
+              </div>
+              <h3 className="text-[#1E1B18] text-sm font-bold">Entry-Level Roles</h3>
+            </div>
+            <ul className="space-y-1.5">
+              {report.jobRolesAndOpportunities.entryLevelRoles.map((r) => (
+                <li key={r} className="text-[#635B55] text-sm flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#7B9E87]" />
+                  {r}
+                </li>
+              ))}
+            </ul>
+          </div>
+          {/* Internships */}
+          <div className="bg-white rounded-2xl p-5 border border-[#E5E0DB]">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-8 h-8 rounded-lg bg-[#C4956A]/10 flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B07D4F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c3 3 10 3 12 0v-5" />
+                </svg>
+              </div>
+              <h3 className="text-[#1E1B18] text-sm font-bold">Internships</h3>
+            </div>
+            <ul className="space-y-1.5">
+              {report.jobRolesAndOpportunities.internships.map((r) => (
+                <li key={r} className="text-[#635B55] text-sm flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C4956A]" />
+                  {r}
+                </li>
+              ))}
+            </ul>
+          </div>
+          {/* Freelance */}
+          <div className="bg-white rounded-2xl p-5 border border-[#E5E0DB]">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-8 h-8 rounded-lg bg-[#8B7EC8]/10 flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B7EC8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" />
+                </svg>
+              </div>
+              <h3 className="text-[#1E1B18] text-sm font-bold">Freelance & Projects</h3>
+            </div>
+            <ul className="space-y-1.5">
+              {report.jobRolesAndOpportunities.freelanceOrProjectIdeas.map((r) => (
+                <li key={r} className="text-[#635B55] text-sm flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#8B7EC8]" />
+                  {r}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* ── CAREER GROWTH PATH ── */}
+      {report.careerGrowthPath.length > 0 && (
+        <div className="mt-10">
+          <div className="flex items-center gap-4 mb-6">
+            <h2
+              className="text-[#1E1B18] text-xl lg:text-2xl font-bold tracking-tight"
+              style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
+            >
+              Career Growth Path
+            </h2>
+            <div className="flex-1 h-px bg-gradient-to-r from-[#D5CFC9] to-transparent" />
+          </div>
+          <div className="space-y-6">
+            {report.careerGrowthPath.map((path) => (
+              <div key={path.careerTitle} className="bg-white rounded-2xl p-5 lg:p-6 border border-[#E5E0DB]">
+                <h3 className="text-[#1E1B18] text-base font-bold mb-4">{path.careerTitle}</h3>
+                <div className="relative">
+                  <div className="absolute left-[14px] top-3 bottom-3 w-[2px] bg-[#ECE8E3]" />
+                  <div className="space-y-4">
+                    {path.steps.map((step, si) => (
+                      <div key={si} className="relative flex items-start gap-4 pl-[38px]">
+                        <div
+                          className="absolute left-[8px] top-1 w-[14px] h-[14px] rounded-full border-[2.5px] bg-white"
+                          style={{
+                            borderColor: MONTH_ACCENTS[si % MONTH_ACCENTS.length],
+                          }}
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-[#1E1B18] text-sm font-bold">{step.roleTitle}</span>
+                            <span className="text-[#9B8E85] text-[11px]">·</span>
+                            <span className="text-[#8A7E76] text-xs">{step.yearRange}</span>
+                          </div>
+                          <p className="text-[#7B9E87] text-xs font-semibold mt-0.5">{step.salaryRange}</p>
+                          {step.specializations && step.specializations.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-1.5">
+                              {step.specializations.map((s) => (
+                                <span key={s} className="px-2 py-0.5 rounded text-[10px] font-medium bg-[#F3F0EC] text-[#635B55]">
+                                  {s}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── PERSONALIZED ADVICE ── */}
+      {report.personalizedAdvice.length > 0 && (
+        <div ref={adviceReveal.ref} className="mt-10">
+          <div className="flex items-center gap-4 mb-6" style={revealStyle(adviceReveal.isVisible, 0, 0)}>
+            <h2
+              className="text-[#1E1B18] text-xl lg:text-2xl font-bold tracking-tight"
+              style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
+            >
+              Personalized Advice
+            </h2>
+            <div className="flex-1 h-px bg-gradient-to-r from-[#D5CFC9] to-transparent" />
+          </div>
+          <div className="space-y-3">
+            {report.personalizedAdvice.map((advice, i) => (
+              <div
+                key={i}
+                className="bg-white rounded-xl p-4 border border-[#E5E0DB] flex items-start gap-3"
+                style={revealStyle(adviceReveal.isVisible, i, 0.1)}
+              >
+                <div className="w-7 h-7 rounded-lg bg-[#C4956A]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B07D4F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 18l6-6-6-6" />
+                  </svg>
+                </div>
+                <p className="text-[#4A433E] text-sm leading-relaxed">{advice}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* ── FOOTER CTA ── */}
       <div
         ref={ctaReveal.ref}
@@ -755,7 +1161,6 @@ export default function DashboardPage() {
           ...revealStyle(ctaReveal.isVisible, 0, 0),
         }}
       >
-        {/* Animated decorative orbs */}
         <div className="absolute top-0 right-0 w-56 h-56 rounded-full -translate-y-1/3 translate-x-1/4 cta-orb-1" style={{ background: "radial-gradient(circle, rgba(196,149,106,0.12) 0%, transparent 70%)" }} />
         <div className="absolute bottom-0 left-0 w-40 h-40 rounded-full translate-y-1/3 -translate-x-1/4 cta-orb-2" style={{ background: "radial-gradient(circle, rgba(123,158,135,0.1) 0%, transparent 70%)" }} />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full opacity-[0.03]" style={{ background: "radial-gradient(circle, white 0%, transparent 60%)" }} />
@@ -769,19 +1174,21 @@ export default function DashboardPage() {
             className="text-white text-2xl lg:text-[1.75rem] font-bold mb-3 leading-tight"
             style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
           >
-            Stay on track with your goals
+            Ready to explore more?
           </h3>
           <p className="text-white/65 text-sm mb-6 max-w-md mx-auto leading-relaxed">
-            Your AI mentor analyzes your progress daily and adjusts the roadmap to keep you moving forward.
+            Run a new discovery with different skills or interests to compare career paths side by side.
           </p>
-          <button className="group px-7 py-3 rounded-xl bg-gradient-to-r from-[#C4956A] to-[#D4A87A] text-white text-sm font-bold hover:shadow-2xl hover:shadow-[#C4956A]/30 transition-all duration-300 active:scale-[0.97] hover:-translate-y-0.5">
-            <span className="flex items-center gap-2">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:scale-110 transition-transform">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-              </svg>
-              Talk to AI Mentor
-            </span>
-          </button>
+          <Link
+            href="/discover"
+            className="group inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-gradient-to-r from-[#C4956A] to-[#D4A87A] text-white text-sm font-bold hover:shadow-2xl hover:shadow-[#C4956A]/30 transition-all duration-300 active:scale-[0.97] hover:-translate-y-0.5"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:scale-110 transition-transform">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            Start New Discovery
+          </Link>
         </div>
       </div>
 
