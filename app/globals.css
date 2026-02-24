@@ -54,6 +54,30 @@ body {
   outline-offset: 2px;
 }
 
+/* ─── Form input resets ─── */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Strip Tailwind v4 preflight border from tag-style inputs */
+.discover-tag-input input {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.discover-tag-input input:focus {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 /* ─── Animations ─── */
 @keyframes fade-in-up {
   from {
@@ -248,11 +272,12 @@ body {
 
 /* ─── Discover Page Animations ─── */
 
+/* Step entrance — slides up with blur-to-focus */
 @keyframes discover-step-in {
   from {
     opacity: 0;
-    transform: translateY(18px) scale(0.98);
-    filter: blur(2px);
+    transform: translateY(22px) scale(0.97);
+    filter: blur(3px);
   }
   to {
     opacity: 1;
@@ -261,24 +286,49 @@ body {
   }
 }
 
-@keyframes discover-option-in {
+/* Step exit — slides out with fade */
+@keyframes discover-step-out-left {
   from {
-    opacity: 0;
-    transform: translateX(-12px);
+    opacity: 1;
+    transform: translateX(0) scale(1);
   }
   to {
-    opacity: 1;
-    transform: translateX(0);
+    opacity: 0;
+    transform: translateX(-30px) scale(0.97);
   }
 }
 
+@keyframes discover-step-out-right {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(30px) scale(0.97);
+  }
+}
+
+/* Education options slide in from left */
+@keyframes discover-option-in {
+  from {
+    opacity: 0;
+    transform: translateX(-16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* Tags pop in with spring bounce */
 @keyframes discover-tag-pop {
   0% {
     opacity: 0;
-    transform: scale(0.6);
+    transform: scale(0.5);
   }
-  60% {
-    transform: scale(1.08);
+  50% {
+    transform: scale(1.12);
   }
   100% {
     opacity: 1;
@@ -286,27 +336,129 @@ body {
   }
 }
 
-@keyframes discover-overlay-fade {
+/* Suggestion pills cascade in */
+@keyframes discover-suggestion-in {
   from {
     opacity: 0;
+    transform: translateY(8px) scale(0.95);
   }
   to {
     opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
+/* Summary review cards slide in */
+@keyframes discover-summary-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Overlay fade with slight scale */
+@keyframes discover-overlay-fade {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(12px);
+  }
+}
+
+/* Ring pulse for active step indicator */
+@keyframes discover-ring-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Concentric rings for loading overlay */
+@keyframes discover-ring-spin-1 {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes discover-ring-spin-2 {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+@keyframes discover-ring-spin-3 {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Progress bar shimmer */
+@keyframes discover-progress-shine {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(300%); }
+}
+
+/* ─── Discover animation classes ─── */
+
 .discover-step-enter {
-  animation: discover-step-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: discover-step-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.discover-step-exit {
+  animation-duration: 0.25s;
+  animation-timing-function: cubic-bezier(0.4, 0, 1, 1);
+  animation-fill-mode: both;
+}
+.discover-slide-exit-left {
+  animation-name: discover-step-out-left;
+}
+.discover-slide-exit-right {
+  animation-name: discover-step-out-right;
 }
 
 .discover-option-enter {
-  animation: discover-option-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: discover-option-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .discover-tag-enter {
   animation: discover-tag-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
+.discover-suggestion-enter {
+  animation: discover-suggestion-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.discover-summary-enter {
+  animation: discover-summary-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 .discover-overlay-enter {
-  animation: discover-overlay-fade 0.4s ease-out both;
+  animation: discover-overlay-fade 0.5s ease-out both;
+}
+
+.discover-ring-pulse {
+  animation: discover-ring-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.discover-ring-1 {
+  animation: discover-ring-spin-1 8s linear infinite;
+  border-style: dashed;
+}
+.discover-ring-2 {
+  animation: discover-ring-spin-2 6s linear infinite;
+  border-style: dotted;
+}
+.discover-ring-3 {
+  animation: discover-ring-spin-3 4s linear infinite;
+}
+
+.discover-progress-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+  animation: discover-progress-shine 2s ease-in-out infinite;
 }
