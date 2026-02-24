@@ -5,7 +5,6 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 const navLinks = [
   { label: "Features", href: "#features" },
-  { label: "How it works", href: "#how-it-works" },
   { label: "FAQ", href: "#faq" },
 ];
 
@@ -59,8 +58,14 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Right: Log in button (desktop) */}
-          <div className="hidden md:flex items-center">
+          {/* Right: Dashboard + Log in buttons (desktop) */}
+          <div className="hidden md:flex items-center gap-2.5">
+            <a
+              href="/dashboard"
+              className="rounded-full bg-[#37322f] px-5 py-1.5 text-sm font-medium text-white shadow-[0_1px_3px_rgba(0,0,0,0.12)] hover:bg-[#2A2520] transition-all"
+            >
+              Dashboard
+            </a>
             <a
               href="/login"
               className="rounded-full border border-[#37322f]/10 bg-white px-5 py-1.5 text-sm font-medium text-[#37322f] shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:bg-[#37322f]/[0.03] hover:shadow-[0_1px_4px_rgba(0,0,0,0.07)] transition-all"
@@ -103,6 +108,13 @@ export default function Header() {
                 {link.label}
               </a>
             ))}
+            <a
+              href="/dashboard"
+              className="rounded-md px-4 py-3 text-sm font-medium text-[#37322f] transition-all hover:bg-[#37322f]/5 animate-slide-in-bottom"
+              style={{ animationDelay: "100ms" }}
+            >
+              Dashboard
+            </a>
             <a
               href="/login"
               className="rounded-md px-4 py-3 text-sm font-medium text-[#37322f] transition-all hover:bg-[#37322f]/5 animate-slide-in-bottom"
