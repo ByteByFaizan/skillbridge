@@ -190,8 +190,15 @@ function buildStats(report: CareerReport) {
 function useScrollReveal(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [elReady, setElReady] = useState(false);
+
+  // Detect when the ref element is first attached to the DOM
+  useEffect(() => {
+    if (ref.current && !elReady) setElReady(true);
+  });
 
   useEffect(() => {
+    if (isVisible) return; // already revealed
     const el = ref.current;
     if (!el) return;
 
@@ -207,7 +214,7 @@ function useScrollReveal(threshold = 0.15) {
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [threshold]);
+  }, [threshold, elReady, isVisible]);
 
   return { ref, isVisible };
 }
