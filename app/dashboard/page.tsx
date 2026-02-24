@@ -346,12 +346,10 @@ export default function DashboardPage() {
 
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
-  const [animatedProgress, setAnimatedProgress] = useState<Record<number, number>>({});
 
   // Scroll reveal refs
   const headerReveal = useScrollReveal(0.1);
   const statsReveal = useScrollReveal(0.1);
-  const progressReveal = useScrollReveal(0.2);
   const timelineReveal = useScrollReveal(0.05);
   const careerReveal = useScrollReveal(0.1);
   const adviceReveal = useScrollReveal(0.1);
@@ -451,19 +449,6 @@ export default function DashboardPage() {
     return () => clearTimeout(t);
   }, []);
 
-  /* Animate progress bars when visible */
-  useEffect(() => {
-    if (!timelineReveal.isVisible || milestones.length === 0) return;
-    const timers: NodeJS.Timeout[] = [];
-    milestones.forEach((m, i) => {
-      const t = setTimeout(() => {
-        setAnimatedProgress((prev) => ({ ...prev, [m.id]: m.progress }));
-      }, 400 + i * 180);
-      timers.push(t);
-    });
-    return () => timers.forEach(clearTimeout);
-  }, [timelineReveal.isVisible, milestones]);
-
   const toggleCard = useCallback((id: number) => {
     setExpandedCard((prev) => (prev === id ? null : id));
   }, []);
@@ -490,8 +475,6 @@ export default function DashboardPage() {
 
   const { report } = runData;
   const completedCount = milestones.filter((m) => m.status === "completed").length;
-  const inProgressCount = milestones.filter((m) => m.status === "in-progress").length;
-  const upcomingCount = milestones.filter((m) => m.status === "upcoming").length;
 
   return (
     <div className="min-h-screen p-5 pt-16 lg:pt-6 lg:p-10 overflow-x-hidden">
@@ -620,49 +603,6 @@ export default function DashboardPage() {
               <p className="text-[#635B55] text-sm leading-relaxed">{career.why}</p>
             </div>
           ))}
-        </div>
-      </div>
-
-      {/* ── OVERALL PROGRESS BAR ── */}
-      <div
-        ref={progressReveal.ref}
-        className="bg-white rounded-2xl p-6 border border-[#E5E0DB] mb-10 overflow-hidden"
-        style={revealStyle(progressReveal.isVisible, 0, 0)}
-      >
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="w-3 h-3 rounded-full bg-[#C4956A]" />
-              <div className="absolute inset-0 w-3 h-3 rounded-full bg-[#C4956A] animate-ping opacity-30" />
-            </div>
-            <p className="text-[#1E1B18] text-sm font-bold">{report.learningRoadmap.durationMonths}-Month Plan Progress</p>
-          </div>
-          <p className="text-[#C4956A] text-lg font-bold tabular-nums">0%</p>
-        </div>
-        <div className="w-full h-3 bg-[#ECE8E3] rounded-full overflow-hidden">
-          <div
-            className="h-full rounded-full relative overflow-hidden"
-            style={{
-              width: "0%",
-              background: "linear-gradient(90deg, #7B9E87 0%, #C4956A 60%, #D4A87A 100%)",
-              transition: "width 2.2s cubic-bezier(0.16,1,0.3,1) 0.3s",
-            }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent dashboard-shimmer" />
-          </div>
-        </div>
-        <div className="flex items-center justify-between mt-3.5">
-          <div className="flex items-center gap-5">
-            <span className="flex items-center gap-2 text-xs text-[#5A8A6A] font-medium">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#7B9E87]" /> {completedCount} Completed
-            </span>
-            <span className="flex items-center gap-2 text-xs text-[#B07D4F] font-medium">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#C4956A]" /> {inProgressCount} In Progress
-            </span>
-            <span className="flex items-center gap-2 text-xs text-[#8A7E76] font-medium">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#D5CFC9]" /> {upcomingCount} Upcoming
-            </span>
-          </div>
         </div>
       </div>
 
@@ -818,27 +758,7 @@ export default function DashboardPage() {
                           </p>
                         </div>
 
-                        {/* Circular progress */}
-                        <div className="flex-shrink-0 w-[60px] h-[60px] relative">
-                          <svg className="w-[60px] h-[60px] -rotate-90" viewBox="0 0 60 60">
-                            <circle cx="30" cy="30" r="25" fill="none" stroke="#ECE8E3" strokeWidth="4" />
-                            <circle
-                              cx="30"
-                              cy="30"
-                              r="25"
-                              fill="none"
-                              stroke={milestone.accent}
-                              strokeWidth="4"
-                              strokeLinecap="round"
-                              strokeDasharray={`${2 * Math.PI * 25}`}
-                              strokeDashoffset={`${2 * Math.PI * 25 * (1 - (animatedProgress[milestone.id] ?? 0) / 100)}`}
-                              style={{ transition: "stroke-dashoffset 1.8s cubic-bezier(0.16,1,0.3,1)" }}
-                            />
-                          </svg>
-                          <span className="absolute inset-0 flex items-center justify-center text-[13px] font-bold text-[#1E1B18]">
-                            {animatedProgress[milestone.id] ?? 0}%
-                          </span>
-                        </div>
+
                       </div>
 
                       {/* Skills */}
@@ -858,69 +778,8 @@ export default function DashboardPage() {
                         ))}
                       </div>
 
-                      {/* Bottom: Tasks + expand indicator */}
-                      <div className="flex items-center gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-1.5">
-                            <span className="text-[#7A706A] text-xs font-semibold">Topics & Tools</span>
-                            <span className="text-[#4A433E] text-xs font-bold tabular-nums">
-                              {milestone.tasksDone}/{milestone.tasks}
-                            </span>
-                          </div>
-                          <div className="w-full h-[6px] bg-[#ECE8E3] rounded-full overflow-hidden">
-                            <div
-                              className="h-full rounded-full relative overflow-hidden"
-                              style={{
-                                width: `${(animatedProgress[milestone.id] ?? 0)}%`,
-                                backgroundColor: milestone.accent,
-                                transition: "width 1.5s cubic-bezier(0.16,1,0.3,1)",
-                              }}
-                            >
-                              {milestone.status !== "upcoming" && (
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent dashboard-shimmer" />
-                              )}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Status button */}
-                        <button
-                          className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 hover:shadow-lg active:scale-[0.95]"
-                          style={{
-                            backgroundColor:
-                              milestone.status === "in-progress"
-                                ? "#C4956A"
-                                : "#ECE8E3",
-                            color:
-                              milestone.status === "upcoming" ? "#635B55" : "white",
-                            boxShadow:
-                              milestone.status !== "upcoming"
-                                ? `0 4px 14px -3px ${milestone.accent}40`
-                                : "none",
-                          }}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {milestone.status === "in-progress" && (
-                            <>
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <polygon points="5 3 19 12 5 21 5 3" />
-                              </svg>
-                              Start
-                            </>
-                          )}
-                          {milestone.status === "upcoming" && (
-                            <>
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                <line x1="16" y1="2" x2="16" y2="6" />
-                                <line x1="8" y1="2" x2="8" y2="6" />
-                                <line x1="3" y1="10" x2="21" y2="10" />
-                              </svg>
-                              Scheduled
-                            </>
-                          )}
-                        </button>
-
+                      {/* Bottom: expand indicator */}
+                      <div className="flex items-center justify-end gap-4">
                         {/* Expand/collapse chevron */}
                         <div
                           className="w-8 h-8 rounded-lg flex items-center justify-center text-[#9B8E85] hover:bg-[#F3F0EC] transition-all"
