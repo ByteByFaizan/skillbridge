@@ -255,7 +255,7 @@ export default function LoginPage() {
               </span>
             </h1>
             <p
-              className="text-white/40 text-[15px] leading-relaxed max-w-sm"
+              className="text-white/55 text-[15px] leading-relaxed max-w-sm"
               style={stagger(3, 0.3)}
             >
               Join thousands of students who have discovered their ideal career path with AI-powered guidance and personalized roadmaps.
@@ -276,8 +276,8 @@ export default function LoginPage() {
                   </svg>
                 </div>
                 <div>
-                  <div className="text-white/70 text-sm font-medium login-counter">10k+</div>
-                  <div className="text-white/30 text-[11px]">Students</div>
+                  <div className="text-white/80 text-sm font-medium login-counter">10k+</div>
+                  <div className="text-white/50 text-[11px]">Students</div>
                 </div>
               </div>
               <div className="w-px h-8 bg-white/[0.06]" />
@@ -288,8 +288,8 @@ export default function LoginPage() {
                   </svg>
                 </div>
                 <div>
-                  <div className="text-white/70 text-sm font-medium">95%</div>
-                  <div className="text-white/30 text-[11px]">Success rate</div>
+                  <div className="text-white/80 text-sm font-medium">95%</div>
+                  <div className="text-white/50 text-[11px]">Success rate</div>
                 </div>
               </div>
             </div>
@@ -373,7 +373,7 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="relative flex items-center mb-6" style={stagger(3, 0.15)}>
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#37322f]/[0.08] to-transparent" />
-            <span className="px-4 text-xs text-[#49423D]/40 font-medium uppercase tracking-widest">or</span>
+            <span className="px-4 text-xs text-[#49423D]/55 font-medium uppercase tracking-widest">or</span>
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#37322f]/[0.08] to-transparent" />
           </div>
 
@@ -386,7 +386,7 @@ export default function LoginPage() {
               </label>
               <div className={`relative login-input-wrap ${focusedField === "email" ? "login-input-focused" : ""}`}>
                 <div className={`pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 transition-all duration-300 ${focusedField === "email" ? "scale-110" : ""}`}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={`transition-colors duration-300 ${focusedField === "email" ? "text-[#c4a882]" : "text-[#37322f]/25"}`}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={`transition-colors duration-300 ${focusedField === "email" ? "text-[#c4a882]" : "text-[#37322f]/40"}`}>
                     <rect width="20" height="16" x="2" y="4" rx="2" />
                     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                   </svg>
@@ -400,7 +400,7 @@ export default function LoginPage() {
                   onBlur={() => setFocusedField(null)}
                   placeholder="name@example.com"
                   required
-                  className="w-full rounded-xl border border-[#37322f]/[0.08] bg-white py-3 pl-11 pr-4 text-[15px] text-[#2c2724] placeholder:text-[#37322f]/25 shadow-[0_1px_2px_rgba(0,0,0,0.04)] focus:outline-none focus:border-[#c4a882]/30 focus:shadow-[0_0_0_3px_rgba(196,168,130,0.08),0_0_20px_rgba(196,168,130,0.06)] transition-all duration-300"
+                  className="w-full rounded-xl border border-[#37322f]/[0.08] bg-white py-3 pl-11 pr-4 text-[15px] text-[#2c2724] placeholder:text-[#37322f]/40 shadow-[0_1px_2px_rgba(0,0,0,0.04)] focus:outline-none focus:border-[#c4a882]/30 focus:shadow-[0_0_0_3px_rgba(196,168,130,0.08),0_0_20px_rgba(196,168,130,0.06)] transition-all duration-300"
                 />
               </div>
             </div>
@@ -412,7 +412,7 @@ export default function LoginPage() {
               </label>
               <div className={`relative login-input-wrap ${focusedField === "password" ? "login-input-focused" : ""}`}>
                 <div className={`pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 transition-all duration-300 ${focusedField === "password" ? "scale-110" : ""}`}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={`transition-colors duration-300 ${focusedField === "password" ? "text-[#c4a882]" : "text-[#37322f]/25"}`}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={`transition-colors duration-300 ${focusedField === "password" ? "text-[#c4a882]" : "text-[#37322f]/40"}`}>
                     <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
                     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                   </svg>
@@ -426,7 +426,7 @@ export default function LoginPage() {
                   onBlur={() => setFocusedField(null)}
                   placeholder="Enter your password"
                   required
-                  className="w-full rounded-xl border border-[#37322f]/[0.08] bg-white py-3 pl-11 pr-12 text-[15px] text-[#2c2724] placeholder:text-[#37322f]/25 shadow-[0_1px_2px_rgba(0,0,0,0.04)] focus:outline-none focus:border-[#c4a882]/30 focus:shadow-[0_0_0_3px_rgba(196,168,130,0.08),0_0_20px_rgba(196,168,130,0.06)] transition-all duration-300"
+                  className="w-full rounded-xl border border-[#37322f]/[0.08] bg-white py-3 pl-11 pr-12 text-[15px] text-[#2c2724] placeholder:text-[#37322f]/40 shadow-[0_1px_2px_rgba(0,0,0,0.04)] focus:outline-none focus:border-[#c4a882]/30 focus:shadow-[0_0_0_3px_rgba(196,168,130,0.08),0_0_20px_rgba(196,168,130,0.06)] transition-all duration-300"
                 />
                 <button
                   type="button"
@@ -475,13 +475,13 @@ export default function LoginPage() {
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
-                <span className="text-[13px] text-[#49423D]/60 group-hover:text-[#49423D]/80 transition-colors select-none">
+                <span className="text-[13px] text-[#49423D]/70 group-hover:text-[#49423D]/90 transition-colors select-none">
                   Remember me
                 </span>
               </label>
               <a
                 href="#"
-                className="text-[13px] font-medium text-[#37322f]/50 hover:text-[#c4a882] transition-colors duration-300 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-[#c4a882]/50 hover:after:w-full after:transition-all after:duration-300"
+                className="text-[13px] font-medium text-[#37322f]/65 hover:text-[#c4a882] transition-colors duration-300 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-[#c4a882]/50 hover:after:w-full after:transition-all after:duration-300"
               >
                 Forgot password?
               </a>
@@ -491,13 +491,15 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="login-submit-btn relative w-full mt-2 rounded-xl bg-[#37322f] py-3.5 text-[15px] font-medium text-white shadow-[0_1px_3px_rgba(0,0,0,0.12),0_4px_12px_rgba(55,50,47,0.15)] hover:bg-[#2c2724] hover:shadow-[0_4px_12px_rgba(0,0,0,0.2),0_12px_32px_rgba(55,50,47,0.25)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[0_1px_3px_rgba(0,0,0,0.12),0_4px_12px_rgba(55,50,47,0.15)] transition-all duration-300 cursor-pointer overflow-hidden"
+              className="login-submit-btn group relative w-full mt-2 rounded-xl bg-[#37322f] py-3.5 text-[15px] font-medium text-white shadow-[0_1px_3px_rgba(0,0,0,0.12),0_4px_12px_rgba(55,50,47,0.15)] hover:bg-[#2c2724] hover:shadow-[0_4px_12px_rgba(0,0,0,0.2),0_12px_32px_rgba(55,50,47,0.25)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[0_1px_3px_rgba(0,0,0,0.12),0_4px_12px_rgba(55,50,47,0.15)] transition-all duration-300 cursor-pointer"
               style={stagger(7, 0.15)}
             >
               {/* Shine sweep */}
-              <div className="absolute inset-0 login-btn-shine-sweep" />
+              <div className="absolute inset-0 overflow-hidden rounded-xl">
+                <div className="absolute inset-0 login-btn-shine-sweep" />
+              </div>
               {/* Ripple on hover */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.04] to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <span className={`relative z-10 inline-flex items-center gap-2 ${isLoading ? "opacity-0" : ""}`}>
                 Sign in
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-1 transition-transform duration-200">
@@ -514,7 +516,7 @@ export default function LoginPage() {
           </form>
 
           {/* Sign up link */}
-          <p className="mt-8 text-center text-[14px] text-[#49423D]/50" style={stagger(8, 0.15)}>
+          <p className="mt-8 text-center text-[14px] text-[#49423D]/65" style={stagger(8, 0.15)}>
             Don&apos;t have an account?{" "}
             <a
               href="#"
@@ -525,7 +527,7 @@ export default function LoginPage() {
           </p>
 
           {/* Terms */}
-          <p className="mt-6 text-center text-[12px] text-[#49423D]/30 leading-relaxed" style={stagger(9, 0.15)}>
+          <p className="mt-6 text-center text-[12px] text-[#49423D]/45 leading-relaxed" style={stagger(9, 0.15)}>
             By continuing, you agree to our{" "}
             <a href="#" className="underline underline-offset-2 hover:text-[#49423D]/50 transition-colors duration-300">
               Terms of Service
@@ -673,23 +675,16 @@ export default function LoginPage() {
         }
         .login-input-focused::before {
           opacity: 1;
-          animation: input-glow-rotate 3s linear infinite;
+          animation: input-glow-pulse 2s ease-in-out infinite;
         }
-        @keyframes input-glow-rotate {
-          0% {
-            background: linear-gradient(0deg, transparent, rgba(196, 168, 130, 0.15), transparent);
-          }
-          25% {
-            background: linear-gradient(90deg, transparent, rgba(196, 168, 130, 0.15), transparent);
+        @keyframes input-glow-pulse {
+          0%, 100% {
+            opacity: 0.5;
+            box-shadow: 0 0 8px 1px rgba(196, 168, 130, 0.1);
           }
           50% {
-            background: linear-gradient(180deg, transparent, rgba(196, 168, 130, 0.15), transparent);
-          }
-          75% {
-            background: linear-gradient(270deg, transparent, rgba(196, 168, 130, 0.15), transparent);
-          }
-          100% {
-            background: linear-gradient(360deg, transparent, rgba(196, 168, 130, 0.15), transparent);
+            opacity: 1;
+            box-shadow: 0 0 16px 3px rgba(196, 168, 130, 0.15);
           }
         }
 
@@ -711,22 +706,18 @@ export default function LoginPage() {
           50%, 100% { background-position: -200% 0; }
         }
 
-        /* ▸ Submit button magnetic hover glow */
-        .login-submit-btn::before {
+        /* ▸ Submit button hover glow */
+        .login-submit-btn::after {
           content: '';
           position: absolute;
-          bottom: -6px;
-          left: 10%;
-          right: 10%;
-          height: 20px;
-          background: radial-gradient(ellipse, rgba(55, 50, 47, 0.15), transparent);
-          filter: blur(8px);
+          inset: 0;
+          border-radius: 12px;
           opacity: 0;
-          transition: opacity 0.3s ease, bottom 0.3s ease;
+          box-shadow: 0 0 20px 4px rgba(196, 168, 130, 0.12);
+          transition: opacity 0.3s ease;
         }
-        .login-submit-btn:hover::before {
+        .login-submit-btn:hover::after {
           opacity: 1;
-          bottom: -10px;
         }
 
         /* ▸ Checkbox pop */
