@@ -78,7 +78,7 @@ export default function HowItWorks() {
                   className={`relative p-6 flex flex-col gap-2 border cursor-pointer transition-all duration-300 ${
                     isActive
                       ? "bg-white border-[#e0dedb] shadow-sm"
-                      : "border-[#e0dedb]/80"
+                      : "border-[#e0dedb]/80 hover:border-[#e0dedb] hover:bg-white/50"
                   }`}
                 >
                   {/* Animated top indicator line */}
