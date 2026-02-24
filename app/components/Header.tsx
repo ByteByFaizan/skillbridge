@@ -5,6 +5,7 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 const navLinks = [
   { label: "Features", href: "#features" },
+  { label: "How it works", href: "#how-it-works" },
   { label: "FAQ", href: "#faq" },
 ];
 
