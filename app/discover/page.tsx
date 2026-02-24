@@ -124,6 +124,27 @@ export default function DiscoverPage() {
     return () => clearTimeout(t);
   }, [step]);
 
+  /* ── Global Enter key to advance ─────────────────────── */
+  useEffect(() => {
+    const handleKeyDown = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Enter" && !e.shiftKey && !isSubmitting && !transitioning) {
+        // Step 0: advance if education selected
+        if (step === 0 && formData.education) {
+          e.preventDefault();
+          goNext();
+        }
+        // Step 3: submit
+        if (step === 3) {
+          e.preventDefault();
+          handleSubmit();
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, formData.education, isSubmitting, transitioning]);
+
   /* ── Loading stage progression ───────────────────────── */
   useEffect(() => {
     if (!isSubmitting) {
