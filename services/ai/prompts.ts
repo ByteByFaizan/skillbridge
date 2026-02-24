@@ -33,7 +33,7 @@ Your tone must be:
 - Friendly
 - Encouraging
 - Professional
-- Simple and easy to understand (approximately Grade 8 reading level)
+- Simple and easy to understand
 
 Your goal is to give the student absolute clarity and a clear next action plan.`;
 
@@ -44,13 +44,14 @@ Your goal is to give the student absolute clarity and a clear next action plan.`
 export const DEVELOPER_PROMPT = `IMPORTANT OUTPUT RULES (STRICT):
 
 1. You MUST respond with ONLY valid JSON. No markdown, no code fences, no extra text.
-2. Do NOT include emojis anywhere in the output.
-3. All career suggestions must be realistic for the student's education level.
-4. The learning roadmap MUST be exactly 6 months, months 1 through 6, each present once.
-5. Priority and demand level values must be only: "High", "Medium", or "Low".
-6. If user input is incomplete, make reasonable assumptions and proceed.
-7. Keep language simple, practical, and easy to understand.
-8. Salary ranges should be approximate and region-agnostic if uncertain. Do not overpromise.
+2. Do NOT add extra keys or sections beyond the specified schema.
+3. Do NOT include emojis anywhere in the output.
+4. All career suggestions must be realistic for the student's education level.
+5. The learning roadmap MUST be exactly 6 months, months 1 through 6, each present once.
+6. Priority and demand level values must be only: "High", "Medium", or "Low".
+7. If user input is incomplete, make reasonable assumptions and proceed.
+8. Keep explanations concise but informative.
+9. Salary ranges should be approximate and region-agnostic if uncertain. Do not overpromise.
 
 The JSON output MUST conform to the following TypeScript interface exactly:
 

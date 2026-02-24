@@ -231,6 +231,12 @@ export default function DiscoverPage() {
       });
       const data = await res.json();
       if (!res.ok) {
+        // If DB failed but report was generated, still navigate with the report
+        if (data?.report && data?.error?.code === "DB_ERROR") {
+          sessionStorage.setItem("sb_fallback_report", JSON.stringify(data.report));
+          window.location.href = "/dashboard?fallback=1";
+          return;
+        }
         console.error("API error:", data);
         alert(data?.error?.message ?? "Something went wrong. Please try again.");
         setIsSubmitting(false);

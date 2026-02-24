@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionId } from "@/lib/session";
 import { getSupabaseServer } from "@/lib/supabase-server";
 
+// Best practice (js-hoist-regexp): hoist regex outside the handler
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 /* ═══════════════════════════════════════════════════════
    GET /api/recommendations/[runId]
    Fetch a single run's full report for the current session.
@@ -12,8 +15,11 @@ export async function GET(
   { params }: { params: Promise<{ runId: string }> }
 ) {
   try {
-    const { runId } = await params;
-    const sessionId = await getSessionId();
+    // Best practice (async-parallel): start independent reads concurrently
+    const [{ runId }, sessionId] = await Promise.all([
+      params,
+      getSessionId(),
+    ]);
 
     if (!sessionId) {
       return NextResponse.json(
@@ -22,9 +28,8 @@ export async function GET(
       );
     }
 
-    // Basic UUID format check
-    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    if (!uuidRe.test(runId)) {
+    // Early exit for invalid UUID format
+    if (!UUID_RE.test(runId)) {
       return NextResponse.json(
         { error: { code: "INVALID_ID", message: "Invalid run ID format." } },
         { status: 400 }
@@ -54,7 +59,13 @@ export async function GET(
         input: data.input,
         report: data.report,
       },
-      { status: 200 }
+      {
+        status: 200,
+        headers: {
+          // Cache for 5 min — reports don't change after creation
+          "Cache-Control": "private, max-age=300, stale-while-revalidate=60",
+        },
+      }
     );
   } catch (err) {
     console.error("[/api/recommendations/[runId]] Unhandled error:", err);

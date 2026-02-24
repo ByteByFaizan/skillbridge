@@ -44,12 +44,14 @@ export default function DashboardLayout({
   /* Fetch current user */
   useEffect(() => {
     const supabase = getSupabaseBrowser();
-    supabase.auth.getUser().then(({ data }) => {
+    supabase.auth.getUser().then(({ data }: { data: { user: User | null } }) => {
       setUser(data.user);
     });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event: string, session: { user: User } | null) => {
+        setUser(session?.user ?? null);
+      }
+    );
     return () => subscription.unsubscribe();
   }, []);
 

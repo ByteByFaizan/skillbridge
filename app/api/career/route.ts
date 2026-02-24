@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
       req.headers.get("x-real-ip") ??
       "unknown";
 
-    /* ── 2. Rate limit ───────────────────────────────── */
+    /* ── 2. Rate limit (early exit) ──────────────────── */
     const rl = checkRateLimit(ip);
     if (!rl.allowed) {
       return NextResponse.json(
@@ -27,7 +27,12 @@ export async function POST(req: NextRequest) {
             message: `Too many requests. Try again in ${Math.ceil((rl.retryAfterMs ?? 0) / 60000)} minutes.`,
           },
         },
-        { status: 429 }
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(Math.ceil((rl.retryAfterMs ?? 0) / 1000)),
+          },
+        }
       );
     }
 
@@ -44,9 +49,12 @@ export async function POST(req: NextRequest) {
 
     const parsed = CareerInputSchema.safeParse(body);
     if (!parsed.success) {
-      const issues = (parsed as { error?: { issues?: Array<{ path?: unknown[]; message?: string }> } }).error?.issues;
-      const message = issues
-        ? issues.map((i) => `${(i.path ?? []).join(".")}: ${i.message}`).join("; ")
+      const message = parsed.error?.issues
+        ? parsed.error.issues
+            .map((i: { path?: unknown[]; message?: string }) =>
+              `${(i.path ?? []).join(".")}: ${i.message}`
+            )
+            .join("; ")
         : "Invalid input";
       return NextResponse.json(
         { error: { code: "VALIDATION_ERROR", message } },
@@ -54,21 +62,24 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const input = parsed.data!;
+    const input = parsed.data;
 
-    /* ── 4. Session (create or reuse) ────────────────── */
-    let sessionId = await getSessionId();
-    const isNew = !sessionId;
-    if (!sessionId) {
-      sessionId = crypto.randomUUID();
-    }
+    /* ── 4. Session + AI call in parallel ─────────────── */
+    // Best practice (async-parallel): start independent work concurrently
+    const [sessionId, reportResult] = await Promise.allSettled([
+      getSessionId(),
+      generateCareerReport(input),
+    ]);
 
-    /* ── 5. Call OpenRouter AI ────────────────────────── */
-    let report;
-    try {
-      report = await generateCareerReport(input);
-    } catch (err) {
-      console.error("[/api/career] AI generation failed:", err);
+    // Resolve session
+    const existingSessionId =
+      sessionId.status === "fulfilled" ? sessionId.value : null;
+    const isNew = !existingSessionId;
+    const finalSessionId = existingSessionId ?? crypto.randomUUID();
+
+    // Check AI result
+    if (reportResult.status === "rejected") {
+      console.error("[/api/career] AI generation failed:", reportResult.reason);
       return NextResponse.json(
         {
           error: {
@@ -80,13 +91,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    /* ── 6. Persist to Supabase ──────────────────────── */
+    const report = reportResult.value;
+
+    /* ── 5. Persist to Supabase ──────────────────────── */
     const db = getSupabaseServer();
 
     const { data: row, error: dbError } = await db
       .from("recommendation_runs")
       .insert({
-        session_id: sessionId,
+        session_id: finalSessionId,
         input: {
           education: input.education,
           skills: input.skills,
@@ -101,16 +114,29 @@ export async function POST(req: NextRequest) {
 
     if (dbError || !row) {
       console.error("[/api/career] Supabase insert error:", dbError);
-      // Still return the report — don't fail the user because of DB issues
+      // BUG FIX: If DB insert fails, return an error instead of a fake runId
+      // that won't be fetchable from /api/recommendations/[runId].
+      return NextResponse.json(
+        {
+          error: {
+            code: "DB_ERROR",
+            message:
+              "Your report was generated but could not be saved. Please try again.",
+          },
+          // Include the report so the client can still display it
+          report,
+        },
+        { status: 500 }
+      );
     }
 
-    const runId: string = row?.id ?? crypto.randomUUID();
+    const runId: string = row.id;
 
-    /* ── 7. Build response ───────────────────────────── */
+    /* ── 6. Build response ───────────────────────────── */
     const res = NextResponse.json({ runId, report }, { status: 200 });
 
     if (isNew) {
-      setSessionCookie(res, sessionId);
+      setSessionCookie(res, finalSessionId);
     }
 
     return res;

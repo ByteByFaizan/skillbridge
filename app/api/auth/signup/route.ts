@@ -1,5 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAuth } from "@/lib/supabase-auth";
+import { SignupSchema } from "@/utils/validators";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 /**
  * POST /api/auth/signup
@@ -7,17 +9,57 @@ import { getSupabaseAuth } from "@/lib/supabase-auth";
  * Creates a new user with email + password via Supabase Auth.
  * On success returns 200 with { user }. If the email requires
  * confirmation, Supabase will send a verification email automatically.
+ * Includes rate limiting and input validation.
  */
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const { email, password, name } = await request.json();
+    /* ── Rate limit by IP ─────────────────────────────── */
+    const ip =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      request.headers.get("x-real-ip") ??
+      "unknown";
 
-    if (!email || !password) {
+    const rl = checkRateLimit(`auth:${ip}`);
+    if (!rl.allowed) {
       return NextResponse.json(
-        { error: "Email and password are required." },
+        { error: "Too many signup attempts. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(Math.ceil((rl.retryAfterMs ?? 0) / 1000)),
+          },
+        }
+      );
+    }
+
+    /* ── Parse JSON safely ────────────────────────────── */
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Request body must be valid JSON." },
         { status: 400 }
       );
     }
+
+    /* ── Validate input ───────────────────────────────── */
+    const parsed = SignupSchema.safeParse(body);
+    if (!parsed.success) {
+      const message = parsed.error?.issues
+        ? parsed.error.issues
+            .map((i: { path?: unknown[]; message?: string }) =>
+              `${(i.path ?? []).join(".")}: ${i.message}`
+            )
+            .join("; ")
+        : "Invalid input";
+      return NextResponse.json(
+        { error: message },
+        { status: 400 }
+      );
+    }
+
+    const { email, password, name } = parsed.data;
 
     const supabase = await getSupabaseAuth();
 

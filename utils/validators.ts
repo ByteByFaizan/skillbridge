@@ -1,6 +1,39 @@
 import { z } from "zod";
 
 /* ═══════════════════════════════════════════════════════
+   AUTH SCHEMAS — Login & Signup validation
+   ═══════════════════════════════════════════════════════ */
+
+export const LoginSchema = z.object({
+  email: z
+    .string()
+    .email("Invalid email address")
+    .max(255, "Email must be under 255 characters")
+    .transform((v) => v.toLowerCase().trim()),
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .max(128, "Password must be under 128 characters"),
+});
+
+export type LoginInput = z.infer<typeof LoginSchema>;
+
+export const SignupSchema = z.object({
+  email: z
+    .string()
+    .email("Invalid email address")
+    .max(255, "Email must be under 255 characters")
+    .transform((v) => v.toLowerCase().trim()),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .max(128, "Password must be under 128 characters"),
+  name: z.string().max(100).optional().default(""),
+});
+
+export type SignupInput = z.infer<typeof SignupSchema>;
+
+/* ═══════════════════════════════════════════════════════
    INPUT SCHEMA — Discovery form payload
    ═══════════════════════════════════════════════════════ */
 

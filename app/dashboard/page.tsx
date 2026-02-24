@@ -384,6 +384,31 @@ export default function DashboardPage() {
     setLoading(true);
     setError(null);
 
+    // Check for fallback report from session storage (DB insert failed scenario)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("fallback") === "1") {
+      try {
+        const fallback = sessionStorage.getItem("sb_fallback_report");
+        if (fallback) {
+          const report = JSON.parse(fallback) as CareerReport;
+          sessionStorage.removeItem("sb_fallback_report");
+          // Clean up URL without reload
+          window.history.replaceState({}, "", "/dashboard");
+          setRunData({
+            runId: "fallback",
+            createdAt: new Date().toISOString(),
+            input: { education: "", skills: [], interests: [] },
+            report,
+          });
+          setExpandedCard(1);
+          setLoading(false);
+          return;
+        }
+      } catch {
+        // Fall through to normal flow
+      }
+    }
+
     const runId = localStorage.getItem("sb_last_run_id");
     if (!runId) {
       setLoading(false);

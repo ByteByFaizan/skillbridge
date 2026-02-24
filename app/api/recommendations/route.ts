@@ -11,12 +11,14 @@ export async function GET() {
   try {
     const sessionId = await getSessionId();
 
+    // Early exit: no session = no runs
     if (!sessionId) {
       return NextResponse.json({ runs: [] }, { status: 200 });
     }
 
     const db = getSupabaseServer();
 
+    // Only select the columns we need — skip the full report JSONB for listing
     const { data, error } = await db
       .from("recommendation_runs")
       .select("id, created_at, report")
@@ -33,21 +35,40 @@ export async function GET() {
     }
 
     // Return lightweight summaries with career titles extracted from the report
-    const runs = (data ?? []).map((row) => {
+    // Best practice (js-combine-iterations): single loop to extract + transform
+    const runs = [];
+    for (const row of data ?? []) {
       const report = row.report as {
         careerOverview?: Array<{ title?: string }>;
       } | null;
-      const careerTitles =
-        report?.careerOverview?.map((c) => c.title).filter(Boolean).slice(0, 3) ??
-        [];
-      return {
+
+      const careerTitles: string[] = [];
+      if (report?.careerOverview) {
+        for (const c of report.careerOverview) {
+          if (c.title) {
+            careerTitles.push(c.title);
+            if (careerTitles.length >= 3) break;
+          }
+        }
+      }
+
+      runs.push({
         runId: row.id,
         createdAt: row.created_at,
         careerTitles,
-      };
-    });
+      });
+    }
 
-    return NextResponse.json({ runs }, { status: 200 });
+    return NextResponse.json(
+      { runs },
+      {
+        status: 200,
+        headers: {
+          // Short cache: list may change when user creates new reports
+          "Cache-Control": "private, max-age=30, stale-while-revalidate=10",
+        },
+      }
+    );
   } catch (err) {
     console.error("[/api/recommendations] Unhandled error:", err);
     return NextResponse.json(
