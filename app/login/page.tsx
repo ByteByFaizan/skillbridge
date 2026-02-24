@@ -140,8 +140,8 @@ export default function LoginPage() {
             <div className="w-[60px] h-[60px] rounded-full border border-[#c4a882]/[0.12] login-spin-slow-reverse" />
           </div>
 
-          {/* ░░ Floating particles ░░ */}
-          {particles.map((p) => (
+          {/* ░░ Floating particles (client-only to avoid hydration mismatch) ░░ */}
+          {mounted && particles.map((p) => (
             <div
               key={p.id}
               className="absolute rounded-full bg-white login-particle"
@@ -150,10 +150,9 @@ export default function LoginPage() {
                 height: p.size,
                 left: `${p.x}%`,
                 top: `${p.y}%`,
-                opacity: mounted ? p.opacity : 0,
+                opacity: p.opacity,
                 animationDuration: `${p.duration}s`,
                 animationDelay: `${p.delay}s`,
-                transition: `opacity 2s ease-out ${0.8 + p.delay * 0.08}s`,
               }}
             />
           ))}
