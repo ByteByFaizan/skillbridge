@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { getSupabaseBrowser } from "@/lib/supabase-browser";
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -12,12 +13,61 @@ const navLinks = [
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Fetch the logged-in user
+  useEffect(() => {
+    const supabase = getSupabaseBrowser();
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        const meta = data.user.user_metadata;
+        setUser({
+          name: meta?.full_name || meta?.name || data.user.email?.split("@")[0] || "User",
+          email: data.user.email || "",
+        });
+      }
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        const meta = session.user.user_metadata;
+        setUser({
+          name: meta?.full_name || meta?.name || session.user.email?.split("@")[0] || "User",
+          email: session.user.email || "",
+        });
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    setUser(null);
+    setDropdownOpen(false);
+    window.location.href = "/";
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full pt-4 pb-2">
@@ -59,7 +109,7 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Right: Dashboard + Log in buttons (desktop) */}
+          {/* Right: Dashboard + Auth buttons (desktop) */}
           <div className="hidden md:flex items-center gap-2.5">
             <a
               href="/dashboard"
@@ -67,12 +117,41 @@ export default function Header() {
             >
               Dashboard
             </a>
-            <a
-              href="/login"
-              className="rounded-full border border-[#37322f]/10 bg-white px-5 py-1.5 text-sm font-medium text-[#37322f] shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:bg-[#37322f]/[0.03] hover:shadow-[0_1px_4px_rgba(0,0,0,0.07)] transition-all"
-            >
-              Log in
-            </a>
+            {user ? (
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center gap-2 rounded-full border border-[#37322f]/10 bg-white pl-2 pr-4 py-1.5 text-sm font-medium text-[#37322f] shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:bg-[#37322f]/[0.03] hover:shadow-[0_1px_4px_rgba(0,0,0,0.07)] transition-all"
+                >
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#37322f] text-white text-xs font-semibold">
+                    {user.name.charAt(0).toUpperCase()}
+                  </span>
+                  <span className="max-w-[120px] truncate">{user.name}</span>
+                  <svg className={`w-3.5 h-3.5 text-[#37322f]/50 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                </button>
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 rounded-xl border border-[#37322f]/10 bg-white shadow-lg py-1 z-50 animate-fade-in">
+                    <div className="px-4 py-2 border-b border-[#37322f]/5">
+                      <p className="text-sm font-medium text-[#37322f] truncate">{user.name}</p>
+                      <p className="text-xs text-[#37322f]/50 truncate">{user.email}</p>
+                    </div>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2.5 text-sm text-[#37322f]/70 hover:bg-[#37322f]/5 hover:text-[#37322f] transition-colors"
+                    >
+                      Log out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <a
+                href="/login"
+                className="rounded-full border border-[#37322f]/10 bg-white px-5 py-1.5 text-sm font-medium text-[#37322f] shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:bg-[#37322f]/[0.03] hover:shadow-[0_1px_4px_rgba(0,0,0,0.07)] transition-all"
+              >
+                Log in
+              </a>
+            )}
           </div>
 
           {/* Mobile menu toggle */}
@@ -116,13 +195,23 @@ export default function Header() {
             >
               Dashboard
             </a>
-            <a
-              href="/login"
-              className="rounded-md px-4 py-3 text-sm font-medium text-[#37322f] transition-all hover:bg-[#37322f]/5 animate-slide-in-bottom"
-              style={{ animationDelay: "150ms" }}
-            >
-              Log in
-            </a>
+            {user ? (
+              <button
+                onClick={handleLogout}
+                className="rounded-md px-4 py-3 text-left text-sm font-medium text-[#37322f] transition-all hover:bg-[#37322f]/5 animate-slide-in-bottom"
+                style={{ animationDelay: "150ms" }}
+              >
+                Log out ({user.name})
+              </button>
+            ) : (
+              <a
+                href="/login"
+                className="rounded-md px-4 py-3 text-sm font-medium text-[#37322f] transition-all hover:bg-[#37322f]/5 animate-slide-in-bottom"
+                style={{ animationDelay: "150ms" }}
+              >
+                Log in
+              </a>
+            )}
           </div>
         </div>
       </div>
