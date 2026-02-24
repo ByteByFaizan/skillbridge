@@ -482,7 +482,7 @@ export default function DashboardPage() {
       <header ref={headerReveal.ref} className="mb-10" style={revealStyle(headerReveal.isVisible, 0, 0.1)}>
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
-            <p className="text-[#8A7E76] text-sm font-semibold tracking-[0.15em] uppercase mb-2">
+            <p className="text-[#6B6058] text-sm font-semibold tracking-[0.15em] uppercase mb-2">
               Learning Roadmap
             </p>
             <h1
@@ -491,7 +491,7 @@ export default function DashboardPage() {
             >
               Your Career Milestones
             </h1>
-            <p className="text-[#635B55] text-[15px] mt-2.5 max-w-lg leading-relaxed">
+            <p className="text-[#4A433E] text-[15px] mt-2.5 max-w-lg leading-relaxed">
               {report.learningRoadmap.durationMonths}-month personalized learning plan — built by AI based on your skills and goals.
             </p>
           </div>
@@ -547,14 +547,14 @@ export default function DashboardPage() {
                     </svg>
                   )}
                 </div>
-                <p className="text-[#7A706A] text-xs font-semibold tracking-wide uppercase">{stat.label}</p>
+                <p className="text-[#5C5249] text-xs font-semibold tracking-wide uppercase">{stat.label}</p>
               </div>
               <p className="text-[#1E1B18] text-[1.75rem] font-bold tracking-tight leading-none">
                 {getAnimatedValue(i)}
               </p>
-              <div className="flex items-center justify-between mt-1.5">
-                <p className="text-[#9B8E85] text-xs">{stat.sub}</p>
-                <p className="text-[#7B9E87] text-[10px] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="flex items-center justify-between mt-2">
+                <p className="text-[#6B6058] text-xs">{stat.sub}</p>
+                <p className="text-[#4A8A5A] text-[11px] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   {stat.trend}
                 </p>
               </div>
@@ -578,7 +578,7 @@ export default function DashboardPage() {
           {report.careerOverview.map((career, i) => (
             <div
               key={career.title}
-              className="bg-white rounded-2xl p-5 border border-[#E5E0DB] hover:border-[#C4956A]/40 transition-all duration-300 hover:shadow-lg"
+              className="bg-white rounded-2xl p-5 border border-[#E5E0DB] hover:border-[#C4956A]/40 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
               style={revealStyle(careerReveal.isVisible, i, 0.1)}
             >
               <div className="flex items-start justify-between mb-3">
@@ -600,7 +600,7 @@ export default function DashboardPage() {
                   {career.demandLevel} Demand
                 </span>
               </div>
-              <p className="text-[#635B55] text-sm leading-relaxed">{career.why}</p>
+              <p className="text-[#4A433E] text-sm leading-relaxed">{career.why}</p>
             </div>
           ))}
         </div>
@@ -616,7 +616,7 @@ export default function DashboardPage() {
             Milestone Timeline
           </h2>
           <div className="flex-1 h-px bg-gradient-to-r from-[#D5CFC9] to-transparent" />
-          <span className="text-[#8A7E76] text-xs font-semibold">
+          <span className="text-[#5C5249] text-xs font-semibold">
             {completedCount}/{milestones.length} milestones
           </span>
         </div>
@@ -693,7 +693,7 @@ export default function DashboardPage() {
                   {/* Month label */}
                   <div className="mb-2">
                     <span
-                      className="inline-block text-[11px] font-bold tracking-[0.15em] uppercase px-2.5 py-1 rounded-md transition-all duration-200"
+                      className="inline-block text-xs font-bold tracking-[0.12em] uppercase px-2.5 py-1 rounded-md transition-all duration-200"
                       style={{
                         backgroundColor: badge.bg,
                         color: badge.color,
@@ -753,7 +753,7 @@ export default function DashboardPage() {
                               {badge.text}
                             </span>
                           </div>
-                          <p className="text-[#635B55] text-sm leading-relaxed max-w-xl">
+                          <p className="text-[#4A433E] text-sm leading-relaxed max-w-xl">
                             {milestone.description}
                           </p>
                         </div>
@@ -766,7 +766,7 @@ export default function DashboardPage() {
                         {milestone.skills.map((skill, si) => (
                           <span
                             key={skill}
-                            className="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all duration-200 hover:scale-105 cursor-default"
+                            className="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default"
                             style={{
                               backgroundColor: `${milestone.accent}14`,
                               color: milestone.accent,
@@ -803,13 +803,18 @@ export default function DashboardPage() {
                         opacity: isExpanded ? 1 : 0,
                       }}
                     >
-                      <div className="border-t border-[#ECE8E3] bg-gradient-to-b from-[#FDFCFB] to-[#F9F7F4] px-5 lg:px-6 py-4">
+                      <div className="border-t border-[#ECE8E3] bg-gradient-to-b from-[#FDFCFB] to-[#F9F7F4] px-5 lg:px-6 py-5">
                         {milestone.details && (
-                          <div className="mb-3 space-y-1.5">
+                          <div className="mb-3 space-y-2.5">
                             {milestone.details.map((detail, di) => (
                               <p
                                 key={di}
-                                className="text-[13px] leading-relaxed text-[#635B55]"
+                                className="text-sm leading-relaxed text-[#3D3632] flex items-start gap-2"
+                                style={{
+                                  opacity: isExpanded ? 1 : 0,
+                                  transform: isExpanded ? "translateX(0)" : "translateX(-8px)",
+                                  transition: `opacity 0.4s ease ${di * 0.05}s, transform 0.4s ease ${di * 0.05}s`,
+                                }}
                               >
                                 {detail}
                               </p>
@@ -840,14 +845,14 @@ export default function DashboardPage() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {report.skillGapAnalysis.map((sg) => (
-              <div key={sg.careerTitle} className="bg-white rounded-2xl p-5 border border-[#E5E0DB]">
+              <div key={sg.careerTitle} className="bg-white rounded-2xl p-5 border border-[#E5E0DB] hover:border-[#C4956A]/40 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
                 <h3 className="text-[#1E1B18] text-base font-bold mb-3">{sg.careerTitle}</h3>
                 {sg.existingSkills.length > 0 && (
                   <div className="mb-3">
-                    <p className="text-[#7A706A] text-[11px] font-semibold uppercase tracking-wider mb-1.5">You have</p>
+                    <p className="text-[#5C5249] text-xs font-semibold uppercase tracking-wider mb-2">You have</p>
                     <div className="flex flex-wrap gap-1.5">
                       {sg.existingSkills.map((s) => (
-                        <span key={s.name} className="px-2 py-0.5 rounded-md text-[11px] font-medium bg-[#7B9E87]/10 text-[#5A8A6A]">
+                        <span key={s.name} className="px-2.5 py-1 rounded-md text-xs font-medium bg-[#7B9E87]/12 text-[#3D7A50] transition-colors duration-200 hover:bg-[#7B9E87]/20">
                           {s.name}
                         </span>
                       ))}
@@ -856,25 +861,25 @@ export default function DashboardPage() {
                 )}
                 {sg.missingSkills.length > 0 && (
                   <div>
-                    <p className="text-[#7A706A] text-[11px] font-semibold uppercase tracking-wider mb-1.5">To learn</p>
+                    <p className="text-[#5C5249] text-xs font-semibold uppercase tracking-wider mb-2">To learn</p>
                     <div className="flex flex-wrap gap-1.5">
                       {sg.missingSkills.map((s) => (
                         <span
                           key={s.name}
-                          className="px-2 py-0.5 rounded-md text-[11px] font-medium"
+                          className="px-2.5 py-1 rounded-md text-xs font-medium transition-colors duration-200 hover:opacity-80"
                           style={{
                             backgroundColor:
-                              s.priority === "High" ? "rgba(212,131,109,0.12)" :
-                              s.priority === "Medium" ? "rgba(196,149,106,0.12)" :
-                              "rgba(155,142,133,0.08)",
+                              s.priority === "High" ? "rgba(212,131,109,0.15)" :
+                              s.priority === "Medium" ? "rgba(196,149,106,0.15)" :
+                              "rgba(155,142,133,0.12)",
                             color:
-                              s.priority === "High" ? "#D4836D" :
-                              s.priority === "Medium" ? "#B07D4F" :
-                              "#8A7E76",
+                              s.priority === "High" ? "#B5543A" :
+                              s.priority === "Medium" ? "#96693A" :
+                              "#5C5249",
                           }}
                         >
                           {s.name}
-                          <span className="opacity-60 ml-1">({s.priority})</span>
+                          <span className="opacity-70 ml-1">({s.priority})</span>
                         </span>
                       ))}
                     </div>
@@ -899,7 +904,7 @@ export default function DashboardPage() {
         </div>
         <div className="grid gap-4 sm:grid-cols-3">
           {/* Entry Level */}
-          <div className="bg-white rounded-2xl p-5 border border-[#E5E0DB]">
+          <div className="bg-white rounded-2xl p-5 border border-[#E5E0DB] hover:border-[#7B9E87]/40 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-8 h-8 rounded-lg bg-[#7B9E87]/10 flex items-center justify-center">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5A8A6A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -908,17 +913,17 @@ export default function DashboardPage() {
               </div>
               <h3 className="text-[#1E1B18] text-sm font-bold">Entry-Level Roles</h3>
             </div>
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               {report.jobRolesAndOpportunities.entryLevelRoles.map((r) => (
-                <li key={r} className="text-[#635B55] text-sm flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#7B9E87]" />
+                <li key={r} className="text-[#3D3632] text-sm flex items-center gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#7B9E87] flex-shrink-0" />
                   {r}
                 </li>
               ))}
             </ul>
           </div>
           {/* Internships */}
-          <div className="bg-white rounded-2xl p-5 border border-[#E5E0DB]">
+          <div className="bg-white rounded-2xl p-5 border border-[#E5E0DB] hover:border-[#C4956A]/40 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-8 h-8 rounded-lg bg-[#C4956A]/10 flex items-center justify-center">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B07D4F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -927,17 +932,17 @@ export default function DashboardPage() {
               </div>
               <h3 className="text-[#1E1B18] text-sm font-bold">Internships</h3>
             </div>
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               {report.jobRolesAndOpportunities.internships.map((r) => (
-                <li key={r} className="text-[#635B55] text-sm flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#C4956A]" />
+                <li key={r} className="text-[#3D3632] text-sm flex items-center gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C4956A] flex-shrink-0" />
                   {r}
                 </li>
               ))}
             </ul>
           </div>
           {/* Freelance */}
-          <div className="bg-white rounded-2xl p-5 border border-[#E5E0DB]">
+          <div className="bg-white rounded-2xl p-5 border border-[#E5E0DB] hover:border-[#8B7EC8]/40 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-8 h-8 rounded-lg bg-[#8B7EC8]/10 flex items-center justify-center">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B7EC8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -946,10 +951,10 @@ export default function DashboardPage() {
               </div>
               <h3 className="text-[#1E1B18] text-sm font-bold">Freelance & Projects</h3>
             </div>
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               {report.jobRolesAndOpportunities.freelanceOrProjectIdeas.map((r) => (
-                <li key={r} className="text-[#635B55] text-sm flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#8B7EC8]" />
+                <li key={r} className="text-[#3D3632] text-sm flex items-center gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#8B7EC8] flex-shrink-0" />
                   {r}
                 </li>
               ))}
@@ -972,7 +977,7 @@ export default function DashboardPage() {
           </div>
           <div className="space-y-6">
             {report.careerGrowthPath.map((path) => (
-              <div key={path.careerTitle} className="bg-white rounded-2xl p-5 lg:p-6 border border-[#E5E0DB]">
+              <div key={path.careerTitle} className="bg-white rounded-2xl p-5 lg:p-6 border border-[#E5E0DB] hover:border-[#C4956A]/30 transition-all duration-300 hover:shadow-lg">
                 <h3 className="text-[#1E1B18] text-base font-bold mb-4">{path.careerTitle}</h3>
                 <div className="relative">
                   <div className="absolute left-[14px] top-3 bottom-3 w-[2px] bg-[#ECE8E3]" />
@@ -988,14 +993,14 @@ export default function DashboardPage() {
                         <div className="flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="text-[#1E1B18] text-sm font-bold">{step.roleTitle}</span>
-                            <span className="text-[#9B8E85] text-[11px]">·</span>
-                            <span className="text-[#8A7E76] text-xs">{step.yearRange}</span>
+                            <span className="text-[#6B6058] text-xs">·</span>
+                            <span className="text-[#5C5249] text-xs font-medium">{step.yearRange}</span>
                           </div>
-                          <p className="text-[#7B9E87] text-xs font-semibold mt-0.5">{step.salaryRange}</p>
+                          <p className="text-[#3D7A50] text-xs font-semibold mt-0.5">{step.salaryRange}</p>
                           {step.specializations && step.specializations.length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-1.5">
                               {step.specializations.map((s) => (
-                                <span key={s} className="px-2 py-0.5 rounded text-[10px] font-medium bg-[#F3F0EC] text-[#635B55]">
+                                <span key={s} className="px-2 py-0.5 rounded text-[11px] font-medium bg-[#F3F0EC] text-[#4A433E]">
                                   {s}
                                 </span>
                               ))}
@@ -1028,7 +1033,7 @@ export default function DashboardPage() {
             {report.personalizedAdvice.map((advice, i) => (
               <div
                 key={i}
-                className="bg-white rounded-xl p-4 border border-[#E5E0DB] flex items-start gap-3"
+                className="bg-white rounded-xl p-4 border border-[#E5E0DB] flex items-start gap-3 hover:border-[#C4956A]/30 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 cursor-default"
                 style={revealStyle(adviceReveal.isVisible, i, 0.1)}
               >
                 <div className="w-7 h-7 rounded-lg bg-[#C4956A]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -1036,7 +1041,7 @@ export default function DashboardPage() {
                     <path d="M9 18l6-6-6-6" />
                   </svg>
                 </div>
-                <p className="text-[#4A433E] text-sm leading-relaxed">{advice}</p>
+                <p className="text-[#3D3632] text-sm leading-relaxed">{advice}</p>
               </div>
             ))}
           </div>
@@ -1059,7 +1064,7 @@ export default function DashboardPage() {
         <div className="relative">
           <div className="inline-flex items-center gap-2 bg-white/[0.07] border border-white/[0.08] rounded-full px-4 py-1.5 mb-4">
             <div className="w-2 h-2 rounded-full bg-[#7B9E87] animate-pulse" />
-            <span className="text-white/60 text-xs font-semibold tracking-wide">AI-Powered Guidance</span>
+            <span className="text-white/80 text-xs font-semibold tracking-wide">AI-Powered Guidance</span>
           </div>
           <h3
             className="text-white text-2xl lg:text-[1.75rem] font-bold mb-3 leading-tight"
@@ -1067,7 +1072,7 @@ export default function DashboardPage() {
           >
             Ready to explore more?
           </h3>
-          <p className="text-white/65 text-sm mb-6 max-w-md mx-auto leading-relaxed">
+          <p className="text-white/80 text-sm mb-6 max-w-md mx-auto leading-relaxed">
             Run a new discovery with different skills or interests to compare career paths side by side.
           </p>
           <Link
