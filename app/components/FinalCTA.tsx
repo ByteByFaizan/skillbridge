@@ -8,7 +8,7 @@ export default function FinalCTA() {
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-normal leading-tight tracking-tight text-[#37322f]">
             Ready to get clarity on your career?
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-base text-[#605A57] sm:text-lg font-medium leading-7">
+          <p className="mx-auto mt-4 max-w-xl text-base text-[#49423D] sm:text-lg font-medium leading-7">
             Start your career discovery in minutes. No sign-up. No cost. Just
             clear, personalized guidance.
           </p>

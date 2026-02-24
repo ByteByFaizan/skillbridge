@@ -34,12 +34,12 @@ export default function TrustSignals() {
                 <div key={signal.title} className="flex gap-3.5">
                   <div className="flex-shrink-0">
                     <div className="inline-flex rounded-lg bg-[#f7f5f3] p-2.5">
-                      <signal.icon className="h-5 w-5 text-[#49423D]" />
+                      <signal.icon className="h-5 w-5 text-[#37322f]" />
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-[#49423D]">{signal.title}</h3>
-                    <p className="mt-1 text-sm leading-[22px] text-[#605A57]">
+                    <h3 className="text-sm font-semibold text-[#37322f]">{signal.title}</h3>
+                    <p className="mt-1 text-sm leading-[22px] text-[#49423D]/80">
                       {signal.description}
                     </p>
                   </div>

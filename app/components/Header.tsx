@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 const navLinks = [
@@ -11,13 +11,26 @@ const navLinks = [
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="relative w-full pt-4 pb-2">
+    <header className="sticky top-0 z-50 w-full pt-4 pb-2">
       {/* Full-width horizontal line through the middle of the navbar */}
-      <div className="absolute top-1/2 left-0 right-0 h-[2px] bg-[#37322f]/[0.08]" />
+      {!scrolled && (
+        <div className="absolute top-1/2 left-0 right-0 h-[2px] bg-[#37322f]/[0.08] transition-opacity duration-300" />
+      )}
       <div className="relative max-w-[1060px] mx-auto px-4">
-        <nav className="flex items-center justify-between rounded-full border border-[#37322f]/8 bg-white/60 backdrop-blur-sm shadow-[0_1px_3px_rgba(0,0,0,0.04)] px-6 py-2.5">
+        <nav className={`flex items-center justify-between rounded-full border header-sticky px-6 py-2.5 ${
+          scrolled
+            ? "border-[#37322f]/6 header-scrolled shadow-[0_1px_8px_rgba(0,0,0,0.06)]"
+            : "border-[#37322f]/8 bg-white/60 backdrop-blur-sm shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
+        }`}>
           {/* Left: Brand + nav links */}
           <div className="flex items-center gap-8">
             <a
@@ -72,28 +85,34 @@ export default function Header() {
       </div>
 
       {/* Mobile menu */}
-      {mobileOpen && (
-        <div className="border-t border-[#37322f]/6 bg-[#f7f5f3] md:hidden animate-fade-in">
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-out md:hidden ${
+          mobileOpen ? "max-h-[300px] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="border-t border-[#37322f]/6 bg-[#f7f5f3]">
           <div className="max-w-[1060px] mx-auto flex flex-col gap-1 px-4 py-4">
-            {navLinks.map((link) => (
+            {navLinks.map((link, i) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="rounded-md px-4 py-3 text-sm font-medium text-[#37322f] transition-colors hover:bg-[#37322f]/5"
+                className="rounded-md px-4 py-3 text-sm font-medium text-[#37322f] transition-all hover:bg-[#37322f]/5 animate-slide-in-bottom"
+                style={{ animationDelay: `${i * 50}ms` }}
               >
                 {link.label}
               </a>
             ))}
             <a
               href="/login"
-              className="rounded-md px-4 py-3 text-sm font-medium text-[#37322f] transition-colors hover:bg-[#37322f]/5"
+              className="rounded-md px-4 py-3 text-sm font-medium text-[#37322f] transition-all hover:bg-[#37322f]/5 animate-slide-in-bottom"
+              style={{ animationDelay: "150ms" }}
             >
               Log in
             </a>
           </div>
         </div>
-      )}
+      </div>
     </header>
   );
 }

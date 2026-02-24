@@ -24,7 +24,7 @@ const steps = [
   },
 ];
 
-const CYCLE_MS = 3000;
+const CYCLE_MS = 3200;
 
 export default function HowItWorks() {
   const [active, setActive] = useState(0);
@@ -56,14 +56,14 @@ export default function HowItWorks() {
   }, []);
 
   return (
-    <section id="how-it-works" className="border-t border-[#e0dedb] border-b border-b-[#e0dedb]">
+    <section id="how-it-works" className="border-t border-b border-[#e0dedb]">
       <div className="max-w-[1060px] mx-auto px-4">
         <div className="py-16 sm:py-20">
           <RevealOnScroll>
             <p className="text-[#605A57] text-sm font-medium uppercase tracking-widest">
               How it works
             </p>
-            <h2 className="mt-3 text-[#49423D] text-3xl sm:text-4xl font-semibold leading-tight tracking-tight">
+            <h2 className="mt-3 text-[#37322f] text-3xl sm:text-4xl font-semibold leading-tight tracking-tight">
               Three simple steps to clarity
             </h2>
           </RevealOnScroll>
@@ -91,10 +91,10 @@ export default function HowItWorks() {
                     )}
                   </div>
 
-                  <h3 className="text-[#49423D] text-sm font-semibold leading-6 mt-2">
+                  <h3 className="text-[#37322f] text-sm font-semibold leading-6 mt-2">
                     {step.title}
                   </h3>
-                  <p className="text-[#605A57] text-sm leading-[22px]">
+                  <p className="text-[#49423D]/80 text-sm leading-[22px]">
                     {step.description}
                   </p>
                 </div>
