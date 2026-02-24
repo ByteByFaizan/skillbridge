@@ -1,16 +1,24 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { getSupabaseBrowser } from "@/lib/supabase-browser";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [formTilt, setFormTilt] = useState({ x: 0, y: 0 });
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const leftPanelRef = useRef<HTMLDivElement>(null);
@@ -43,10 +51,75 @@ export default function LoginPage() {
     setFormTilt({ x: 0, y: 0 });
   }, []);
 
+  /* ── Read callback error from URL ─────────────────── */
+  useEffect(() => {
+    const err = searchParams.get("error");
+    if (err === "auth_callback_failed") {
+      setError("Authentication failed. Please try again.");
+    }
+  }, [searchParams]);
+
+  /* ── OAuth (Google / GitHub) ──────────────────────── */
+  const handleOAuth = async (provider: "google" | "github") => {
+    setError(null);
+    setIsLoading(true);
+    try {
+      const supabase = getSupabaseBrowser();
+      const redirectTo = `${window.location.origin}/api/auth/callback`;
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: { redirectTo },
+      });
+      if (oauthError) setError(oauthError.message);
+    } catch {
+      setError("OAuth sign-in failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  /* ── Email + Password submit ─────────────────────── */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    setSuccessMsg(null);
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 2000);
+
+    try {
+      if (mode === "signup") {
+        const res = await fetch("/api/auth/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password, name }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.error ?? "Sign-up failed.");
+        } else {
+          setSuccessMsg("Check your email to confirm your account, then sign in.");
+          setMode("login");
+        }
+      } else {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.error ?? "Invalid credentials.");
+        } else {
+          const redirect = searchParams.get("redirect") ?? "/dashboard";
+          router.push(redirect);
+          router.refresh();
+          return; // keep spinner until navigation completes
+        }
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   /* ── Stagger helper — spring-overshoot easing ─────────── */
@@ -335,18 +408,34 @@ export default function LoginPage() {
               className="text-[#2c2724] text-[28px] tracking-tight mb-2"
               style={{ fontFamily: "var(--font-instrument-serif), 'Georgia', serif" }}
             >
-              Welcome back
+              {mode === "login" ? "Welcome back" : "Create your account"}
             </h2>
             <p className="text-[#49423D]/60 text-[15px]" style={stagger(1, 0.15)}>
-              Enter your credentials to access your account
+              {mode === "login"
+                ? "Enter your credentials to access your account"
+                : "Start your personalized career journey"}
             </p>
           </div>
+
+          {/* Error / Success messages */}
+          {error && (
+            <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 animate-[fade-in_0.3s_ease-out]">
+              {error}
+            </div>
+          )}
+          {successMsg && (
+            <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 animate-[fade-in_0.3s_ease-out]">
+              {successMsg}
+            </div>
+          )}
 
           {/* Social Login */}
           <div className="grid grid-cols-2 gap-3 mb-6" style={stagger(2, 0.15)}>
             <button
               type="button"
-              className="group relative flex items-center justify-center gap-2.5 rounded-xl border border-[#37322f]/[0.08] bg-white px-4 py-3 text-sm font-medium text-[#37322f]/80 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:border-[#37322f]/[0.15] hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] hover:bg-white hover:-translate-y-1 active:translate-y-0 active:scale-[0.98] transition-all duration-300 overflow-hidden"
+              onClick={() => handleOAuth("google")}
+              disabled={isLoading}
+              className="group relative flex items-center justify-center gap-2.5 rounded-xl border border-[#37322f]/[0.08] bg-white px-4 py-3 text-sm font-medium text-[#37322f]/80 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:border-[#37322f]/[0.15] hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] hover:bg-white hover:-translate-y-1 active:translate-y-0 active:scale-[0.98] transition-all duration-300 overflow-hidden disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#37322f]/[0.02] to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700" />
               <svg width="18" height="18" viewBox="0 0 24 24" className="shrink-0 group-hover:scale-110 transition-transform duration-300">
@@ -359,7 +448,9 @@ export default function LoginPage() {
             </button>
             <button
               type="button"
-              className="group relative flex items-center justify-center gap-2.5 rounded-xl border border-[#37322f]/[0.08] bg-white px-4 py-3 text-sm font-medium text-[#37322f]/80 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:border-[#37322f]/[0.15] hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] hover:bg-white hover:-translate-y-1 active:translate-y-0 active:scale-[0.98] transition-all duration-300 overflow-hidden"
+              onClick={() => handleOAuth("github")}
+              disabled={isLoading}
+              className="group relative flex items-center justify-center gap-2.5 rounded-xl border border-[#37322f]/[0.08] bg-white px-4 py-3 text-sm font-medium text-[#37322f]/80 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:border-[#37322f]/[0.15] hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] hover:bg-white hover:-translate-y-1 active:translate-y-0 active:scale-[0.98] transition-all duration-300 overflow-hidden disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#37322f]/[0.02] to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700" />
               <svg width="18" height="18" viewBox="0 0 24 24" fill="#37322f" className="shrink-0 opacity-80 group-hover:scale-110 group-hover:rotate-[360deg] transition-all duration-500">
@@ -378,6 +469,33 @@ export default function LoginPage() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Name (signup only) */}
+            {mode === "signup" && (
+              <div style={stagger(3.5, 0.15)}>
+                <label htmlFor="name" className="block text-[13px] font-medium text-[#37322f]/70 mb-1.5">
+                  Full name
+                </label>
+                <div className={`relative login-input-wrap ${focusedField === "name" ? "login-input-focused" : ""}`}>
+                  <div className={`pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 transition-all duration-300 ${focusedField === "name" ? "scale-110" : ""}`}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={`transition-colors duration-300 ${focusedField === "name" ? "text-[#c4a882]" : "text-[#37322f]/40"}`}>
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                  </div>
+                  <input
+                    id="name"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    onFocus={() => setFocusedField("name")}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder="John Doe"
+                    className="w-full rounded-xl border border-[#37322f]/[0.08] bg-white py-3 pl-11 pr-4 text-[15px] text-[#2c2724] placeholder:text-[#37322f]/40 shadow-[0_1px_2px_rgba(0,0,0,0.04)] focus:outline-none focus:border-[#c4a882]/30 focus:shadow-[0_0_0_3px_rgba(196,168,130,0.08),0_0_20px_rgba(196,168,130,0.06)] transition-all duration-300"
+                  />
+                </div>
+              </div>
+            )}
+
             {/* Email */}
             <div style={stagger(4, 0.15)}>
               <label htmlFor="email" className="block text-[13px] font-medium text-[#37322f]/70 mb-1.5">
@@ -500,7 +618,7 @@ export default function LoginPage() {
               {/* Ripple on hover */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <span className={`relative z-10 inline-flex items-center gap-2 ${isLoading ? "opacity-0" : ""}`}>
-                Sign in
+                {mode === "login" ? "Sign in" : "Create account"}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-1 transition-transform duration-200">
                   <line x1="5" y1="12" x2="19" y2="12" />
                   <polyline points="12 5 19 12 12 19" />
@@ -516,13 +634,18 @@ export default function LoginPage() {
 
           {/* Sign up link */}
           <p className="mt-8 text-center text-[14px] text-[#49423D]/65" style={stagger(8, 0.15)}>
-            Don&apos;t have an account?{" "}
-            <a
-              href="#"
-              className="font-medium text-[#37322f] hover:text-[#c4a882] transition-colors duration-300 underline decoration-[#37322f]/20 underline-offset-2 hover:decoration-[#c4a882]/40"
+            {mode === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
+            <button
+              type="button"
+              onClick={() => {
+                setMode(mode === "login" ? "signup" : "login");
+                setError(null);
+                setSuccessMsg(null);
+              }}
+              className="font-medium text-[#37322f] hover:text-[#c4a882] transition-colors duration-300 underline decoration-[#37322f]/20 underline-offset-2 hover:decoration-[#c4a882]/40 cursor-pointer"
             >
-              Create account
-            </a>
+              {mode === "login" ? "Create account" : "Sign in"}
+            </button>
           </p>
 
           {/* Terms */}
@@ -724,6 +847,12 @@ export default function LoginPage() {
           0% { transform: scale(0); }
           50% { transform: scale(1.3); }
           100% { transform: scale(1); }
+        }
+
+        /* ▸ Fade-in for error/success messages */
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(-6px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </div>

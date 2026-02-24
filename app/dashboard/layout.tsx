@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { getSupabaseBrowser } from "@/lib/supabase-browser";
+import type { User } from "@supabase/supabase-js";
 
 const navItems = [
   {
@@ -29,11 +32,38 @@ export default function DashboardLayout({
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 50);
     return () => clearTimeout(t);
   }, []);
+
+  /* Fetch current user */
+  useEffect(() => {
+    const supabase = getSupabaseBrowser();
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  /* Logout handler */
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      router.push("/login");
+      router.refresh();
+    } catch {
+      setLoggingOut(false);
+    }
+  };
 
   /* Close mobile sidebar on resize to desktop */
   useEffect(() => {
@@ -203,6 +233,41 @@ export default function DashboardLayout({
             );
           })}
         </nav>
+
+        {/* ── User profile & Logout ── */}
+        {user && (
+          <div className={`px-3 pb-5 mt-auto ${sidebarCollapsed && !mobileOpen ? "lg:px-2" : ""}`}>
+            <div className={`h-px bg-white/[0.08] mb-3 ${sidebarCollapsed ? "lg:mx-0" : "mx-2"}`} />
+            <div className={`flex items-center gap-3 rounded-xl px-3 py-2.5 ${sidebarCollapsed && !mobileOpen ? "lg:justify-center lg:px-0" : ""}`}>
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#D4A67A] to-[#A67B52] flex items-center justify-center flex-shrink-0 text-white text-xs font-bold uppercase">
+                {(user.user_metadata?.full_name?.[0] ?? user.email?.[0] ?? "U")}
+              </div>
+              {(!sidebarCollapsed || mobileOpen) && (
+                <div className="flex-1 min-w-0">
+                  <p className="text-white/90 text-[13px] font-medium truncate">
+                    {user.user_metadata?.full_name || "User"}
+                  </p>
+                  <p className="text-white/40 text-[11px] truncate">{user.email}</p>
+                </div>
+              )}
+              {(!sidebarCollapsed || mobileOpen) && (
+                <button
+                  onClick={handleLogout}
+                  disabled={loggingOut}
+                  className="w-8 h-8 rounded-lg bg-white/[0.06] hover:bg-red-500/20 flex items-center justify-center text-white/40 hover:text-red-400 transition-all duration-200 disabled:opacity-50"
+                  aria-label="Sign out"
+                  title="Sign out"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                  </svg>
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </aside>
 
       {/* ──────────── MAIN CONTENT ──────────── */}
