@@ -58,6 +58,27 @@ Thumbs.db
 # Turbopack
 .turbo/
 
+# Windows
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Visual Studio / MSBuild
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+/bin/
+/obj/
+
+# Local tooling
+.envrc
+.direnv/
+.history/
+.npm/
+.pnpm-store/
+
 
 
 # Skills.sh (local-only)
