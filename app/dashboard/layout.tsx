@@ -5,19 +5,6 @@ import Link from "next/link";
 
 const navItems = [
   {
-    label: "Overview",
-    href: "/dashboard",
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="3" width="7" height="7" rx="1.5" />
-        <rect x="14" y="3" width="7" height="7" rx="1.5" />
-        <rect x="3" y="14" width="7" height="7" rx="1.5" />
-        <rect x="14" y="14" width="7" height="7" rx="1.5" />
-      </svg>
-    ),
-    active: false,
-  },
-  {
     label: "Roadmap",
     href: "/dashboard",
     icon: (
@@ -30,51 +17,6 @@ const navItems = [
       </svg>
     ),
     active: true,
-  },
-  {
-    label: "Skills",
-    href: "/dashboard",
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-      </svg>
-    ),
-    active: false,
-  },
-  {
-    label: "Mentors",
-    href: "/dashboard",
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-      </svg>
-    ),
-    active: false,
-  },
-  {
-    label: "Resources",
-    href: "/dashboard",
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-      </svg>
-    ),
-    active: false,
-  },
-  {
-    label: "Settings",
-    href: "/dashboard",
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="3" />
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-      </svg>
-    ),
-    active: false,
   },
 ];
 
@@ -208,13 +150,6 @@ export default function DashboardLayout({
         {/* Separator */}
         <div className={`mx-5 h-px bg-white/[0.08] mb-3 ${sidebarCollapsed ? "lg:mx-3" : ""}`} />
 
-        {/* Section label */}
-        {(!sidebarCollapsed || mobileOpen) && (
-          <p className="px-6 mb-2 text-[10px] font-bold tracking-[0.2em] uppercase text-white/25">
-            Menu
-          </p>
-        )}
-
         {/* Nav */}
         <nav className="flex-1 flex flex-col gap-0.5 px-3 overflow-y-auto" role="menu">
           {navItems.map((item, i) => {
@@ -268,33 +203,6 @@ export default function DashboardLayout({
             );
           })}
         </nav>
-
-        {/* Separator before profile */}
-        <div className={`mx-5 h-px bg-white/[0.06] mt-2 ${sidebarCollapsed ? "lg:mx-3" : ""}`} />
-
-        {/* Bottom: User profile */}
-        <div className={`p-4 ${sidebarCollapsed && !mobileOpen ? "lg:flex lg:justify-center" : ""}`}>
-          <div
-            className={`flex items-center gap-3 rounded-xl px-2 py-2 hover:bg-white/[0.05] transition-colors cursor-pointer ${
-              sidebarCollapsed && !mobileOpen ? "lg:justify-center lg:px-0" : ""
-            }`}
-          >
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#8BAF96] to-[#5A7D62] flex items-center justify-center flex-shrink-0 text-white text-xs font-bold ring-2 ring-white/10">
-              AS
-            </div>
-            {(!sidebarCollapsed || mobileOpen) && (
-              <div className="flex-1 min-w-0">
-                <p className="text-white/90 text-sm font-medium truncate">Alex S.</p>
-                <p className="text-white/40 text-[11px] truncate">Frontend Track</p>
-              </div>
-            )}
-            {(!sidebarCollapsed || mobileOpen) && (
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/25 flex-shrink-0">
-                <circle cx="12" cy="12" r="1" /><circle cx="12" cy="5" r="1" /><circle cx="12" cy="19" r="1" />
-              </svg>
-            )}
-          </div>
-        </div>
       </aside>
 
       {/* ──────────── MAIN CONTENT ──────────── */}
