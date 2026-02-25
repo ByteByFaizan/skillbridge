@@ -204,10 +204,16 @@ function buildStats(report: CareerReport) {
    SCROLL REVEAL HOOK
    ═══════════════════════════════════════════════════════ */
 
-function useScrollReveal(threshold = 0.15) {
+function useScrollReveal(threshold = 0.15, resetKey?: string) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [elReady, setElReady] = useState(false);
+
+  // Reset visibility when resetKey changes (e.g. new roadmap loaded)
+  useEffect(() => {
+    setIsVisible(false);
+    setElReady(false);
+  }, [resetKey]);
 
   // Detect when the ref element is first attached to the DOM
   useEffect(() => {
@@ -240,8 +246,13 @@ function useScrollReveal(threshold = 0.15) {
    ANIMATED COUNTER
    ═══════════════════════════════════════════════════════ */
 
-function useAnimatedCounter(target: number, isVisible: boolean, duration = 1200) {
+function useAnimatedCounter(target: number, isVisible: boolean, duration = 1200, resetKey?: string) {
   const [count, setCount] = useState(0);
+
+  // Reset count when resetKey changes so we re-animate on new data
+  useEffect(() => {
+    setCount(0);
+  }, [resetKey]);
 
   useEffect(() => {
     if (!isVisible) return;
@@ -366,14 +377,15 @@ export default function DashboardPage() {
   const [completedMilestones, setCompletedMilestones] = useState<Set<number>>(new Set());
   const [animatedProgress, setAnimatedProgress] = useState<Record<number, number>>({});
 
-  // Scroll reveal refs
-  const headerReveal = useScrollReveal(0.1);
-  const statsReveal = useScrollReveal(0.1);
-  const progressReveal = useScrollReveal(0.2);
-  const timelineReveal = useScrollReveal(0.05);
-  const careerReveal = useScrollReveal(0.1);
-  const adviceReveal = useScrollReveal(0.1);
-  const ctaReveal = useScrollReveal(0.2);
+  // Scroll reveal refs — pass runId as resetKey so all animations re-trigger on new data
+  const revealKey = runData?.runId;
+  const headerReveal = useScrollReveal(0.1, revealKey);
+  const statsReveal = useScrollReveal(0.1, revealKey);
+  const progressReveal = useScrollReveal(0.2, revealKey);
+  const timelineReveal = useScrollReveal(0.05, revealKey);
+  const careerReveal = useScrollReveal(0.1, revealKey);
+  const adviceReveal = useScrollReveal(0.1, revealKey);
+  const ctaReveal = useScrollReveal(0.2, revealKey);
 
   // Derived data
   const milestones = runData ? buildMilestones(runData.report.learningRoadmap, completedMilestones) : [];
@@ -382,19 +394,27 @@ export default function DashboardPage() {
   // Animated counters for stats
   const counter0 = useAnimatedCounter(
     runData ? parseInt(stats[0]?.value ?? "0", 10) || 0 : 0,
-    statsReveal.isVisible
+    statsReveal.isVisible,
+    1200,
+    revealKey
   );
   const counter1 = useAnimatedCounter(
     runData ? parseInt(stats[1]?.value ?? "0", 10) || 0 : 0,
-    statsReveal.isVisible
+    statsReveal.isVisible,
+    1200,
+    revealKey
   );
   const counter2 = useAnimatedCounter(
     runData ? parseInt(stats[2]?.value ?? "0", 10) || 0 : 0,
-    statsReveal.isVisible
+    statsReveal.isVisible,
+    1200,
+    revealKey
   );
   const counter3 = useAnimatedCounter(
     runData ? parseInt(stats[3]?.value ?? "0", 10) || 0 : 0,
-    statsReveal.isVisible
+    statsReveal.isVisible,
+    1200,
+    revealKey
   );
 
   const getAnimatedValue = (index: number) => {
@@ -504,6 +524,11 @@ export default function DashboardPage() {
     const t = setTimeout(() => setMounted(true), 80);
     return () => clearTimeout(t);
   }, []);
+
+  /* Reset animated progress when new roadmap loads */
+  useEffect(() => {
+    setAnimatedProgress({});
+  }, [revealKey]);
 
   /* Animate progress bars when visible */
   useEffect(() => {

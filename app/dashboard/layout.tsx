@@ -321,11 +321,11 @@ export default function DashboardLayout({
           <div
             className="overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex-shrink-0"
             style={{
-              maxHeight: showHistory && (!sidebarCollapsed || mobileOpen) ? "400px" : "0px",
+              maxHeight: showHistory && (!sidebarCollapsed || mobileOpen) ? "600px" : "0px",
               opacity: showHistory && (!sidebarCollapsed || mobileOpen) ? 1 : 0,
             }}
           >
-            <div className="pl-11 pr-3 py-2 space-y-1 pb-6 overflow-y-auto max-h-[300px] custom-scrollbar">
+            <div className="pl-11 pr-3 py-2 space-y-1 pb-6 overflow-y-auto max-h-[500px] custom-scrollbar">
               {loadingHistory ? (
                 <div className="flex items-center gap-2 text-white/40 text-xs py-2">
                   <div className="w-3 h-3 rounded-full border-2 border-white/20 border-t-[#D4A67A] animate-spin" />
