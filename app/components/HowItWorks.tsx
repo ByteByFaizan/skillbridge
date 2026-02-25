@@ -75,14 +75,16 @@ export default function HowItWorks() {
                 <div
                   key={step.number}
                   onClick={() => goTo(index)}
-                  className={`relative p-6 flex flex-col gap-2 border cursor-pointer transition-all duration-300 ${
-                    isActive
-                      ? "bg-white border-[#e0dedb] shadow-sm"
-                      : "border-[#e0dedb]/80 hover:border-[#e0dedb] hover:bg-white/50"
-                  }`}
+                  className={`group relative p-6 flex flex-col gap-2 border cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${isActive
+                      ? "bg-white border-[#37322f]/20 shadow-[0_8px_30px_rgba(55,50,47,0.08)] -translate-y-1"
+                      : "bg-[#f7f5f3]/30 border-[#e0dedb]/80 hover:border-[#37322f]/10 hover:bg-white/80 hover:shadow-sm"
+                    }`}
                 >
+                  {/* Subtle background glow for active state */}
+                  <div className={`absolute inset-0 bg-gradient-to-br from-[#37322f]/[0.02] to-transparent transition-opacity duration-500 ${isActive ? "opacity-100" : "opacity-0"}`} />
+
                   {/* Animated top indicator line */}
-                  <div className="absolute top-0 left-0 right-0 h-[3px] overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-[3px] overflow-hidden bg-transparent">
                     {isActive && (
                       <div
                         key={animKey}
@@ -91,10 +93,10 @@ export default function HowItWorks() {
                     )}
                   </div>
 
-                  <h3 className="text-[#37322f] text-sm font-semibold leading-6 mt-2">
+                  <h3 className={`text-sm font-semibold leading-6 mt-2 transition-colors duration-300 relative z-10 ${isActive ? "text-[#37322f]" : "text-[#49423D]/70 group-hover:text-[#37322f]"}`}>
                     {step.title}
                   </h3>
-                  <p className="text-[#49423D]/80 text-sm leading-[22px]">
+                  <p className={`text-sm leading-[22px] transition-colors duration-300 relative z-10 ${isActive ? "text-[#49423D]/90" : "text-[#49423D]/60 group-hover:text-[#49423D]/80"}`}>
                     {step.description}
                   </p>
                 </div>

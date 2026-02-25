@@ -57,11 +57,12 @@ export default function Features() {
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4">
           {features.map((feature, i) => (
             <RevealOnScroll key={feature.title} delay={i * 100}>
-              <div className="p-6 border border-[#e0dedb] bg-white card-hover h-full">
-                <div className="mb-4 inline-flex rounded-lg bg-[#f7f5f3] p-2.5">
+              <div className="group p-6 border border-[#e0dedb]/80 bg-white h-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-[#37322f]/20 hover:shadow-[0_8px_30px_rgba(55,50,47,0.06)] hover:-translate-y-1 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#f7f5f3]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="mb-4 inline-flex rounded-lg bg-[#f7f5f3] p-2.5 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110 relative z-10">
                   <feature.icon className="h-5 w-5 text-[#37322f]" />
                 </div>
-                <h3 className="flex items-center gap-2 text-[#37322f] text-sm font-semibold leading-6">
+                <h3 className="flex items-center gap-2 text-[#37322f] text-sm font-semibold leading-6 relative z-10">
                   {feature.title}
                   {feature.comingSoon && (
                     <span className="px-2 py-0.5 bg-[#f7f5f3] border border-[#e0dedb] text-[10px] font-semibold uppercase tracking-wider text-[#605A57] rounded-full">
@@ -69,7 +70,7 @@ export default function Features() {
                     </span>
                   )}
                 </h3>
-                <p className="mt-1.5 text-[#49423D]/80 text-sm leading-[22px]">
+                <p className="mt-1.5 text-[#49423D]/80 text-sm leading-[22px] relative z-10">
                   {feature.description}
                 </p>
               </div>

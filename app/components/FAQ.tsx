@@ -63,14 +63,16 @@ export default function FAQ() {
             {faqs.map((faq, i) => (
               <RevealOnScroll key={i} delay={i * 60}>
                 <Disclosure as="div" className="border-b border-[rgba(73,66,61,0.16)]">
-                  <DisclosureButton className="group flex w-full items-center justify-between py-5 text-left">
-                    <span className="pr-4 text-[#49423D] text-sm font-semibold sm:text-base">
+                  <DisclosureButton className="group flex w-full items-center justify-between py-5 text-left transition-colors duration-300 hover:text-[#37322f]">
+                    <span className="pr-4 text-[#49423D] group-hover:text-[#37322f] text-sm font-semibold sm:text-base transition-colors duration-200">
                       {faq.question}
                     </span>
-                    <ChevronDownIcon className="h-4 w-4 flex-shrink-0 text-[#605A57] transition-transform duration-200 group-data-[open]:rotate-180" />
+                    <span className="flex items-center justify-center w-8 h-8 rounded-full border border-transparent group-hover:border-[#e0dedb] group-hover:bg-[#f7f5f3] transition-all duration-300">
+                      <ChevronDownIcon className="h-4 w-4 flex-shrink-0 text-[#605A57] group-hover:text-[#37322f] transition-transform duration-300 ease-[cubic-bezier(0.87,0,0.13,1)] group-data-[open]:rotate-180" />
+                    </span>
                   </DisclosureButton>
-                  <DisclosurePanel className="pb-5">
-                    <p className="text-sm leading-relaxed text-[#605A57]">
+                  <DisclosurePanel className="pb-6 overflow-hidden transition-all duration-300 ease-in-out">
+                    <p className="text-sm leading-relaxed text-[#605A57] animate-fade-in-up">
                       {faq.answer}
                     </p>
                   </DisclosurePanel>

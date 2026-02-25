@@ -24,14 +24,15 @@ export default function Hero() {
           <div className="flex flex-col items-center gap-4 animate-fade-in-up animation-delay-400">
             <a
               href="/discover"
-              className="group h-11 px-12 bg-[#37322f] hover:bg-[#2A2520] text-white rounded-full font-medium text-sm transition-all duration-300 inline-flex items-center gap-2 shadow-[0px_0px_0px_2.5px_rgba(255,255,255,0.08)_inset] hover:shadow-[0_4px_16px_rgba(55,50,47,0.25)] hover:scale-[1.02] active:scale-[0.98]"
+              className="group relative h-12 px-12 bg-[#37322f] hover:bg-[#2A2520] text-white rounded-full font-medium text-[15px] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] inline-flex items-center gap-2.5 shadow-[0px_0px_0px_2.5px_rgba(255,255,255,0.08)_inset] hover:shadow-[0_8px_24px_rgba(55,50,47,0.3),0_0_0_4px_rgba(55,50,47,0.1)] hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
             >
-              Start Career Discovery
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+              <span className="relative z-10">Start Career Discovery</span>
               <svg
-                className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
+                className="relative z-10 h-4 w-4 transition-transform duration-300 cubic-bezier(0.16,1,0.3,1) group-hover:translate-x-1"
                 fill="none"
                 viewBox="0 0 24 24"
-                strokeWidth={2}
+                strokeWidth={2.5}
                 stroke="currentColor"
               >
                 <path
