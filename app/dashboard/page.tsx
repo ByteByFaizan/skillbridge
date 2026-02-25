@@ -844,8 +844,8 @@ export default function DashboardPage() {
                             toggleMilestoneComplete(milestone.id);
                           }}
                           className={`group/btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-300 active:scale-[0.96] ${milestone.status === "completed"
-                              ? "bg-[#7B9E87]/12 text-[#5A8A6A] hover:bg-[#7B9E87]/20 border border-[#7B9E87]/25"
-                              : "bg-[#F3F0EC] text-[#4A433E] hover:bg-[#2C2623] hover:text-white border border-[#E5E0DB] hover:border-[#2C2623] hover:shadow-lg hover:shadow-[#2C2623]/10"
+                            ? "bg-[#7B9E87]/12 text-[#5A8A6A] hover:bg-[#7B9E87]/20 border border-[#7B9E87]/25"
+                            : "bg-[#F3F0EC] text-[#4A433E] hover:bg-[#2C2623] hover:text-white border border-[#E5E0DB] hover:border-[#2C2623] hover:shadow-lg hover:shadow-[#2C2623]/10"
                             }`}
                         >
                           {milestone.status === "completed" ? (
@@ -865,18 +865,33 @@ export default function DashboardPage() {
                           )}
                         </button>
 
-                        {/* Expand/collapse chevron */}
-                        <div
-                          className="w-8 h-8 rounded-lg flex items-center justify-center text-[#9B8E85] hover:bg-[#F3F0EC] transition-all"
-                          style={{
-                            transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
-                            transition: "transform 0.35s cubic-bezier(0.34,1.56,0.64,1)",
+                        {/* Expand/collapse button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleCard(milestone.id);
                           }}
+                          className="group/expand flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#9B8E85] hover:text-[#4A433E] bg-transparent hover:bg-[#F3F0EC] border border-transparent hover:border-[#E5E0DB] transition-all duration-300"
                         >
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <span>{isExpanded ? "Hide Details" : "View Details"}</span>
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="transition-transform duration-300 group-hover/expand:translate-y-[1px]"
+                            style={{
+                              transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                              transition: "transform 0.35s cubic-bezier(0.34,1.56,0.64,1)",
+                            }}
+                          >
                             <polyline points="6 9 12 15 18 9" />
                           </svg>
-                        </div>
+                        </button>
                       </div>
                     </div>
 
