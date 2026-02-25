@@ -436,14 +436,14 @@ export default function DashboardPage() {
 
     let runId = localStorage.getItem("sb_last_run_id");
     if (!runId) {
-      // New device or cleared storage — try to fetch the latest run from the server
+      // New device or cleared storage — fetch the run list and take the most recent one
       try {
-        const latestRes = await fetch("/api/recommendations/latest");
-        if (latestRes.ok) {
-          const { runId: latest } = await latestRes.json();
-          if (latest) {
-            runId = latest;
-            localStorage.setItem("sb_last_run_id", latest);
+        const listRes = await fetch("/api/recommendations");
+        if (listRes.ok) {
+          const { runs } = await listRes.json() as { runs: { runId: string }[] };
+          if (runs && runs.length > 0) {
+            runId = runs[0].runId;
+            localStorage.setItem("sb_last_run_id", runId);
           }
         }
       } catch {

@@ -94,7 +94,7 @@ function LoginPageContent() {
         });
         const data = await res.json();
         if (!res.ok) {
-          setError(data.error ?? "Sign-up failed.");
+          setError(data.error?.message ?? data.error ?? "Sign-up failed.");
         } else {
           setSuccessMsg("Check your email to confirm your account, then sign in.");
           setMode("login");
@@ -107,7 +107,7 @@ function LoginPageContent() {
         });
         const data = await res.json();
         if (!res.ok) {
-          setError(data.error ?? "Invalid credentials.");
+          setError(data.error?.message ?? data.error ?? "Invalid credentials.");
         } else {
           const redirect = searchParams.get("redirect") ?? "/dashboard";
           router.push(redirect);
@@ -663,7 +663,9 @@ function LoginPageContent() {
       </div>
 
       {/* ──────────── CSS Animations ──────────── */}
-      <style jsx>{`
+      {/* eslint-disable-next-line react/no-danger */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
         /* ▸ Animated gradient background */
         .login-gradient-shift {
           background: linear-gradient(135deg, #2c2724 0%, #37322f 25%, #1e1b19 50%, #2c2724 75%, #37322f 100%);
@@ -854,7 +856,7 @@ function LoginPageContent() {
           from { opacity: 0; transform: translateY(-6px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-      `}</style>
+      ` }} />
     </div>
   );
 }
