@@ -20,7 +20,7 @@ function getApiKey(): string {
 }
 
 function getModel(): string {
-  return process.env.OPENROUTER_MODEL ?? "openai/gpt-4.1";
+  return process.env.OPENROUTER_MODEL ?? "qwen/qwen3-235b-a22b:free";
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -112,10 +112,10 @@ function parseAndValidate(raw: string): {
   // Build a human-readable error from zod issues
   const errMsg = result.error?.issues
     ? result.error.issues
-        .map((i: { path?: unknown[]; message?: string }) =>
-          `${(i.path ?? []).join(".")}: ${i.message}`
-        )
-        .join("; ")
+      .map((i: { path?: unknown[]; message?: string }) =>
+        `${(i.path ?? []).join(".")}: ${i.message}`
+      )
+      .join("; ")
     : "Schema validation failed";
   return { success: false, error: errMsg, raw: cleaned };
 }
