@@ -6,9 +6,9 @@ import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import type { User } from "@supabase/supabase-js";
 
 const navLinks = [
-  { label: "Features", href: "#features" },
-  { label: "How it works", href: "#how-it-works" },
-  { label: "FAQ", href: "#faq" },
+  { label: "Features", href: "/#features" },
+  { label: "How it works", href: "/#how-it-works" },
+  { label: "FAQ", href: "/#faq" },
   { label: "About", href: "/about" },
 ];
 

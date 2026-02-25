@@ -116,21 +116,26 @@ export default function AboutPage() {
                         </div>
                     </div>
 
-                    {/* Scroll-down indicator */}
-                    <div className="about-scroll-indicator absolute bottom-4 left-1/2 -translate-x-1/2 opacity-40">
-                        <svg
-                            width="20"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="#37322f"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M7 13l5 5 5-5" />
-                            <path d="M7 6l5 5 5-5" />
-                        </svg>
+                    {/* Scroll-down indicator label */}
+                    <div className="absolute bottom-6 left-0 right-0 flex justify-center opacity-40 pointer-events-none">
+                        <div className="about-scroll-indicator flex flex-col items-center gap-2">
+                            <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#37322f]">
+                                Scroll Down
+                            </span>
+                            <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="#37322f"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
+                                <path d="M12 5v14" />
+                                <path d="M19 12l-7 7-7-7" />
+                            </svg>
+                        </div>
                     </div>
                 </section>
 

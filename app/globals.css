@@ -785,25 +785,17 @@ textarea {
 @keyframes about-scroll-bounce {
 
   0%,
-  20%,
-  50%,
-  80%,
   100% {
-    transform: translateY(0) translateX(-50%);
+    transform: translateY(0);
   }
 
-  40% {
-    transform: translateY(8px) translateX(-50%);
-  }
-
-  60% {
-    transform: translateY(4px) translateX(-50%);
+  50% {
+    transform: translateY(6px);
   }
 }
 
 .about-scroll-indicator {
   animation: about-scroll-bounce 2.5s ease-in-out infinite;
-  animation-delay: 1.5s;
 }
 
 /* Floating dots pattern for story section */
