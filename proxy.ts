@@ -11,7 +11,7 @@ import { NextResponse, type NextRequest } from "next/server";
  * 3. Redirects already-authenticated users away from `/login` to
  *    `/dashboard`.
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(

@@ -90,9 +90,8 @@ export default function DashboardLayout({
     <div className="min-h-screen flex bg-[#F5F3F0]" onKeyDown={handleKeyDown}>
       {/* ──────── MOBILE OVERLAY ──────── */}
       <div
-        className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300 ${
-          mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
+        className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300 ${mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
         onClick={() => setMobileOpen(false)}
         aria-hidden="true"
       />
@@ -191,11 +190,10 @@ export default function DashboardLayout({
                 key={item.label}
                 href={item.href}
                 role="menuitem"
-                className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 ${
-                  item.active
+                className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 ${item.active
                     ? "bg-white/[0.1] text-white"
                     : "text-white/45 hover:text-white/90 hover:bg-white/[0.06]"
-                } ${sidebarCollapsed && !mobileOpen ? "lg:justify-center lg:px-0" : ""}`}
+                  } ${sidebarCollapsed && !mobileOpen ? "lg:justify-center lg:px-0" : ""}`}
                 style={{
                   opacity: mounted ? 1 : 0,
                   transform: mounted ? "translateX(0)" : "translateX(-16px)",
@@ -212,9 +210,8 @@ export default function DashboardLayout({
 
                 {/* Hover glow behind icon */}
                 <div
-                  className={`absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full transition-all duration-300 ${
-                    isHovered && !item.active ? "bg-white/[0.04] scale-100" : "bg-transparent scale-75"
-                  }`}
+                  className={`absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full transition-all duration-300 ${isHovered && !item.active ? "bg-white/[0.04] scale-100" : "bg-transparent scale-75"
+                    }`}
                 />
 
                 <span className={`relative flex-shrink-0 transition-transform duration-200 ${isHovered ? "scale-110" : ""} ${item.active ? "text-[#D4A67A]" : ""}`}>
@@ -256,14 +253,25 @@ export default function DashboardLayout({
                 <button
                   onClick={handleLogout}
                   disabled={loggingOut}
-                  className="w-8 h-8 rounded-lg bg-white/[0.06] hover:bg-red-500/20 flex items-center justify-center text-white/40 hover:text-red-400 transition-all duration-200 disabled:opacity-50"
+                  className="group w-8 h-8 rounded-lg bg-white/[0.04] border border-white/[0.05] flex items-center justify-center text-white/40 shadow-sm hover:bg-[#ef4444]/15 hover:border-[#ef4444]/30 hover:text-[#ef4444] hover:shadow-[0_0_12px_rgba(239,68,68,0.2)] transition-all duration-300 ease-out hover:scale-[1.05] active:scale-95 disabled:opacity-50 disabled:hover:scale-100 disabled:hover:bg-white/[0.04] relative overflow-hidden"
                   aria-label="Sign out"
                   title="Sign out"
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent to-[#ef4444]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="relative z-10 transition-transform duration-300 group-hover:-translate-x-[1px]"
+                  >
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                    <polyline points="16 17 21 12 16 7" />
-                    <line x1="21" y1="12" x2="9" y2="12" />
+                    <polyline points="16 17 21 12 16 7" className="transition-transform duration-300 group-hover:translate-x-[2px]" />
+                    <line x1="21" y1="12" x2="9" y2="12" className="transition-transform duration-300 group-hover:translate-x-[2px]" />
                   </svg>
                 </button>
               )}
@@ -274,9 +282,8 @@ export default function DashboardLayout({
 
       {/* ──────────── MAIN CONTENT ──────────── */}
       <main
-        className={`flex-1 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] min-h-screen ${
-          sidebarCollapsed ? "lg:ml-[78px]" : "lg:ml-[260px]"
-        } ml-0`}
+        className={`flex-1 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] min-h-screen ${sidebarCollapsed ? "lg:ml-[78px]" : "lg:ml-[260px]"
+          } ml-0`}
       >
         {children}
       </main>

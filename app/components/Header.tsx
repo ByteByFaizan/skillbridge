@@ -76,11 +76,10 @@ export default function Header() {
         <div className="absolute top-1/2 left-0 right-0 h-[2px] bg-[#37322f]/[0.08] transition-opacity duration-300" />
       )}
       <div className="relative max-w-[1060px] mx-auto px-4">
-        <nav className={`flex items-center justify-between rounded-full border header-sticky px-6 py-2.5 ${
-          scrolled
-            ? "border-[#37322f]/6 header-scrolled shadow-[0_1px_8px_rgba(0,0,0,0.06)]"
-            : "border-[#37322f]/8 bg-white/60 backdrop-blur-sm shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
-        }`}>
+        <nav className={`flex items-center justify-between rounded-full border header-sticky px-6 py-2.5 ${scrolled
+          ? "border-[#37322f]/6 header-scrolled shadow-[0_1px_8px_rgba(0,0,0,0.06)]"
+          : "border-[#37322f]/8 bg-white/60 backdrop-blur-sm shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
+          }`}>
           {/* Left: Brand + nav links */}
           <div className="flex items-center gap-8">
             <a
@@ -137,8 +136,15 @@ export default function Header() {
                     </div>
                     <button
                       onClick={handleLogout}
-                      className="w-full text-left px-4 py-2.5 text-sm text-[#37322f]/70 hover:bg-[#37322f]/5 hover:text-[#37322f] transition-colors"
+                      className="group flex w-full items-center gap-2.5 px-4 py-2.5 text-[13.5px] font-medium text-[#37322f]/70 bg-transparent hover:bg-[#ef4444]/[0.06] hover:text-[#ef4444] transition-all duration-200"
                     >
+                      <span className="flex items-center justify-center w-6 h-6 rounded-md bg-[#37322f]/[0.04] group-hover:bg-[#ef4444]/10 transition-colors duration-200">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-70 group-hover:opacity-100 transition-opacity">
+                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                          <polyline points="16 17 21 12 16 7" className="transition-transform duration-200 group-hover:translate-x-[2px]" />
+                          <line x1="21" y1="12" x2="9" y2="12" className="transition-transform duration-200 group-hover:translate-x-[2px]" />
+                        </svg>
+                      </span>
                       Log out
                     </button>
                   </div>
@@ -171,9 +177,8 @@ export default function Header() {
 
       {/* Mobile menu */}
       <div
-        className={`overflow-hidden transition-all duration-300 ease-out md:hidden ${
-          mobileOpen ? "max-h-[300px] opacity-100" : "max-h-0 opacity-0"
-        }`}
+        className={`overflow-hidden transition-all duration-300 ease-out md:hidden ${mobileOpen ? "max-h-[300px] opacity-100" : "max-h-0 opacity-0"
+          }`}
       >
         <div className="border-t border-[#37322f]/6 bg-[#f7f5f3]">
           <div className="max-w-[1060px] mx-auto flex flex-col gap-1 px-4 py-4">
@@ -198,10 +203,17 @@ export default function Header() {
             {user ? (
               <button
                 onClick={handleLogout}
-                className="rounded-md px-4 py-3 text-left text-sm font-medium text-[#37322f] transition-all hover:bg-[#37322f]/5 animate-slide-in-bottom"
+                className="group flex w-full items-center gap-3 rounded-md px-4 py-3 text-left text-[14px] font-medium text-[#37322f]/80 transition-all hover:bg-[#ef4444]/[0.06] hover:text-[#ef4444] animate-slide-in-bottom"
                 style={{ animationDelay: "150ms" }}
               >
-                Log out ({user.name})
+                <span className="flex items-center justify-center w-7 h-7 rounded-md bg-[#37322f]/[0.04] group-hover:bg-[#ef4444]/10 transition-colors duration-200">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-70 group-hover:opacity-100 transition-opacity">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" className="transition-transform duration-200 group-hover:translate-x-[2px]" />
+                    <line x1="21" y1="12" x2="9" y2="12" className="transition-transform duration-200 group-hover:translate-x-[2px]" />
+                  </svg>
+                </span>
+                Log out
               </button>
             ) : (
               <a
