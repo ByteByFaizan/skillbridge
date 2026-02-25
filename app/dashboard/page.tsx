@@ -835,8 +835,36 @@ export default function DashboardPage() {
                         ))}
                       </div>
 
-                      {/* Bottom: expand indicator */}
-                      <div className="flex items-center justify-end gap-4">
+                      {/* Bottom: complete button + expand chevron */}
+                      <div className="flex items-center justify-between gap-3">
+                        {/* Mark Complete / Undo button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleMilestoneComplete(milestone.id);
+                          }}
+                          className={`group/btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-300 active:scale-[0.96] ${milestone.status === "completed"
+                              ? "bg-[#7B9E87]/12 text-[#5A8A6A] hover:bg-[#7B9E87]/20 border border-[#7B9E87]/25"
+                              : "bg-[#F3F0EC] text-[#4A433E] hover:bg-[#2C2623] hover:text-white border border-[#E5E0DB] hover:border-[#2C2623] hover:shadow-lg hover:shadow-[#2C2623]/10"
+                            }`}
+                        >
+                          {milestone.status === "completed" ? (
+                            <>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-200 group-hover/btn:scale-110">
+                                <polyline points="20 6 9 17 4 12" />
+                              </svg>
+                              Completed
+                            </>
+                          ) : (
+                            <>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-200 group-hover/btn:scale-110">
+                                <circle cx="12" cy="12" r="10" />
+                              </svg>
+                              Mark Complete
+                            </>
+                          )}
+                        </button>
+
                         {/* Expand/collapse chevron */}
                         <div
                           className="w-8 h-8 rounded-lg flex items-center justify-center text-[#9B8E85] hover:bg-[#F3F0EC] transition-all"
@@ -862,7 +890,7 @@ export default function DashboardPage() {
                     >
                       <div className="border-t border-[#ECE8E3] bg-gradient-to-b from-[#FDFCFB] to-[#F9F7F4] px-5 lg:px-6 py-5">
                         {milestone.details && (
-                          <div className="mb-4 space-y-2.5">
+                          <div className="space-y-2.5">
                             {milestone.details.map((detail, di) => (
                               <p
                                 key={di}
@@ -878,35 +906,6 @@ export default function DashboardPage() {
                             ))}
                           </div>
                         )}
-
-                        {/* Mark Complete / Undo button */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleMilestoneComplete(milestone.id);
-                          }}
-                          className={`group/btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 active:scale-[0.96] ${milestone.status === "completed"
-                              ? "bg-[#7B9E87]/12 text-[#5A8A6A] hover:bg-[#7B9E87]/20 border border-[#7B9E87]/20"
-                              : "bg-[#2C2623] text-white hover:bg-[#1E1B18] shadow-lg shadow-[#2C2623]/15 hover:shadow-xl hover:shadow-[#2C2623]/20"
-                            }`}
-                        >
-                          {milestone.status === "completed" ? (
-                            <>
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-200 group-hover/btn:scale-110">
-                                <polyline points="20 6 9 17 4 12" />
-                              </svg>
-                              Completed — Undo
-                            </>
-                          ) : (
-                            <>
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-200 group-hover/btn:scale-110">
-                                <circle cx="12" cy="12" r="10" />
-                                <polyline points="16 10 11 15.5 8 12.5" />
-                              </svg>
-                              Mark as Complete
-                            </>
-                          )}
-                        </button>
                       </div>
                     </div>
                   </div>
