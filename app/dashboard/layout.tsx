@@ -6,6 +6,12 @@ import Link from "next/link";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import type { User } from "@supabase/supabase-js";
 
+interface HistoryRun {
+  runId: string;
+  createdAt: string;
+  careerTitles: string[];
+}
+
 const navItems = [
   {
     label: "Roadmap",
@@ -34,6 +40,12 @@ export default function DashboardLayout({
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loggingOut, setLoggingOut] = useState(false);
+
+  const [historyRuns, setHistoryRuns] = useState<HistoryRun[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+  const [hoveredHistoryItem, setHoveredHistoryItem] = useState<string | null>(null);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -85,6 +97,40 @@ export default function DashboardLayout({
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Escape") setMobileOpen(false);
   }, []);
+
+  const handleToggleHistory = useCallback(async () => {
+    if (showHistory) {
+      setShowHistory(false);
+      return;
+    }
+    setLoadingHistory(true);
+    setShowHistory(true);
+
+    // Auto-expand sidebar if collapsed
+    if (sidebarCollapsed) {
+      setSidebarCollapsed(false);
+    }
+
+    try {
+      const res = await fetch("/api/recommendations");
+      if (res.ok) {
+        const data = await res.json();
+        setHistoryRuns(data.runs || []);
+      }
+    } catch (err) {
+      console.error("Failed to fetch history:", err);
+    } finally {
+      setLoadingHistory(false);
+    }
+  }, [showHistory, sidebarCollapsed]);
+
+  const handleSelectHistory = useCallback((runId: string) => {
+    localStorage.setItem("sb_last_run_id", runId);
+    if (mobileOpen) setMobileOpen(false);
+
+    // Trigger event for page.tsx to reload
+    window.dispatchEvent(new CustomEvent('sb-history-selected'));
+  }, [mobileOpen]);
 
   return (
     <div className="min-h-screen flex bg-[#F5F3F0]" onKeyDown={handleKeyDown}>
@@ -191,8 +237,8 @@ export default function DashboardLayout({
                 href={item.href}
                 role="menuitem"
                 className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 ${item.active
-                    ? "bg-white/[0.1] text-white"
-                    : "text-white/45 hover:text-white/90 hover:bg-white/[0.06]"
+                  ? "bg-white/[0.1] text-white"
+                  : "text-white/45 hover:text-white/90 hover:bg-white/[0.06]"
                   } ${sidebarCollapsed && !mobileOpen ? "lg:justify-center lg:px-0" : ""}`}
                 style={{
                   opacity: mounted ? 1 : 0,
@@ -231,6 +277,92 @@ export default function DashboardLayout({
               </Link>
             );
           })}
+
+          {/* ── Sidebar History Toggle ── */}
+          <button
+            onClick={handleToggleHistory}
+            className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 mt-1 ${showHistory
+              ? "bg-white/[0.08] text-white"
+              : "text-white/45 hover:text-white/90 hover:bg-white/[0.06]"
+              } ${sidebarCollapsed && !mobileOpen ? "lg:justify-center lg:px-0" : ""}`}
+            onMouseEnter={() => setHoveredNav("History")}
+            onMouseLeave={() => setHoveredNav(null)}
+          >
+            <div
+              className={`absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full transition-all duration-300 ${hoveredNav === "History" && !showHistory ? "bg-white/[0.04] scale-100" : "bg-transparent scale-75"
+                }`}
+            />
+            <span className={`relative flex-shrink-0 transition-transform duration-200 ${hoveredNav === "History" ? "scale-110" : ""} ${showHistory ? "text-[#D4A67A]" : ""}`}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+            </span>
+            {(!sidebarCollapsed || mobileOpen) && (
+              <span className="relative text-[13.5px] font-medium tracking-wide flex-1 text-left">Previous Roadmaps</span>
+            )}
+
+            {/* Caret icon when expanded */}
+            {(!sidebarCollapsed || mobileOpen) && (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-300 ${showHistory ? 'rotate-180' : ''}`}>
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            )}
+
+            {sidebarCollapsed && !mobileOpen && hoveredNav === "History" && (
+              <div className="absolute left-full ml-3 px-3 py-1.5 bg-[#2C2623] text-white text-xs font-medium rounded-lg shadow-xl border border-white/10 whitespace-nowrap z-[60] pointer-events-none sidebar-tooltip">
+                Previous Roadmaps
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 bg-[#2C2623] rotate-45 border-l border-b border-white/10" />
+              </div>
+            )}
+          </button>
+
+          {/* History List expansion (only if menu is not collapsed) */}
+          <div
+            className="overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            style={{
+              maxHeight: showHistory && (!sidebarCollapsed || mobileOpen) ? "400px" : "0px",
+              opacity: showHistory && (!sidebarCollapsed || mobileOpen) ? 1 : 0,
+            }}
+          >
+            <div className="pl-11 pr-3 py-2 space-y-1">
+              {loadingHistory ? (
+                <div className="flex items-center gap-2 text-white/40 text-xs py-2">
+                  <div className="w-3 h-3 rounded-full border-2 border-white/20 border-t-[#D4A67A] animate-spin" />
+                  Loading...
+                </div>
+              ) : historyRuns.length === 0 ? (
+                <div className="text-white/40 text-[11px] py-1">No past roadmaps</div>
+              ) : (
+                historyRuns.map((run, idx) => {
+                  const d = new Date(run.createdAt);
+                  const dateStr = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                  const isHovered = hoveredHistoryItem === run.runId;
+
+                  return (
+                    <button
+                      key={run.runId}
+                      onClick={() => handleSelectHistory(run.runId)}
+                      onMouseEnter={() => setHoveredHistoryItem(run.runId)}
+                      onMouseLeave={() => setHoveredHistoryItem(null)}
+                      className="w-full text-left py-2 px-3 rounded-lg flex items-center gap-2 transition-all duration-200"
+                      style={{
+                        backgroundColor: isHovered ? "rgba(255,255,255,0.06)" : "transparent",
+                        animationDelay: `${idx * 0.05}s`
+                      }}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-[12px] truncate transition-colors ${isHovered ? "text-white/90" : "text-white/60"}`}>
+                          {run.careerTitles.length > 0 ? run.careerTitles[0] : "Roadmap"}
+                        </p>
+                        <p className="text-[10px] text-[#D4A67A] font-medium mt-0.5">{dateStr}</p>
+                      </div>
+                    </button>
+                  );
+                })
+              )}
+            </div>
+          </div>
         </nav>
 
         {/* ── User profile & Logout ── */}

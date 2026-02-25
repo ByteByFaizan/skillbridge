@@ -88,6 +88,13 @@ interface RunData {
   report: CareerReport;
 }
 
+interface HistoryRun {
+  runId: string;
+  createdAt: string;
+  careerTitles: string[];
+}
+
+
 /* ═══════════════════════════════════════════════════════
    HELPERS
    ═══════════════════════════════════════════════════════ */
@@ -442,6 +449,14 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchReport();
+
+    // Listen for history selection from sidebar
+    const handleHistorySelected = () => {
+      fetchReport();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    window.addEventListener('sb-history-selected', handleHistorySelected);
+    return () => window.removeEventListener('sb-history-selected', handleHistorySelected);
   }, [fetchReport]);
 
   useEffect(() => {
@@ -588,12 +603,12 @@ export default function DashboardPage() {
                   style={{
                     backgroundColor:
                       career.demandLevel === "High" ? "rgba(123,158,135,0.12)" :
-                      career.demandLevel === "Medium" ? "rgba(196,149,106,0.12)" :
-                      "rgba(155,142,133,0.08)",
+                        career.demandLevel === "Medium" ? "rgba(196,149,106,0.12)" :
+                          "rgba(155,142,133,0.08)",
                     color:
                       career.demandLevel === "High" ? "#5A8A6A" :
-                      career.demandLevel === "Medium" ? "#B07D4F" :
-                      "#8A7E76",
+                        career.demandLevel === "Medium" ? "#B07D4F" :
+                          "#8A7E76",
                   }}
                 >
                   {career.demandLevel === "High" && <span className="w-1.5 h-1.5 rounded-full bg-[#5A8A6A]" />}
@@ -652,8 +667,8 @@ export default function DashboardPage() {
                           milestone.status === "completed"
                             ? "#7B9E87"
                             : milestone.status === "in-progress"
-                            ? "#C4956A"
-                            : "#D5CFC9",
+                              ? "#C4956A"
+                              : "#D5CFC9",
                         backgroundColor:
                           milestone.status === "completed"
                             ? "#7B9E87"
@@ -662,8 +677,8 @@ export default function DashboardPage() {
                           milestone.status === "completed"
                             ? "0 0 0 4px rgba(123,158,135,0.18), 0 2px 8px rgba(123,158,135,0.15)"
                             : milestone.status === "in-progress"
-                            ? "0 0 0 4px rgba(196,149,106,0.18), 0 2px 8px rgba(196,149,106,0.15)"
-                            : "none",
+                              ? "0 0 0 4px rgba(196,149,106,0.18), 0 2px 8px rgba(196,149,106,0.15)"
+                              : "none",
                         transform: isHovered ? "scale(1.2)" : "scale(1)",
                       }}
                     >
@@ -684,8 +699,8 @@ export default function DashboardPage() {
                           milestone.status === "completed"
                             ? "rgba(123,158,135,0.3)"
                             : milestone.status === "in-progress"
-                            ? "rgba(196,149,106,0.3)"
-                            : "#E5E0DB",
+                              ? "rgba(196,149,106,0.3)"
+                              : "#E5E0DB",
                       }}
                     />
                   </div>
@@ -870,12 +885,12 @@ export default function DashboardPage() {
                           style={{
                             backgroundColor:
                               s.priority === "High" ? "rgba(212,131,109,0.15)" :
-                              s.priority === "Medium" ? "rgba(196,149,106,0.15)" :
-                              "rgba(155,142,133,0.12)",
+                                s.priority === "Medium" ? "rgba(196,149,106,0.15)" :
+                                  "rgba(155,142,133,0.12)",
                             color:
                               s.priority === "High" ? "#B5543A" :
-                              s.priority === "Medium" ? "#96693A" :
-                              "#5C5249",
+                                s.priority === "Medium" ? "#96693A" :
+                                  "#5C5249",
                           }}
                         >
                           {s.name}
