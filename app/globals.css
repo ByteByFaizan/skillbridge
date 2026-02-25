@@ -649,3 +649,195 @@ textarea {
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
   animation: discover-progress-shine 2s ease-in-out infinite;
 }
+
+/* ─── About Page Animations ─── */
+@keyframes about-line-grow {
+  from {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+.about-line-grow {
+  animation: about-line-grow 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: top;
+}
+
+/* Hero text shimmer — one-time sweep */
+@keyframes about-hero-shimmer {
+  0% {
+    background-position: -200% center;
+  }
+
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.about-hero-shimmer {
+  background: linear-gradient(90deg,
+      #37322f 0%,
+      #37322f 35%,
+      #8a7e76 50%,
+      #37322f 65%,
+      #37322f 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: about-hero-shimmer 2.4s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+}
+
+/* Staggered text reveal with blur */
+@keyframes about-text-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.about-text-reveal {
+  animation: about-text-reveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Avatar glow pulse on hover */
+@keyframes about-avatar-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(55, 50, 47, 0.25);
+  }
+
+  50% {
+    box-shadow: 0 0 20px 6px rgba(55, 50, 47, 0.15);
+  }
+}
+
+.about-avatar-glow:hover {
+  animation: about-avatar-glow 2s ease-in-out infinite;
+}
+
+/* Blockquote left border grow */
+@keyframes about-quote-border {
+  from {
+    transform: scaleY(0);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.about-quote-border {
+  transform-origin: top;
+  animation: about-quote-border 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+/* CTA button diagonal shine on hover */
+@keyframes about-cta-shine {
+  0% {
+    transform: translateX(-100%) rotate(-45deg);
+  }
+
+  100% {
+    transform: translateX(200%) rotate(-45deg);
+  }
+}
+
+.about-cta-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.about-cta-shine::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.18),
+      transparent);
+  transform: translateX(-100%) rotate(-45deg);
+  transition: none;
+  pointer-events: none;
+}
+
+.about-cta-shine:hover::after {
+  animation: about-cta-shine 0.6s ease-out;
+}
+
+/* Scroll indicator bounce */
+@keyframes about-scroll-bounce {
+
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0) translateX(-50%);
+  }
+
+  40% {
+    transform: translateY(8px) translateX(-50%);
+  }
+
+  60% {
+    transform: translateY(4px) translateX(-50%);
+  }
+}
+
+.about-scroll-indicator {
+  animation: about-scroll-bounce 2.5s ease-in-out infinite;
+  animation-delay: 1.5s;
+}
+
+/* Floating dots pattern for story section */
+@keyframes about-dots-drift {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.04;
+  }
+
+  50% {
+    transform: translateY(-10px) rotate(1deg);
+    opacity: 0.07;
+  }
+}
+
+.about-dots-drift {
+  animation: about-dots-drift 8s ease-in-out infinite;
+}
+
+/* Number badge subtle entrance */
+@keyframes about-number-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.about-number-pop {
+  animation: about-number-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}

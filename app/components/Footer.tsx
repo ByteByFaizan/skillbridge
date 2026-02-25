@@ -5,7 +5,7 @@ const footerLinks = {
     { label: "FAQ", href: "#faq" },
   ],
   Company: [
-    { label: "About", href: "#" },
+    { label: "About", href: "/about" },
     { label: "Contact", href: "#" },
   ],
   Legal: [
