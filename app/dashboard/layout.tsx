@@ -355,6 +355,7 @@ export default function DashboardLayout({
                         <p className={`text-[12px] truncate transition-colors ${isHovered ? "text-white/90" : "text-white/60"}`}>
                           {run.careerTitles.length > 0 ? run.careerTitles[0] : "Roadmap"}
                         </p>
+                        <p className="text-[10px] text-white/30 mt-0.5">{dateStr}</p>
                       </div>
                     </button>
                   );
