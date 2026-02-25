@@ -364,10 +364,12 @@ export default function DashboardPage() {
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [completedMilestones, setCompletedMilestones] = useState<Set<number>>(new Set());
+  const [animatedProgress, setAnimatedProgress] = useState<Record<number, number>>({});
 
   // Scroll reveal refs
   const headerReveal = useScrollReveal(0.1);
   const statsReveal = useScrollReveal(0.1);
+  const progressReveal = useScrollReveal(0.2);
   const timelineReveal = useScrollReveal(0.05);
   const careerReveal = useScrollReveal(0.1);
   const adviceReveal = useScrollReveal(0.1);
@@ -487,6 +489,19 @@ export default function DashboardPage() {
     return () => clearTimeout(t);
   }, []);
 
+  /* Animate progress bars when visible */
+  useEffect(() => {
+    if (!timelineReveal.isVisible || milestones.length === 0) return;
+    const timers: NodeJS.Timeout[] = [];
+    milestones.forEach((m, i) => {
+      const t = setTimeout(() => {
+        setAnimatedProgress((prev) => ({ ...prev, [m.id]: m.progress }));
+      }, 400 + i * 180);
+      timers.push(t);
+    });
+    return () => timers.forEach(clearTimeout);
+  }, [timelineReveal.isVisible, milestones]);
+
   const toggleCard = useCallback((id: number) => {
     setExpandedCard((prev) => (prev === id ? null : id));
   }, []);
@@ -532,6 +547,9 @@ export default function DashboardPage() {
 
   const { report } = runData;
   const completedCount = milestones.filter((m) => m.status === "completed").length;
+  const inProgressCount = milestones.filter((m) => m.status === "in-progress").length;
+  const upcomingCount = milestones.filter((m) => m.status === "upcoming").length;
+  const overallProgress = milestones.length > 0 ? Math.round((completedCount / milestones.length) * 100) : 0;
 
   return (
     <div className="min-h-screen p-5 pt-16 lg:pt-6 lg:p-10 overflow-x-hidden">
@@ -618,6 +636,49 @@ export default function DashboardPage() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* ── OVERALL PROGRESS BAR ── */}
+      <div
+        ref={progressReveal.ref}
+        className="bg-white rounded-2xl p-6 border border-[#E5E0DB] mb-10 overflow-hidden"
+        style={revealStyle(progressReveal.isVisible, 0, 0)}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="w-3 h-3 rounded-full bg-[#C4956A]" />
+              <div className="absolute inset-0 w-3 h-3 rounded-full bg-[#C4956A] animate-ping opacity-30" />
+            </div>
+            <p className="text-[#1E1B18] text-sm font-bold">{report.learningRoadmap.durationMonths}-Month Plan Progress</p>
+          </div>
+          <p className="text-[#C4956A] text-lg font-bold tabular-nums">{overallProgress}%</p>
+        </div>
+        <div className="w-full h-3 bg-[#ECE8E3] rounded-full overflow-hidden">
+          <div
+            className="h-full rounded-full relative overflow-hidden"
+            style={{
+              width: progressReveal.isVisible ? `${overallProgress}%` : "0%",
+              background: "linear-gradient(90deg, #7B9E87 0%, #C4956A 60%, #D4A87A 100%)",
+              transition: "width 2.2s cubic-bezier(0.16,1,0.3,1) 0.3s",
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent dashboard-shimmer" />
+          </div>
+        </div>
+        <div className="flex items-center justify-between mt-3.5">
+          <div className="flex items-center gap-5">
+            <span className="flex items-center gap-2 text-xs text-[#5A8A6A] font-medium">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#7B9E87]" /> {completedCount} Completed
+            </span>
+            <span className="flex items-center gap-2 text-xs text-[#B07D4F] font-medium">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#C4956A]" /> {inProgressCount} In Progress
+            </span>
+            <span className="flex items-center gap-2 text-xs text-[#8A7E76] font-medium">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#D5CFC9]" /> {upcomingCount} Upcoming
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* ── CAREER OVERVIEW ── */}
@@ -815,7 +876,27 @@ export default function DashboardPage() {
                           </p>
                         </div>
 
-
+                        {/* Circular progress */}
+                        <div className="flex-shrink-0 w-[60px] h-[60px] relative">
+                          <svg className="w-[60px] h-[60px] -rotate-90" viewBox="0 0 60 60">
+                            <circle cx="30" cy="30" r="25" fill="none" stroke="#ECE8E3" strokeWidth="4" />
+                            <circle
+                              cx="30"
+                              cy="30"
+                              r="25"
+                              fill="none"
+                              stroke={milestone.accent}
+                              strokeWidth="4"
+                              strokeLinecap="round"
+                              strokeDasharray={`${2 * Math.PI * 25}`}
+                              strokeDashoffset={`${2 * Math.PI * 25 * (1 - (animatedProgress[milestone.id] ?? 0) / 100)}`}
+                              style={{ transition: "stroke-dashoffset 1.8s cubic-bezier(0.16,1,0.3,1)" }}
+                            />
+                          </svg>
+                          <span className="absolute inset-0 flex items-center justify-center text-[13px] font-bold text-[#1E1B18]">
+                            {animatedProgress[milestone.id] ?? 0}%
+                          </span>
+                        </div>
                       </div>
 
                       {/* Skills */}
