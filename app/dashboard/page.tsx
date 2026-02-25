@@ -965,15 +965,21 @@ export default function DashboardPage() {
                           )}
                         </button>
 
-                        {/* Expand/collapse button */}
+                        {/* Expand/collapse circle arrow button */}
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             toggleCard(milestone.id);
                           }}
-                          className="group/expand flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#9B8E85] hover:text-[#4A433E] bg-transparent hover:bg-[#F3F0EC] border border-transparent hover:border-[#E5E0DB] transition-all duration-300"
+                          className="w-8 h-8 rounded-full flex items-center justify-center border transition-all duration-300 hover:scale-110 active:scale-95"
+                          style={{
+                            borderColor: isExpanded ? `${milestone.accent}50` : "#E5E0DB",
+                            backgroundColor: isExpanded ? `${milestone.accent}12` : "transparent",
+                            color: isExpanded ? milestone.accent : "#9B8E85",
+                          }}
+                          aria-label={isExpanded ? "Hide details" : "View details"}
+                          title={isExpanded ? "Hide details" : "View details"}
                         >
-                          <span>{isExpanded ? "Hide Details" : "View Details"}</span>
                           <svg
                             width="14"
                             height="14"
@@ -983,7 +989,6 @@ export default function DashboardPage() {
                             strokeWidth="2.5"
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            className="transition-transform duration-300 group-hover/expand:translate-y-[1px]"
                             style={{
                               transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
                               transition: "transform 0.35s cubic-bezier(0.34,1.56,0.64,1)",
