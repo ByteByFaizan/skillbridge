@@ -1236,9 +1236,9 @@ export default function DashboardPage() {
                 className="bg-white rounded-xl p-4 border border-[#E5E0DB] flex items-start gap-3 hover:border-[#C4956A]/30 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 cursor-default"
                 style={revealStyle(adviceReveal.isVisible, i, 0.1)}
               >
-                <div className="w-7 h-7 rounded-lg bg-[#C4956A]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B07D4F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9 18l6-6-6-6" />
+                <div className="w-7 h-7 rounded-full bg-[#C4956A]/12 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg width="8" height="8" viewBox="0 0 8 8" fill="#B07D4F" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="4" cy="4" r="4" />
                   </svg>
                 </div>
                 <p className="text-[#3D3632] text-sm leading-relaxed">{advice}</p>
