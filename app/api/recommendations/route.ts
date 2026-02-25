@@ -6,6 +6,8 @@ import { getSupabaseAuth } from "@/lib/supabase-auth";
 /* ═══════════════════════════════════════════════════════
    GET /api/recommendations
    List recent runs for the current user or anonymous session.
+   For authenticated users: returns runs matching user_id OR
+   legacy runs (user_id IS NULL) matching the current session_id.
    ═══════════════════════════════════════════════════════ */
 
 export async function GET() {
@@ -25,23 +27,62 @@ export async function GET() {
 
     const db = getSupabaseServer();
 
-    // Prefer user_id (works cross-device), fall back to session_id for anonymous users
-    const query = db
-      .from("recommendation_runs")
-      .select("id, created_at, report")
-      .order("created_at", { ascending: false })
-      .limit(20);
+    let data: Array<{ id: string; created_at: string; report: unknown }> | null = null;
 
-    const { data, error } = authUser
-      ? await query.eq("user_id", authUser.id)
-      : await query.eq("session_id", sessionId!);
+    if (authUser && sessionId) {
+      // Authenticated user WITH a session cookie — fetch both:
+      // (a) runs owned by this user (cross-device) AND
+      // (b) legacy runs on the current device session (user_id IS NULL)
+      // Use .or() to combine both conditions
+      const { data: rows, error } = await db
+        .from("recommendation_runs")
+        .select("id, created_at, report")
+        .or(`user_id.eq.${authUser.id},and(session_id.eq.${sessionId},user_id.is.null)`)
+        .order("created_at", { ascending: false })
+        .limit(20);
 
-    if (error) {
-      console.error("[/api/recommendations] DB error:", error);
-      return NextResponse.json(
-        { error: { code: "DB_ERROR", message: "Failed to fetch recommendations." } },
-        { status: 500 }
-      );
+      if (error) {
+        console.error("[/api/recommendations] DB error:", error);
+        return NextResponse.json(
+          { error: { code: "DB_ERROR", message: "Failed to fetch recommendations." } },
+          { status: 500 }
+        );
+      }
+      data = rows;
+    } else if (authUser) {
+      // Authenticated user with no session cookie
+      const { data: rows, error } = await db
+        .from("recommendation_runs")
+        .select("id, created_at, report")
+        .eq("user_id", authUser.id)
+        .order("created_at", { ascending: false })
+        .limit(20);
+
+      if (error) {
+        console.error("[/api/recommendations] DB error:", error);
+        return NextResponse.json(
+          { error: { code: "DB_ERROR", message: "Failed to fetch recommendations." } },
+          { status: 500 }
+        );
+      }
+      data = rows;
+    } else {
+      // Anonymous user — session_id only
+      const { data: rows, error } = await db
+        .from("recommendation_runs")
+        .select("id, created_at, report")
+        .eq("session_id", sessionId!)
+        .order("created_at", { ascending: false })
+        .limit(20);
+
+      if (error) {
+        console.error("[/api/recommendations] DB error:", error);
+        return NextResponse.json(
+          { error: { code: "DB_ERROR", message: "Failed to fetch recommendations." } },
+          { status: 500 }
+        );
+      }
+      data = rows;
     }
 
     // Return lightweight summaries with career titles extracted from the report

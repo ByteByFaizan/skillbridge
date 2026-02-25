@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionId } from "@/lib/session";
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseAuth } from "@/lib/supabase-auth";
 
 // Best practice (js-hoist-regexp): hoist regex outside the handler
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /* ═══════════════════════════════════════════════════════
    GET /api/recommendations/[runId]
-   Fetch a single run's full report for the current session.
+   Fetch a single run's full report. Verifies ownership by:
+   1. user_id match (cross-device, authenticated users)
+   2. session_id match (anonymous / legacy rows with user_id=NULL)
    ═══════════════════════════════════════════════════════ */
 
 export async function GET(
@@ -15,13 +18,17 @@ export async function GET(
   { params }: { params: Promise<{ runId: string }> }
 ) {
   try {
-    // Best practice (async-parallel): start independent reads concurrently
-    const [{ runId }, sessionId] = await Promise.all([
+    // Start all reads in parallel
+    const [{ runId }, authClient, sessionId] = await Promise.all([
       params,
+      getSupabaseAuth(),
       getSessionId(),
     ]);
 
-    if (!sessionId) {
+    const { data: { user: authUser } } = await authClient.auth.getUser();
+
+    // Must have at least one identity
+    if (!authUser && !sessionId) {
       return NextResponse.json(
         { error: { code: "NOT_FOUND", message: "Run not found." } },
         { status: 404 }
@@ -38,14 +45,50 @@ export async function GET(
 
     const db = getSupabaseServer();
 
-    const { data, error } = await db
-      .from("recommendation_runs")
-      .select("id, session_id, input, report, created_at")
-      .eq("id", runId)
-      .eq("session_id", sessionId)
-      .single();
+    let data = null;
 
-    if (error || !data) {
+    if (authUser) {
+      // Try by user_id first (works for new cross-device runs)
+      const { data: byUser } = await db
+        .from("recommendation_runs")
+        .select("id, session_id, user_id, input, report, created_at")
+        .eq("id", runId)
+        .eq("user_id", authUser.id)
+        .maybeSingle();
+
+      if (byUser) {
+        data = byUser;
+      } else if (sessionId) {
+        // Fallback: legacy row with user_id=NULL but matching session on this device
+        const { data: bySession } = await db
+          .from("recommendation_runs")
+          .select("id, session_id, user_id, input, report, created_at")
+          .eq("id", runId)
+          .eq("session_id", sessionId)
+          .maybeSingle();
+
+        if (bySession) {
+          data = bySession;
+          // Opportunistically backfill user_id so this run works cross-device going forward
+          await db
+            .from("recommendation_runs")
+            .update({ user_id: authUser.id })
+            .eq("id", runId)
+            .is("user_id", null);
+        }
+      }
+    } else {
+      // Anonymous user — session_id only
+      const { data: bySession } = await db
+        .from("recommendation_runs")
+        .select("id, session_id, user_id, input, report, created_at")
+        .eq("id", runId)
+        .eq("session_id", sessionId!)
+        .maybeSingle();
+      data = bySession;
+    }
+
+    if (!data) {
       return NextResponse.json(
         { error: { code: "NOT_FOUND", message: "Run not found." } },
         { status: 404 }
