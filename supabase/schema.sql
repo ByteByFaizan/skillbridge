@@ -24,5 +24,6 @@ ALTER TABLE recommendation_runs ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Service role full access"
   ON recommendation_runs
   FOR ALL
+  TO service_role
   USING (true)
   WITH CHECK (true);
