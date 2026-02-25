@@ -649,3 +649,21 @@ textarea {
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
   animation: discover-progress-shine 2s ease-in-out infinite;
 }
+
+/* ─── About Page Animations ─── */
+@keyframes about-line-grow {
+  from {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+.about-line-grow {
+  animation: about-line-grow 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: top;
+}
