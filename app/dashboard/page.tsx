@@ -875,28 +875,6 @@ export default function DashboardPage() {
                             {milestone.description}
                           </p>
                         </div>
-
-                        {/* Circular progress */}
-                        <div className="flex-shrink-0 w-[60px] h-[60px] relative">
-                          <svg className="w-[60px] h-[60px] -rotate-90" viewBox="0 0 60 60">
-                            <circle cx="30" cy="30" r="25" fill="none" stroke="#ECE8E3" strokeWidth="4" />
-                            <circle
-                              cx="30"
-                              cy="30"
-                              r="25"
-                              fill="none"
-                              stroke={milestone.accent}
-                              strokeWidth="4"
-                              strokeLinecap="round"
-                              strokeDasharray={`${2 * Math.PI * 25}`}
-                              strokeDashoffset={`${2 * Math.PI * 25 * (1 - (animatedProgress[milestone.id] ?? 0) / 100)}`}
-                              style={{ transition: "stroke-dashoffset 1.8s cubic-bezier(0.16,1,0.3,1)" }}
-                            />
-                          </svg>
-                          <span className="absolute inset-0 flex items-center justify-center text-[13px] font-bold text-[#1E1B18]">
-                            {animatedProgress[milestone.id] ?? 0}%
-                          </span>
-                        </div>
                       </div>
 
                       {/* Skills */}
