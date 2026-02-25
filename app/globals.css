@@ -31,15 +31,36 @@ body {
 ::-webkit-scrollbar {
   width: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: #ffffff;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #e0dedb;
   border-radius: 3px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #605A57;
+}
+
+/* Dark sidebar custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 /* Selection */
@@ -84,6 +105,7 @@ textarea {
     opacity: 0;
     transform: translateY(24px) scale(0.98);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -91,8 +113,13 @@ textarea {
 }
 
 @keyframes fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes fade-in-scale {
@@ -100,6 +127,7 @@ textarea {
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -107,13 +135,27 @@ textarea {
 }
 
 @keyframes subtle-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(55, 50, 47, 0.15); }
-  50% { box-shadow: 0 0 0 8px rgba(55, 50, 47, 0); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(55, 50, 47, 0.15);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(55, 50, 47, 0);
+  }
 }
 
 @keyframes slide-in-bottom {
@@ -121,6 +163,7 @@ textarea {
     opacity: 0;
     transform: translateY(16px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -128,49 +171,94 @@ textarea {
 }
 
 @keyframes float-gentle {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
 @keyframes pulse-ring {
-  0% { box-shadow: 0 0 0 0 rgba(55, 50, 47, 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(55, 50, 47, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(55, 50, 47, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(55, 50, 47, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(55, 50, 47, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(55, 50, 47, 0);
+  }
 }
 
 .animate-fade-in-up {
   animation: fade-in-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
 .animate-fade-in {
   animation: fade-in 0.6s ease-out both;
 }
+
 .animate-fade-in-scale {
   animation: fade-in-scale 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
 .animate-subtle-float {
   animation: subtle-float 4s ease-in-out infinite;
 }
+
 .animate-float-gentle {
   animation: float-gentle 6s ease-in-out infinite;
 }
+
 .animate-pulse-glow {
   animation: pulse-glow 2.5s ease-in-out infinite;
 }
+
 .animate-pulse-ring:hover {
   animation: pulse-ring 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
+
 .animate-slide-in-bottom {
   animation: slide-in-bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.animation-delay-100 { animation-delay: 100ms; }
-.animation-delay-200 { animation-delay: 200ms; }
-.animation-delay-300 { animation-delay: 300ms; }
-.animation-delay-400 { animation-delay: 400ms; }
-.animation-delay-500 { animation-delay: 500ms; }
-.animation-delay-600 { animation-delay: 600ms; }
-.animation-delay-700 { animation-delay: 700ms; }
-.animation-delay-800 { animation-delay: 800ms; }
+.animation-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animation-delay-300 {
+  animation-delay: 300ms;
+}
+
+.animation-delay-400 {
+  animation-delay: 400ms;
+}
+
+.animation-delay-500 {
+  animation-delay: 500ms;
+}
+
+.animation-delay-600 {
+  animation-delay: 600ms;
+}
+
+.animation-delay-700 {
+  animation-delay: 700ms;
+}
+
+.animation-delay-800 {
+  animation-delay: 800ms;
+}
 
 /* Brillance utility classes */
 .text-balance {
@@ -183,8 +271,13 @@ textarea {
 
 /* Progress bar animation for HowItWorks */
 @keyframes progress-bar {
-  from { width: 0%; }
-  to   { width: 100%; }
+  from {
+    width: 0%;
+  }
+
+  to {
+    width: 100%;
+  }
 }
 
 .animate-progress-bar {
@@ -195,6 +288,7 @@ textarea {
 .card-hover {
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
 }
+
 .card-hover:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 20px rgba(55, 50, 47, 0.08);
@@ -204,6 +298,7 @@ textarea {
 .header-sticky {
   transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
+
 .header-scrolled {
   background-color: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
@@ -213,8 +308,13 @@ textarea {
 
 /* ─── Dashboard Animations ─── */
 @keyframes dashboard-shimmer {
-  0% { transform: translateX(-150%); }
-  100% { transform: translateX(250%); }
+  0% {
+    transform: translateX(-150%);
+  }
+
+  100% {
+    transform: translateX(250%);
+  }
 }
 
 .dashboard-shimmer {
@@ -223,12 +323,15 @@ textarea {
 }
 
 @keyframes timeline-node-pulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(196,149,106,0.4);
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(196, 149, 106, 0.4);
     transform: scale(1);
   }
+
   50% {
-    box-shadow: 0 0 0 6px rgba(196,149,106,0);
+    box-shadow: 0 0 0 6px rgba(196, 149, 106, 0);
     transform: scale(1.15);
   }
 }
@@ -240,18 +343,26 @@ textarea {
 /* Stat card hover lift */
 .stat-card-hover {
   transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
-              box-shadow 0.35s ease,
-              border-color 0.3s ease;
+    box-shadow 0.35s ease,
+    border-color 0.3s ease;
 }
+
 .stat-card-hover:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 28px -8px rgba(196,149,106,0.1), 0 4px 12px rgba(0,0,0,0.04);
+  box-shadow: 0 12px 28px -8px rgba(196, 149, 106, 0.1), 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
 /* Sidebar logo glow */
 @keyframes logo-glow {
-  0%, 100% { box-shadow: 0 4px 14px rgba(196,149,106,0.25); }
-  50% { box-shadow: 0 4px 20px rgba(196,149,106,0.4); }
+
+  0%,
+  100% {
+    box-shadow: 0 4px 14px rgba(196, 149, 106, 0.25);
+  }
+
+  50% {
+    box-shadow: 0 4px 20px rgba(196, 149, 106, 0.4);
+  }
 }
 
 .sidebar-logo-glow {
@@ -260,23 +371,44 @@ textarea {
 
 /* Sidebar tooltip entrance */
 .sidebar-tooltip {
-  animation: tooltip-in 0.2s cubic-bezier(0.16,1,0.3,1);
+  animation: tooltip-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes tooltip-in {
-  from { opacity: 0; transform: translateX(-4px); }
-  to   { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* CTA orb floating */
 @keyframes orb-float-1 {
-  0%, 100% { transform: translate(25%, -33%) scale(1); }
-  50% { transform: translate(20%, -28%) scale(1.05); }
+
+  0%,
+  100% {
+    transform: translate(25%, -33%) scale(1);
+  }
+
+  50% {
+    transform: translate(20%, -28%) scale(1.05);
+  }
 }
 
 @keyframes orb-float-2 {
-  0%, 100% { transform: translate(-25%, 33%) scale(1); }
-  50% { transform: translate(-20%, 38%) scale(1.08); }
+
+  0%,
+  100% {
+    transform: translate(-25%, 33%) scale(1);
+  }
+
+  50% {
+    transform: translate(-20%, 38%) scale(1.08);
+  }
 }
 
 .cta-orb-1 {
@@ -296,6 +428,7 @@ textarea {
     transform: translateY(22px) scale(0.97);
     filter: blur(3px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -309,6 +442,7 @@ textarea {
     opacity: 1;
     transform: translateX(0) scale(1);
   }
+
   to {
     opacity: 0;
     transform: translateX(-30px) scale(0.97);
@@ -320,6 +454,7 @@ textarea {
     opacity: 1;
     transform: translateX(0) scale(1);
   }
+
   to {
     opacity: 0;
     transform: translateX(30px) scale(0.97);
@@ -332,6 +467,7 @@ textarea {
     opacity: 0;
     transform: translateX(-16px) scale(0.98);
   }
+
   to {
     opacity: 1;
     transform: translateX(0) scale(1);
@@ -344,9 +480,11 @@ textarea {
     opacity: 0;
     transform: scale(0.5);
   }
+
   50% {
     transform: scale(1.12);
   }
+
   100% {
     opacity: 1;
     transform: scale(1);
@@ -359,6 +497,7 @@ textarea {
     opacity: 0;
     transform: translateY(8px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -371,6 +510,7 @@ textarea {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -383,6 +523,7 @@ textarea {
     opacity: 0;
     backdrop-filter: blur(0);
   }
+
   to {
     opacity: 1;
     backdrop-filter: blur(12px);
@@ -391,10 +532,13 @@ textarea {
 
 /* Ring pulse for active step indicator */
 @keyframes discover-ring-pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
     opacity: 0.5;
   }
+
   50% {
     transform: scale(1.5);
     opacity: 0;
@@ -403,22 +547,44 @@ textarea {
 
 /* Concentric rings for loading overlay */
 @keyframes discover-ring-spin-1 {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
+
 @keyframes discover-ring-spin-2 {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(-360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(-360deg);
+  }
 }
+
 @keyframes discover-ring-spin-3 {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Progress bar shimmer */
 @keyframes discover-progress-shine {
-  from { transform: translateX(-100%); }
-  to   { transform: translateX(300%); }
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(300%);
+  }
 }
 
 /* ─── Discover animation classes ─── */
@@ -432,9 +598,11 @@ textarea {
   animation-timing-function: cubic-bezier(0.4, 0, 1, 1);
   animation-fill-mode: both;
 }
+
 .discover-slide-exit-left {
   animation-name: discover-step-out-left;
 }
+
 .discover-slide-exit-right {
   animation-name: discover-step-out-right;
 }
@@ -467,15 +635,17 @@ textarea {
   animation: discover-ring-spin-1 8s linear infinite;
   border-style: dashed;
 }
+
 .discover-ring-2 {
   animation: discover-ring-spin-2 6s linear infinite;
   border-style: dotted;
 }
+
 .discover-ring-3 {
   animation: discover-ring-spin-3 4s linear infinite;
 }
 
 .discover-progress-shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
   animation: discover-progress-shine 2s ease-in-out infinite;
 }
