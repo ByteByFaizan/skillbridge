@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
+import type { User } from "@supabase/supabase-js";
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -26,7 +27,7 @@ export default function Header() {
   // Fetch the logged-in user
   useEffect(() => {
     const supabase = getSupabaseBrowser();
-    supabase.auth.getUser().then(({ data }) => {
+    supabase.auth.getUser().then(({ data }: { data: { user: User | null } }) => {
       if (data.user) {
         const meta = data.user.user_metadata;
         setUser({
@@ -36,7 +37,7 @@ export default function Header() {
       }
     });
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((_event: string, session: { user: User } | null) => {
       if (session?.user) {
         const meta = session.user.user_metadata;
         setUser({
