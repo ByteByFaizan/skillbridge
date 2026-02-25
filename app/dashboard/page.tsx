@@ -101,7 +101,7 @@ interface HistoryRun {
 
 const MONTH_ACCENTS = ["#7B9E87", "#C4956A", "#8B7EC8", "#D4836D", "#6B9BBF", "#B8856C"];
 
-function buildMilestones(roadmap: LearningRoadmap): Milestone[] {
+function buildMilestones(roadmap: LearningRoadmap, completedIds: Set<number>): Milestone[] {
   const now = new Date();
   return roadmap.months
     .slice()
@@ -115,8 +115,18 @@ function buildMilestones(roadmap: LearningRoadmap): Milestone[] {
       const skills = [...m.topics.slice(0, 2), ...m.tools.slice(0, 2)];
       const taskCount = m.topics.length + m.tools.length;
 
-      // First month is in-progress, rest upcoming (no tracking yet)
-      const status: MilestoneStatus = i === 0 ? "in-progress" : "upcoming";
+      // Determine status based on completion tracking
+      let status: MilestoneStatus;
+      if (completedIds.has(m.month)) {
+        status = "completed";
+      } else {
+        // Find first non-completed month — that one is "in-progress"
+        const firstIncomplete = roadmap.months
+          .slice()
+          .sort((a, b) => a.month - b.month)
+          .find((rm) => !completedIds.has(rm.month));
+        status = firstIncomplete?.month === m.month ? "in-progress" : "upcoming";
+      }
 
       return {
         id: m.month,
@@ -125,10 +135,10 @@ function buildMilestones(roadmap: LearningRoadmap): Milestone[] {
         title: m.topics[0] ?? `Month ${m.month} Focus`,
         description: `Focus on ${m.topics.join(", ")}. Tools: ${m.tools.join(", ")}. Learn via ${m.platforms.join(", ")}.`,
         status,
-        progress: 0,
+        progress: status === "completed" ? 100 : 0,
         skills,
         tasks: taskCount,
-        tasksDone: 0,
+        tasksDone: status === "completed" ? taskCount : 0,
         accent: MONTH_ACCENTS[i % MONTH_ACCENTS.length],
         details: [
           ...m.topics.map((t) => `○ ${t}`),
@@ -353,6 +363,7 @@ export default function DashboardPage() {
 
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const [completedMilestones, setCompletedMilestones] = useState<Set<number>>(new Set());
 
   // Scroll reveal refs
   const headerReveal = useScrollReveal(0.1);
@@ -363,7 +374,7 @@ export default function DashboardPage() {
   const ctaReveal = useScrollReveal(0.2);
 
   // Derived data
-  const milestones = runData ? buildMilestones(runData.report.learningRoadmap) : [];
+  const milestones = runData ? buildMilestones(runData.report.learningRoadmap, completedMilestones) : [];
   const stats = runData ? buildStats(runData.report) : [];
 
   // Animated counters for stats
@@ -440,6 +451,18 @@ export default function DashboardPage() {
       const data: RunData = await res.json();
       setRunData(data);
       setExpandedCard(1); // Expand first month by default
+
+      // Load completed milestones from localStorage for this run
+      try {
+        const saved = localStorage.getItem(`sb_completed_${data.runId}`);
+        if (saved) {
+          setCompletedMilestones(new Set(JSON.parse(saved) as number[]));
+        } else {
+          setCompletedMilestones(new Set());
+        }
+      } catch {
+        setCompletedMilestones(new Set());
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred.");
     } finally {
@@ -467,6 +490,25 @@ export default function DashboardPage() {
   const toggleCard = useCallback((id: number) => {
     setExpandedCard((prev) => (prev === id ? null : id));
   }, []);
+
+  const toggleMilestoneComplete = useCallback((milestoneId: number) => {
+    setCompletedMilestones((prev) => {
+      const next = new Set(prev);
+      if (next.has(milestoneId)) {
+        next.delete(milestoneId);
+      } else {
+        next.add(milestoneId);
+      }
+      // Persist to localStorage
+      if (runData) {
+        localStorage.setItem(
+          `sb_completed_${runData.runId}`,
+          JSON.stringify([...next])
+        );
+      }
+      return next;
+    });
+  }, [runData]);
 
   /* Stagger helper */
   const revealStyle = (visible: boolean, i: number, base = 0) => ({
@@ -820,7 +862,7 @@ export default function DashboardPage() {
                     >
                       <div className="border-t border-[#ECE8E3] bg-gradient-to-b from-[#FDFCFB] to-[#F9F7F4] px-5 lg:px-6 py-5">
                         {milestone.details && (
-                          <div className="mb-3 space-y-2.5">
+                          <div className="mb-4 space-y-2.5">
                             {milestone.details.map((detail, di) => (
                               <p
                                 key={di}
@@ -836,6 +878,35 @@ export default function DashboardPage() {
                             ))}
                           </div>
                         )}
+
+                        {/* Mark Complete / Undo button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleMilestoneComplete(milestone.id);
+                          }}
+                          className={`group/btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 active:scale-[0.96] ${milestone.status === "completed"
+                              ? "bg-[#7B9E87]/12 text-[#5A8A6A] hover:bg-[#7B9E87]/20 border border-[#7B9E87]/20"
+                              : "bg-[#2C2623] text-white hover:bg-[#1E1B18] shadow-lg shadow-[#2C2623]/15 hover:shadow-xl hover:shadow-[#2C2623]/20"
+                            }`}
+                        >
+                          {milestone.status === "completed" ? (
+                            <>
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-200 group-hover/btn:scale-110">
+                                <polyline points="20 6 9 17 4 12" />
+                              </svg>
+                              Completed — Undo
+                            </>
+                          ) : (
+                            <>
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-200 group-hover/btn:scale-110">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="16 10 11 15.5 8 12.5" />
+                              </svg>
+                              Mark as Complete
+                            </>
+                          )}
+                        </button>
                       </div>
                     </div>
                   </div>
