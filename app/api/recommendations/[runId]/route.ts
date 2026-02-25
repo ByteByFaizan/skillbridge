@@ -18,14 +18,15 @@ export async function GET(
   { params }: { params: Promise<{ runId: string }> }
 ) {
   try {
-    // Start all reads in parallel
-    const [{ runId }, authClient, sessionId] = await Promise.all([
+    // Start all reads in parallel — including getUser() so it doesn't waterfall
+    // after getSupabaseAuth() resolves (async-api-routes best practice)
+    const [{ runId }, authResult, sessionId] = await Promise.all([
       params,
-      getSupabaseAuth(),
+      getSupabaseAuth().then((c) => c.auth.getUser()),
       getSessionId(),
     ]);
 
-    const { data: { user: authUser } } = await authClient.auth.getUser();
+    const authUser = authResult.data.user ?? null;
 
     // Must have at least one identity
     if (!authUser && !sessionId) {

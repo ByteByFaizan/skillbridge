@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     const rl = checkRateLimit(`auth:${ip}`);
     if (!rl.allowed) {
       return NextResponse.json(
-        { error: "Too many login attempts. Please try again later." },
+        { error: { code: "RATE_LIMITED", message: "Too many login attempts. Please try again later." } },
         {
           status: 429,
           headers: {
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       body = await request.json();
     } catch {
       return NextResponse.json(
-        { error: "Request body must be valid JSON." },
+        { error: { code: "INVALID_JSON", message: "Request body must be valid JSON." } },
         { status: 400 }
       );
     }
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     const parsed = LoginSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
-        { error: "Email and password are required." },
+        { error: { code: "VALIDATION_ERROR", message: "Email and password are required." } },
         { status: 400 }
       );
     }
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       return NextResponse.json(
-        { error: error.message },
+        { error: { code: "AUTH_ERROR", message: error.message } },
         { status: error.status ?? 401 }
       );
     }
@@ -70,9 +70,10 @@ export async function POST(request: NextRequest) {
       { user: data.user },
       { status: 200 }
     );
-  } catch {
+  } catch (err) {
+    console.error("[auth/login] Unhandled error:", err);
     return NextResponse.json(
-      { error: "An unexpected error occurred." },
+      { error: { code: "INTERNAL_ERROR", message: "An unexpected error occurred." } },
       { status: 500 }
     );
   }

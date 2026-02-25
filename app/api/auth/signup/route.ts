@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     const rl = checkRateLimit(`auth:${ip}`);
     if (!rl.allowed) {
       return NextResponse.json(
-        { error: "Too many signup attempts. Please try again later." },
+        { error: { code: "RATE_LIMITED", message: "Too many signup attempts. Please try again later." } },
         {
           status: 429,
           headers: {
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
       body = await request.json();
     } catch {
       return NextResponse.json(
-        { error: "Request body must be valid JSON." },
+        { error: { code: "INVALID_JSON", message: "Request body must be valid JSON." } },
         { status: 400 }
       );
     }
@@ -48,13 +48,13 @@ export async function POST(request: NextRequest) {
     if (!parsed.success) {
       const message = parsed.error?.issues
         ? parsed.error.issues
-            .map((i: { path?: unknown[]; message?: string }) =>
-              `${(i.path ?? []).join(".")}: ${i.message}`
-            )
-            .join("; ")
+          .map((i: { path?: unknown[]; message?: string }) =>
+            `${(i.path ?? []).join(".")}: ${i.message}`
+          )
+          .join("; ")
         : "Invalid input";
       return NextResponse.json(
-        { error: message },
+        { error: { code: "VALIDATION_ERROR", message } },
         { status: 400 }
       );
     }
@@ -74,15 +74,16 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       return NextResponse.json(
-        { error: error.message },
+        { error: { code: "AUTH_ERROR", message: error.message } },
         { status: error.status ?? 400 }
       );
     }
 
     return NextResponse.json({ user: data.user }, { status: 200 });
-  } catch {
+  } catch (err) {
+    console.error("[auth/signup] Unhandled error:", err);
     return NextResponse.json(
-      { error: "An unexpected error occurred." },
+      { error: { code: "INTERNAL_ERROR", message: "An unexpected error occurred." } },
       { status: 500 }
     );
   }
