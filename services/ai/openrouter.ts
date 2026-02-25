@@ -10,43 +10,42 @@ import {
    CONFIG
    ═══════════════════════════════════════════════════════ */
 
-const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
-const REQUEST_TIMEOUT_MS = 90_000; // 90s timeout — extra headroom for free model
+// NVIDIA NIM — OpenAI-compatible API, free tier via build.nvidia.com
+const NVIDIA_NIM_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
+const REQUEST_TIMEOUT_MS = 90_000; // 90s timeout — headroom for free tier
 
 function getApiKey(): string {
-  const key = process.env.OPENROUTER_API_KEY;
-  if (!key) throw new Error("Missing OPENROUTER_API_KEY env var");
+  const key = process.env.NVIDIA_API_KEY;
+  if (!key) throw new Error("Missing NVIDIA_API_KEY env var — get one free at build.nvidia.com");
   return key;
 }
 
 function getModel(): string {
-  return process.env.OPENROUTER_MODEL ?? "qwen/qwen3-235b-a22b:free";
+  // Qwen3-235B on NVIDIA NIM — free tier on DGX Cloud
+  return process.env.NVIDIA_MODEL ?? "qwen/qwen3-235b-a22b";
 }
 
 /* ═══════════════════════════════════════════════════════
    MAIN CALL
    ═══════════════════════════════════════════════════════ */
 
-interface OpenRouterMessage {
+interface NimMessage {
   role: "system" | "user" | "assistant";
   content: string;
 }
 
-async function callOpenRouter(messages: OpenRouterMessage[]): Promise<string> {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+async function callNvidaNim(messages: NimMessage[]): Promise<string> {
 
   // Best practice: use AbortController to prevent indefinite hangs
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
   try {
-    const res = await fetch(OPENROUTER_URL, {
+    const res = await fetch(NVIDIA_NIM_URL, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${getApiKey()}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": appUrl,
-        "X-Title": "SkillBridge",
       },
       body: JSON.stringify({
         model: getModel(),
@@ -60,18 +59,18 @@ async function callOpenRouter(messages: OpenRouterMessage[]): Promise<string> {
 
     if (!res.ok) {
       const text = await res.text().catch(() => "");
-      throw new Error(`OpenRouter API error ${res.status}: ${text.slice(0, 200)}`);
+      throw new Error(`NVIDIA NIM API error ${res.status}: ${text.slice(0, 200)}`);
     }
 
     const data = await res.json();
     const content: string | undefined = data?.choices?.[0]?.message?.content;
     if (!content) {
-      throw new Error("OpenRouter returned an empty response");
+      throw new Error("NVIDIA NIM returned an empty response");
     }
     return content.trim();
   } catch (err) {
     if (err instanceof DOMException && err.name === "AbortError") {
-      throw new Error(`OpenRouter request timed out after ${REQUEST_TIMEOUT_MS / 1000}s`);
+      throw new Error(`NVIDIA NIM request timed out after ${REQUEST_TIMEOUT_MS / 1000}s`);
     }
     throw err;
   } finally {
@@ -127,14 +126,14 @@ function parseAndValidate(raw: string): {
 export async function generateCareerReport(
   input: CareerInput
 ): Promise<CareerReport> {
-  const messages: OpenRouterMessage[] = [
+  const messages: NimMessage[] = [
     { role: "system", content: SYSTEM_PROMPT },
     { role: "system", content: DEVELOPER_PROMPT },
     { role: "user", content: buildUserPrompt(input) },
   ];
 
   // First attempt
-  const rawFirst = await callOpenRouter(messages);
+  const rawFirst = await callNvidaNim(messages);
   const firstResult = parseAndValidate(rawFirst);
   if (firstResult.success) return firstResult.data;
 
@@ -143,7 +142,7 @@ export async function generateCareerReport(
   messages.push({ role: "assistant", content: rawFirst });
   messages.push({ role: "user", content: repairMsg });
 
-  const rawSecond = await callOpenRouter(messages);
+  const rawSecond = await callNvidaNim(messages);
   const secondResult = parseAndValidate(rawSecond);
   if (secondResult.success) return secondResult.data;
 
