@@ -12,28 +12,24 @@ const features = [
     title: "Smart Career Discovery",
     description:
       "2–3 realistic career paths with a clear reason for each, matched to your unique profile.",
-    comingSoon: false,
   },
   {
     icon: ChartBarIcon,
     title: "Skill Gap Analysis",
     description:
       "See what you already have vs what to learn, with High, Medium, and Low priorities.",
-    comingSoon: false,
   },
   {
     icon: MapIcon,
     title: "6‑Month Learning Roadmap",
     description:
       "Month-by-month topics, tools, and recommended platforms — all planned out for you.",
-    comingSoon: false,
   },
   {
     icon: Squares2X2Icon,
     title: "Career Dashboard",
     description:
       "Save and revisit your career plan anytime. Track your learning progress in one place.",
-    comingSoon: true,
   },
 ];
 
@@ -64,11 +60,6 @@ export default function Features() {
                 </div>
                 <h3 className="flex items-center gap-2 text-[#37322f] text-sm font-semibold leading-6 relative z-10">
                   {feature.title}
-                  {feature.comingSoon && (
-                    <span className="px-2 py-0.5 bg-[#f7f5f3] border border-[#e0dedb] text-[10px] font-semibold uppercase tracking-wider text-[#605A57] rounded-full">
-                      Coming soon
-                    </span>
-                  )}
                 </h3>
                 <p className="mt-1.5 text-[#49423D]/80 text-sm leading-[22px] relative z-10">
                   {feature.description}
