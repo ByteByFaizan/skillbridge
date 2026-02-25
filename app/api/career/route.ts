@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { CareerInputSchema } from "@/utils/validators";
 import { generateCareerReport } from "@/services/ai/openrouter";
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseAuth } from "@/lib/supabase-auth";
 import { getSessionId, setSessionCookie } from "@/lib/session";
 import { checkRateLimit } from "@/lib/rate-limit";
 
@@ -51,10 +52,10 @@ export async function POST(req: NextRequest) {
     if (!parsed.success) {
       const message = parsed.error?.issues
         ? parsed.error.issues
-            .map((i: { path?: unknown[]; message?: string }) =>
-              `${(i.path ?? []).join(".")}: ${i.message}`
-            )
-            .join("; ")
+          .map((i: { path?: unknown[]; message?: string }) =>
+            `${(i.path ?? []).join(".")}: ${i.message}`
+          )
+          .join("; ")
         : "Invalid input";
       return NextResponse.json(
         { error: { code: "VALIDATION_ERROR", message } },
@@ -64,12 +65,19 @@ export async function POST(req: NextRequest) {
 
     const input = parsed.data;
 
-    /* ── 4. Session + AI call in parallel ─────────────── */
+    /* ── 4. Session + AI call + auth user in parallel ───── */
     // Best practice (async-parallel): start independent work concurrently
-    const [sessionId, reportResult] = await Promise.allSettled([
+    const [sessionId, reportResult, authResult] = await Promise.allSettled([
       getSessionId(),
       generateCareerReport(input),
+      getSupabaseAuth().then((c) => c.auth.getUser()),
     ]);
+
+    // Resolve authenticated user (null for anonymous users)
+    const authUserId =
+      authResult.status === "fulfilled"
+        ? (authResult.value.data.user?.id ?? null)
+        : null;
 
     // Resolve session
     const existingSessionId =
@@ -100,6 +108,7 @@ export async function POST(req: NextRequest) {
       .from("recommendation_runs")
       .insert({
         session_id: finalSessionId,
+        user_id: authUserId,
         input: {
           education: input.education,
           skills: input.skills,

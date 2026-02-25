@@ -1,30 +1,40 @@
 import { NextResponse } from "next/server";
 import { getSessionId } from "@/lib/session";
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseAuth } from "@/lib/supabase-auth";
 
 /* ═══════════════════════════════════════════════════════
    GET /api/recommendations
-   List recent runs for the current anonymous session.
+   List recent runs for the current user or anonymous session.
    ═══════════════════════════════════════════════════════ */
 
 export async function GET() {
   try {
-    const sessionId = await getSessionId();
+    // Resolve authenticated user and anonymous session in parallel
+    const [authClient, sessionId] = await Promise.all([
+      getSupabaseAuth(),
+      getSessionId(),
+    ]);
 
-    // Early exit: no session = no runs
-    if (!sessionId) {
+    const { data: { user: authUser } } = await authClient.auth.getUser();
+
+    // No identity at all — return empty
+    if (!authUser && !sessionId) {
       return NextResponse.json({ runs: [] }, { status: 200 });
     }
 
     const db = getSupabaseServer();
 
-    // Only select the columns we need — skip the full report JSONB for listing
-    const { data, error } = await db
+    // Prefer user_id (works cross-device), fall back to session_id for anonymous users
+    const query = db
       .from("recommendation_runs")
       .select("id, created_at, report")
-      .eq("session_id", sessionId)
       .order("created_at", { ascending: false })
       .limit(20);
+
+    const { data, error } = authUser
+      ? await query.eq("user_id", authUser.id)
+      : await query.eq("session_id", sessionId!);
 
     if (error) {
       console.error("[/api/recommendations] DB error:", error);
@@ -35,7 +45,6 @@ export async function GET() {
     }
 
     // Return lightweight summaries with career titles extracted from the report
-    // Best practice (js-combine-iterations): single loop to extract + transform
     const runs = [];
     for (const row of data ?? []) {
       const report = row.report as {
@@ -64,7 +73,6 @@ export async function GET() {
       {
         status: 200,
         headers: {
-          // Short cache: list may change when user creates new reports
           "Cache-Control": "private, max-age=30, stale-while-revalidate=10",
         },
       }

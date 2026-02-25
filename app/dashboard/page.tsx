@@ -434,10 +434,26 @@ export default function DashboardPage() {
       }
     }
 
-    const runId = localStorage.getItem("sb_last_run_id");
+    let runId = localStorage.getItem("sb_last_run_id");
     if (!runId) {
-      setLoading(false);
-      return; // No run — show empty state
+      // New device or cleared storage — try to fetch the latest run from the server
+      try {
+        const latestRes = await fetch("/api/recommendations/latest");
+        if (latestRes.ok) {
+          const { runId: latest } = await latestRes.json();
+          if (latest) {
+            runId = latest;
+            localStorage.setItem("sb_last_run_id", latest);
+          }
+        }
+      } catch {
+        // Network issue — fall through to empty state
+      }
+
+      if (!runId) {
+        setLoading(false);
+        return; // Truly no runs — show empty state
+      }
     }
 
     try {
