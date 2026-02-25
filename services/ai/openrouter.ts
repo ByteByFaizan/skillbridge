@@ -11,7 +11,7 @@ import {
    ═══════════════════════════════════════════════════════ */
 
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
-const REQUEST_TIMEOUT_MS = 60_000; // 60s timeout for AI calls
+const REQUEST_TIMEOUT_MS = 90_000; // 90s timeout — extra headroom for free model
 
 function getApiKey(): string {
   const key = process.env.OPENROUTER_API_KEY;
