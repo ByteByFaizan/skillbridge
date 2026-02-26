@@ -11,25 +11,18 @@ import { getSupabaseAuth } from "@/lib/supabase-auth";
 
 export async function GET() {
     try {
-        const [authClient, sessionId] = await Promise.all([
-            getSupabaseAuth(),
+        const [authResult, sessionId] = await Promise.all([
+            getSupabaseAuth().then((c) => c.auth.getUser()),
             getSessionId(),
         ]);
 
-        const { data: { user: authUser } } = await authClient.auth.getUser();
+        const authUser = authResult.data.user ?? null;
 
         if (!authUser && !sessionId) {
             return NextResponse.json({ runId: null }, { status: 200 });
         }
 
         const db = getSupabaseServer();
-
-        const query = db
-            .from("recommendation_runs")
-            .select("id")
-            .order("created_at", { ascending: false })
-            .limit(1)
-            .maybeSingle();
 
         const { data, error } = authUser
             ? await db

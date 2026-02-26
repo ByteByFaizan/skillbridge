@@ -12,13 +12,13 @@ import { getSupabaseAuth } from "@/lib/supabase-auth";
 
 export async function GET() {
   try {
-    // Resolve authenticated user and anonymous session in parallel
-    const [authClient, sessionId] = await Promise.all([
-      getSupabaseAuth(),
+    // Resolve authenticated user and anonymous session in parallel (async-api-routes)
+    const [authResult, sessionId] = await Promise.all([
+      getSupabaseAuth().then((c) => c.auth.getUser()),
       getSessionId(),
     ]);
 
-    const { data: { user: authUser } } = await authClient.auth.getUser();
+    const authUser = authResult.data.user ?? null;
 
     // No identity at all — return empty
     if (!authUser && !sessionId) {
