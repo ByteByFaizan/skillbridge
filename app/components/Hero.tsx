@@ -43,7 +43,7 @@ export default function Hero() {
               </svg>
             </a>
             <p className="text-[#605A57] text-sm font-medium">
-              No sign-up required · Takes under 2 minutes
+              Sign-up required · Takes under 2 minutes
             </p>
           </div>
 

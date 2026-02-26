@@ -10,7 +10,7 @@
 
 **AI-powered career guidance for students and early-career learners.**
 
-Answer a few questions about your education, skills, and interests — get 2–3 realistic career paths, a skill-gap breakdown, and a structured 6‑month learning roadmap. No sign-up required. Results in under 10 seconds.
+Answer a few questions about your education, skills, and interests — get 2–3 realistic career paths, a skill-gap breakdown, and a structured 6‑month learning roadmap. Sign-up required. Results in under 10 seconds.
 
 ---
 

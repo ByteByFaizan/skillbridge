@@ -7,10 +7,7 @@ const footerLinks = {
   Company: [
     { label: "About", href: "/about" },
     { label: "Contact", href: "#" },
-  ],
-  Legal: [
-    { label: "Privacy", href: "#" },
-    { label: "Terms", href: "#" },
+    { label: "faizan91study@gmail.com", href: "mailto:faizan91study@gmail.com" },
   ],
 };
 
@@ -18,7 +15,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-[#e0dedb] bg-[#f7f5f3]">
       <div className="max-w-[1060px] mx-auto px-4 py-12 sm:py-16">
-        <div className="grid gap-10 sm:grid-cols-4">
+        <div className="grid gap-10 sm:grid-cols-3">
           {/* Brand */}
           <div className="sm:col-span-1">
             <a href="/" className="font-display text-lg text-[#37322f]">

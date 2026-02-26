@@ -9,7 +9,7 @@ export default function FinalCTA() {
             Ready to get clarity on your career?
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-base text-[#49423D] sm:text-lg font-medium leading-7">
-            Start your career discovery in minutes. No sign-up. No cost. Just
+            Start your career discovery in minutes. Sign-up required. No cost. Just
             clear, personalized guidance.
           </p>
           <div className="mt-10">

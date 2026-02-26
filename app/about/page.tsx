@@ -73,7 +73,7 @@ const values = [
         number: "02",
         title: "Student-First Design",
         description:
-            "Every feature exists because a student needed it. No upsells, no walls, no sign-up friction. You get personalized results in under two minutes — free.",
+            "Every feature exists because a student needed it. No upsells, no walls, sign-up required. You get personalized results in under two minutes — free.",
     },
     {
         icon: PrivacyIcon,
@@ -399,7 +399,7 @@ export default function AboutPage() {
                                 Ready to find your path?
                             </h2>
                             <p className="mx-auto mt-4 max-w-xl text-base text-[#49423D] sm:text-lg font-medium leading-7">
-                                Start your career discovery in minutes. No sign-up. No cost.
+                                Start your career discovery in minutes. Sign-up required. No cost.
                                 Just clear, personalized guidance.
                             </p>
                             <div className="mt-10">
