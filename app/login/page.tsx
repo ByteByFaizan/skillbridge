@@ -333,38 +333,6 @@ function LoginPageContent() {
               Join thousands of students who have discovered their ideal career path with AI-powered guidance and personalized roadmaps.
             </p>
 
-            {/* Stats mini-row */}
-            <div
-              className="flex items-center gap-6 mt-8"
-              style={stagger(4, 0.35)}
-            >
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center login-stat-pulse">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#c4a882]/80">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="text-white/80 text-sm font-medium login-counter">10k+</div>
-                  <div className="text-white/50 text-[11px]">Students</div>
-                </div>
-              </div>
-              <div className="w-px h-8 bg-white/[0.06]" />
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center login-stat-pulse" style={{ animationDelay: "0.5s" }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#c4a882]/80">
-                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="text-white/80 text-sm font-medium">95%</div>
-                  <div className="text-white/50 text-[11px]">Success rate</div>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Spacer */}
