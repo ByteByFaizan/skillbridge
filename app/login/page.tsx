@@ -330,7 +330,7 @@ function LoginPageContent() {
               className="text-white/55 text-[15px] leading-relaxed max-w-sm"
               style={stagger(3, 0.3)}
             >
-              Join thousands of students who have discovered their ideal career path with AI-powered guidance and personalized roadmaps.
+              Discover your ideal career path with AI-powered guidance and personalized roadmaps tailored just for you.
             </p>
 
           </div>
