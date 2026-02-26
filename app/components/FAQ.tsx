@@ -22,7 +22,7 @@ const faqs = [
   {
     question: "Do I need to sign up?",
     answer:
-      "Sign-up is required to get your first career recommendations. You have to create an account laterto save your results and track progress.",
+      "Sign-up is required to get your first career recommendations. You have to create an account to save your results and track progress.",
   },
   {
     question: "How accurate are the recommendations?",
