@@ -19,11 +19,5 @@ CREATE INDEX IF NOT EXISTS idx_runs_session_created
 -- If you later add Supabase Auth, enable RLS and add appropriate policies.
 ALTER TABLE recommendation_runs ENABLE ROW LEVEL SECURITY;
 
--- Allow the service role to do everything (service role bypasses RLS, but
--- this policy ensures the table works if RLS is accidentally left on).
-CREATE POLICY "Service role full access"
-  ON recommendation_runs
-  FOR ALL
-  TO service_role
-  USING (true)
-  WITH CHECK (true);
+-- Allow the service role to do everything (service role inherently bypasses RLS,
+-- so we don't need an explicit policy that triggers Supabase linter warnings).
