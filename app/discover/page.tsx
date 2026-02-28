@@ -924,7 +924,7 @@ export default function DiscoverPage() {
           {/* ── Footer note ── */}
           <div className="mt-12 pt-6 border-t border-[#e0dedb]/60 text-center">
             <p className="text-[13px] text-[#7a7572] leading-relaxed font-medium">
-              No account needed · Your data is only used to generate recommendations · Takes under 2 minutes
+              Account needed · Your data is only used to generate recommendations · Takes under 2 minutes
             </p>
           </div>
         </div>
