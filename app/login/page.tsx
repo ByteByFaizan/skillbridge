@@ -631,7 +631,7 @@ function LoginPageContent() {
       </div>
 
       {/* ──────────── CSS Animations ──────────── */}
-      {/* eslint-disable-next-line react/no-danger */}
+      { }
       <style dangerouslySetInnerHTML={{
         __html: `
         /* ▸ Animated gradient background */
