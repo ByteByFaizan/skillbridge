@@ -564,12 +564,12 @@ function LoginPageContent() {
                   Remember me
                 </span>
               </label>
-              <a
-                href="#"
+              <Link
+                href="/forgot-password"
                 className="text-[13px] font-medium text-[#37322f]/65 hover:text-[#c4a882] transition-colors duration-300 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-[#c4a882]/50 hover:after:w-full after:transition-all after:duration-300"
               >
                 Forgot password?
-              </a>
+              </Link>
             </div>
 
             {/* Submit */}
