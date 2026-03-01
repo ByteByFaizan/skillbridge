@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CareerInputSchema } from "@/utils/validators";
-import { generateCareerReport } from "@/services/ai/openrouter";
+import { generateCareerReport } from "@/services/ai/nvidia";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { getSupabaseAuth } from "@/lib/supabase-auth";
 import { getSessionId, setSessionCookie } from "@/lib/session";
