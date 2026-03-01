@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import type { User } from "@supabase/supabase-js";
@@ -99,7 +100,7 @@ export default function Header() {
             }`}>
             {/* Left: Brand + nav links */}
             <div className="flex items-center gap-8">
-              <a
+              <Link
                 href="/"
                 className="inline-flex items-center gap-2 text-[#37322f] font-semibold text-xl tracking-tight select-none"
                 style={{ fontFamily: "'DM Serif Display', 'Georgia', serif" }}
@@ -111,7 +112,7 @@ export default function Header() {
                   </svg>
                 </div>
                 SkillBridge
-              </a>
+              </Link>
               <div className="hidden md:flex items-center gap-6">
                 {navLinks.map((link) => (
                   <a
@@ -203,7 +204,7 @@ export default function Header() {
       >
         {/* Panel header */}
         <div className="flex items-center justify-between px-6 pt-6 pb-5 border-b border-white/[0.07]">
-          <a
+          <Link
             href="/"
             onClick={() => setMobileOpen(false)}
             className="inline-flex items-center gap-2.5 text-white font-semibold text-lg tracking-tight"
@@ -216,7 +217,7 @@ export default function Header() {
               </svg>
             </div>
             SkillBridge
-          </a>
+          </Link>
           <button
             onClick={() => setMobileOpen(false)}
             className="w-9 h-9 rounded-full bg-white/[0.07] hover:bg-white/[0.13] flex items-center justify-center text-white/70 hover:text-white transition-all"
