@@ -146,7 +146,7 @@ export default function Header() {
                     <span className="max-w-[120px] truncate">{user.name}</span>
                   </button>
                   {dropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 rounded-xl border border-[#37322f]/10 bg-white shadow-lg py-1 z-50 animate-fade-in">
+                    <div className="absolute right-0 mt-2 w-48 rounded-xl border border-[#37322f]/10 bg-white shadow-lg py-1 z-50 animate-menu-slide-down">
                       <div className="px-4 py-2 border-b border-[#37322f]/5">
                         <p className="text-sm font-medium text-[#37322f] truncate">{user.name}</p>
                         <p className="text-xs text-[#37322f]/50 truncate">{user.email}</p>
@@ -157,7 +157,7 @@ export default function Header() {
                         className="group flex w-full items-center gap-2.5 px-4 py-2.5 text-[13.5px] font-medium text-[#37322f]/70 bg-transparent hover:bg-[#37322f]/[0.04] hover:text-[#37322f] transition-all duration-200"
                       >
                         <span className="flex items-center justify-center w-6 h-6 rounded-md bg-[#37322f]/[0.04] group-hover:bg-[#37322f]/[0.08] transition-colors duration-200">
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-70 group-hover:opacity-100 transition-opacity">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-70 group-hover:opacity-100 transition-all duration-300 group-hover:animate-lock-wiggle">
                             <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
                             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                           </svg>
@@ -304,7 +304,7 @@ export default function Header() {
                 onClick={() => setMobileOpen(false)}
                 className="group flex w-full items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-white/60 hover:text-white hover:bg-white/[0.07] transition-all duration-200 active:scale-[0.98]"
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-all duration-300 group-hover:animate-lock-wiggle">
                   <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
                   <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
