@@ -1,5 +1,3 @@
-
-
 import { type EmailOtpType } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAuth } from "@/lib/supabase-auth";
@@ -8,12 +6,17 @@ import { getSupabaseAuth } from "@/lib/supabase-auth";
  * GET /auth/confirm
  *
  * Handles the redirect from Supabase recovery / signup confirmation emails.
- * Exchanges the `token_hash` query-param for a session, then redirects
- * to the URL specified in the `next` param (defaults to `/dashboard`).
+ *
+ * Supports two flows:
+ *  1. PKCE ({{ .ConfirmationURL }})  → receives a `code` query-param
+ *  2. Token-hash                     → receives `token_hash` + `type`
+ *
+ * After verification, redirects to the `next` param (defaults to `/dashboard`).
  */
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const token_hash = searchParams.get("token_hash");
+    const code = searchParams.get("code");
     const type = searchParams.get("type") as EmailOtpType | null;
     const next = searchParams.get("next") ?? "/dashboard";
 
@@ -21,10 +24,24 @@ export async function GET(request: NextRequest) {
     redirectTo.pathname = next;
     redirectTo.searchParams.delete("token_hash");
     redirectTo.searchParams.delete("type");
+    redirectTo.searchParams.delete("code");
     redirectTo.searchParams.delete("next");
 
+    const supabase = await getSupabaseAuth();
+
+    // Flow 1: PKCE — {{ .ConfirmationURL }} redirects here with a `code`
+    if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+        if (!error) {
+            return NextResponse.redirect(redirectTo);
+        }
+
+        console.error("[auth/confirm] Code exchange failed:", error.message);
+    }
+
+    // Flow 2: Token-hash — custom email template with {{ .TokenHash }}
     if (token_hash && type) {
-        const supabase = await getSupabaseAuth();
         const { error } = await supabase.auth.verifyOtp({
             type,
             token_hash,
