@@ -16,7 +16,7 @@ const navLinks = [
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const [user, setUser] = useState<{ name: string; email: string } | null>({ name: "Demo User", email: "demo@skillbridge.com" });
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -168,11 +168,13 @@ export default function Header() {
                         onClick={handleLogout}
                         className="group flex w-full items-center gap-2.5 px-4 py-2.5 text-[13.5px] font-medium text-[#37322f]/70 bg-transparent hover:bg-[#ef4444]/[0.06] hover:text-[#ef4444] transition-all duration-200"
                       >
-                        <span className="flex items-center justify-center w-6 h-6 rounded-md bg-[#37322f]/[0.04] group-hover:bg-[#ef4444]/10 transition-colors duration-200">
+                        <span className="flex items-center justify-center w-6 h-6 rounded-md bg-[#37322f]/[0.04] group-hover:bg-[#ef4444]/10 transition-colors duration-200 overflow-hidden relative">
                           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-70 group-hover:opacity-100 transition-opacity">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                            <polyline points="16 17 21 12 16 7" className="transition-transform duration-200 group-hover:translate-x-[2px]" />
-                            <line x1="21" y1="12" x2="9" y2="12" className="transition-transform duration-200 group-hover:translate-x-[2px]" />
+                            <g className="group-hover:animate-logout-arrow" style={{ transformOrigin: "center" }}>
+                              <polyline points="16 17 21 12 16 7" />
+                              <line x1="21" y1="12" x2="9" y2="12" />
+                            </g>
                           </svg>
                         </span>
                         Log out
@@ -312,13 +314,17 @@ export default function Header() {
               </Link>
               <button
                 onClick={handleLogout}
-                className="group flex w-full items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-white/60 hover:text-[#ef4444] hover:bg-[#ef4444]/[0.08] transition-all duration-200 active:scale-[0.98]"
+                className="group flex w-full items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-white/60 hover:text-[#ef4444] hover:bg-[#ef4444]/[0.08] transition-all duration-200 active:scale-[0.98] overflow-hidden"
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
+                <span className="relative overflow-hidden flex items-center justify-center">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <g className="group-hover:animate-logout-arrow" style={{ transformOrigin: "center" }}>
+                      <polyline points="16 17 21 12 16 7" />
+                      <line x1="21" y1="12" x2="9" y2="12" />
+                    </g>
+                  </svg>
+                </span>
                 Log out
               </button>
             </div>

@@ -168,6 +168,28 @@ textarea {
   }
 }
 
+@keyframes logout-arrow {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  35% {
+    transform: translateX(12px);
+    opacity: 0;
+  }
+
+  45% {
+    transform: translateX(-12px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 @keyframes subtle-float {
 
   0%,
@@ -249,6 +271,10 @@ textarea {
 
 @utility animate-lock-wiggle {
   animation: lock-wiggle 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@utility animate-logout-arrow {
+  animation: logout-arrow 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
 .animate-subtle-float {
