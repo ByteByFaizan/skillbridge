@@ -21,7 +21,11 @@ interface Milestone {
   tasks: number;
   tasksDone: number;
   accent: string;
-  details?: string[];
+  details?: {
+    topics: string[];
+    tools: string[];
+    platforms: string[];
+  };
 }
 
 interface CareerOverviewItem {
@@ -135,11 +139,11 @@ function buildMilestones(roadmap: LearningRoadmap, completedIds: Set<number>): M
         tasks: taskCount,
         tasksDone: status === "completed" ? taskCount : 0,
         accent: MONTH_ACCENTS[i % MONTH_ACCENTS.length],
-        details: [
-          ...m.topics.map((t) => `○ ${t}`),
-          ...m.tools.map((t) => `🔧 ${t}`),
-          ...m.platforms.map((p) => `📚 ${p}`),
-        ],
+        details: {
+          topics: m.topics,
+          tools: m.tools,
+          platforms: m.platforms,
+        },
       };
     });
 }
@@ -1005,26 +1009,164 @@ export default function DashboardPage() {
                     <div
                       className="overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
                       style={{
-                        maxHeight: isExpanded ? "400px" : "0px",
+                        maxHeight: isExpanded ? "600px" : "0px",
                         opacity: isExpanded ? 1 : 0,
                       }}
                     >
-                      <div className="border-t border-[#ECE8E3] bg-gradient-to-b from-[#FDFCFB] to-[#F9F7F4] px-5 lg:px-6 py-5">
+                      <div className="border-t border-[#ECE8E3] bg-gradient-to-b from-[#FDFCFB] to-[#F9F7F4] px-5 lg:px-6 py-6">
                         {milestone.details && (
-                          <div className="space-y-2.5">
-                            {milestone.details.map((detail, di) => (
-                              <p
-                                key={di}
-                                className="text-sm leading-relaxed text-[#3D3632] flex items-start gap-2"
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                            {/* ── Topics Section ── */}
+                            {milestone.details.topics.length > 0 && (
+                              <div
+                                className="milestone-section-reveal"
                                 style={{
                                   opacity: isExpanded ? 1 : 0,
-                                  transform: isExpanded ? "translateX(0)" : "translateX(-8px)",
-                                  transition: `opacity 0.4s ease ${di * 0.05}s, transform 0.4s ease ${di * 0.05}s`,
+                                  transform: isExpanded ? "translateY(0)" : "translateY(12px)",
+                                  transition: `opacity 0.5s cubic-bezier(0.16,1,0.3,1) 0.05s, transform 0.5s cubic-bezier(0.16,1,0.3,1) 0.05s`,
                                 }}
                               >
-                                {detail}
-                              </p>
-                            ))}
+                                <div className="flex items-center gap-2 mb-3">
+                                  <div
+                                    className="w-6 h-6 rounded-lg flex items-center justify-center"
+                                    style={{ backgroundColor: `${milestone.accent}18` }}
+                                  >
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={milestone.accent} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                      <circle cx="12" cy="12" r="10" />
+                                      <path d="M12 16v-4" />
+                                      <path d="M12 8h.01" />
+                                    </svg>
+                                  </div>
+                                  <h4
+                                    className="text-[13px] font-semibold tracking-wide text-[#3D3632]"
+                                    style={{ fontFamily: "var(--font-display), 'Instrument Serif', Georgia, serif", fontStyle: "italic" }}
+                                  >
+                                    Topics to Learn
+                                  </h4>
+                                </div>
+                                <div className="space-y-1.5">
+                                  {milestone.details.topics.map((topic, ti) => (
+                                    <div
+                                      key={ti}
+                                      className="milestone-detail-item group/item flex items-center gap-2.5 py-1.5 px-2.5 rounded-lg transition-all duration-200 hover:bg-white/80"
+                                      style={{
+                                        opacity: isExpanded ? 1 : 0,
+                                        transform: isExpanded ? "translateX(0)" : "translateX(-10px)",
+                                        transition: `opacity 0.4s cubic-bezier(0.16,1,0.3,1) ${0.12 + ti * 0.06}s, transform 0.4s cubic-bezier(0.16,1,0.3,1) ${0.12 + ti * 0.06}s, background-color 0.2s ease`,
+                                      }}
+                                    >
+                                      <span
+                                        className="w-1.5 h-1.5 rounded-full shrink-0 transition-transform duration-200 group-hover/item:scale-150"
+                                        style={{ backgroundColor: milestone.accent }}
+                                      />
+                                      <span className="text-[13px] leading-snug text-[#4A433E] font-medium">{topic}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* ── Tools Section ── */}
+                            {milestone.details.tools.length > 0 && (
+                              <div
+                                className="milestone-section-reveal"
+                                style={{
+                                  opacity: isExpanded ? 1 : 0,
+                                  transform: isExpanded ? "translateY(0)" : "translateY(12px)",
+                                  transition: `opacity 0.5s cubic-bezier(0.16,1,0.3,1) 0.12s, transform 0.5s cubic-bezier(0.16,1,0.3,1) 0.12s`,
+                                }}
+                              >
+                                <div className="flex items-center gap-2 mb-3">
+                                  <div
+                                    className="w-6 h-6 rounded-lg flex items-center justify-center"
+                                    style={{ backgroundColor: `${milestone.accent}18` }}
+                                  >
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={milestone.accent} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                                    </svg>
+                                  </div>
+                                  <h4
+                                    className="text-[13px] font-semibold tracking-wide text-[#3D3632]"
+                                    style={{ fontFamily: "var(--font-display), 'Instrument Serif', Georgia, serif", fontStyle: "italic" }}
+                                  >
+                                    Tools &amp; Tech
+                                  </h4>
+                                </div>
+                                <div className="flex flex-wrap gap-1.5">
+                                  {milestone.details.tools.map((tool, tli) => (
+                                    <span
+                                      key={tli}
+                                      className="milestone-detail-item inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[12px] font-semibold tracking-wide transition-all duration-200 hover:shadow-sm hover:scale-[1.04] cursor-default"
+                                      style={{
+                                        backgroundColor: `${milestone.accent}12`,
+                                        color: milestone.accent,
+                                        opacity: isExpanded ? 1 : 0,
+                                        transform: isExpanded ? "translateY(0) scale(1)" : "translateY(8px) scale(0.92)",
+                                        transition: `opacity 0.35s cubic-bezier(0.16,1,0.3,1) ${0.18 + tli * 0.06}s, transform 0.4s cubic-bezier(0.34,1.56,0.64,1) ${0.18 + tli * 0.06}s, box-shadow 0.2s ease, background-color 0.2s ease`,
+                                      }}
+                                    >
+                                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-60">
+                                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                                      </svg>
+                                      {tool}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* ── Platforms Section ── */}
+                            {milestone.details.platforms.length > 0 && (
+                              <div
+                                className="milestone-section-reveal"
+                                style={{
+                                  opacity: isExpanded ? 1 : 0,
+                                  transform: isExpanded ? "translateY(0)" : "translateY(12px)",
+                                  transition: `opacity 0.5s cubic-bezier(0.16,1,0.3,1) 0.2s, transform 0.5s cubic-bezier(0.16,1,0.3,1) 0.2s`,
+                                }}
+                              >
+                                <div className="flex items-center gap-2 mb-3">
+                                  <div
+                                    className="w-6 h-6 rounded-lg flex items-center justify-center"
+                                    style={{ backgroundColor: `${milestone.accent}18` }}
+                                  >
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={milestone.accent} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                                    </svg>
+                                  </div>
+                                  <h4
+                                    className="text-[13px] font-semibold tracking-wide text-[#3D3632]"
+                                    style={{ fontFamily: "var(--font-display), 'Instrument Serif', Georgia, serif", fontStyle: "italic" }}
+                                  >
+                                    Resources
+                                  </h4>
+                                </div>
+                                <div className="space-y-1.5">
+                                  {milestone.details.platforms.map((platform, pi) => (
+                                    <div
+                                      key={pi}
+                                      className="milestone-detail-item group/res flex items-center gap-2.5 py-2 px-2.5 rounded-lg border border-transparent transition-all duration-200 hover:bg-white hover:border-[#E5E0DB]/60 hover:shadow-sm"
+                                      style={{
+                                        opacity: isExpanded ? 1 : 0,
+                                        transform: isExpanded ? "translateX(0)" : "translateX(-10px)",
+                                        transition: `opacity 0.4s cubic-bezier(0.16,1,0.3,1) ${0.25 + pi * 0.06}s, transform 0.4s cubic-bezier(0.16,1,0.3,1) ${0.25 + pi * 0.06}s, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease`,
+                                      }}
+                                    >
+                                      <span
+                                        className="w-5 h-5 rounded-md flex items-center justify-center text-[10px] shrink-0 transition-transform duration-200 group-hover/res:scale-110"
+                                        style={{
+                                          background: `linear-gradient(135deg, ${milestone.accent}20, ${milestone.accent}08)`,
+                                        }}
+                                      >
+                                        📚
+                                      </span>
+                                      <span className="text-[13px] leading-snug text-[#4A433E] font-medium">{platform}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
