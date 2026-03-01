@@ -3,6 +3,7 @@ import Image from "next/image";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import RevealOnScroll from "../components/RevealOnScroll";
+import CareerDiscoveryLink from "../components/CareerDiscoveryLink";
 
 export const metadata: Metadata = {
     title: "About — SkillBridge",
@@ -403,8 +404,7 @@ export default function AboutPage() {
                                 Just clear, personalized guidance.
                             </p>
                             <div className="mt-10">
-                                <a
-                                    href="/discover"
+                                <CareerDiscoveryLink
                                     className="about-cta-shine group inline-flex items-center gap-2 rounded-full bg-[#37322f] px-8 py-3.5 text-sm font-medium text-white shadow-[0px_0px_0px_2.5px_rgba(255,255,255,0.08)_inset] transition-all hover:opacity-90 hover:scale-[1.02] active:scale-[0.98]"
                                 >
                                     Start Career Discovery
@@ -421,7 +421,7 @@ export default function AboutPage() {
                                             d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
                                         />
                                     </svg>
-                                </a>
+                                </CareerDiscoveryLink>
                             </div>
                         </RevealOnScroll>
                     </div>

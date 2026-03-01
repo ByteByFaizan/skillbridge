@@ -1,3 +1,5 @@
+import CareerDiscoveryLink from "./CareerDiscoveryLink";
+
 export default function Hero() {
   return (
     <section className="relative pt-24 pb-16 sm:pt-36 sm:pb-20 overflow-hidden">
@@ -22,8 +24,7 @@ export default function Hero() {
 
           {/* CTA Button */}
           <div className="flex flex-col items-center gap-4 animate-fade-in-up animation-delay-400">
-            <a
-              href="/discover"
+            <CareerDiscoveryLink
               className="group relative h-12 px-12 bg-[#37322f] hover:bg-[#2A2520] text-white rounded-full font-medium text-[15px] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] inline-flex items-center gap-2.5 shadow-[0px_0px_0px_2.5px_rgba(255,255,255,0.08)_inset] hover:shadow-[0_8px_24px_rgba(55,50,47,0.3),0_0_0_4px_rgba(55,50,47,0.1)] hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
@@ -41,7 +42,7 @@ export default function Hero() {
                   d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
                 />
               </svg>
-            </a>
+            </CareerDiscoveryLink>
             <p className="text-[#605A57] text-sm font-medium">
               Sign-up required · Takes under 2 minutes
             </p>
