@@ -151,6 +151,19 @@ export default function Header() {
                         <p className="text-sm font-medium text-[#37322f] truncate">{user.name}</p>
                         <p className="text-xs text-[#37322f]/50 truncate">{user.email}</p>
                       </div>
+                      <Link
+                        href="/update-password"
+                        onClick={() => setDropdownOpen(false)}
+                        className="group flex w-full items-center gap-2.5 px-4 py-2.5 text-[13.5px] font-medium text-[#37322f]/70 bg-transparent hover:bg-[#37322f]/[0.04] hover:text-[#37322f] transition-all duration-200"
+                      >
+                        <span className="flex items-center justify-center w-6 h-6 rounded-md bg-[#37322f]/[0.04] group-hover:bg-[#37322f]/[0.08] transition-colors duration-200">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-70 group-hover:opacity-100 transition-opacity">
+                            <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                          </svg>
+                        </span>
+                        Change password
+                      </Link>
                       <button
                         onClick={handleLogout}
                         className="group flex w-full items-center gap-2.5 px-4 py-2.5 text-[13.5px] font-medium text-[#37322f]/70 bg-transparent hover:bg-[#ef4444]/[0.06] hover:text-[#ef4444] transition-all duration-200"
@@ -286,6 +299,17 @@ export default function Header() {
                   <p className="text-white/40 text-[11px] truncate">{user.email}</p>
                 </div>
               </div>
+              <Link
+                href="/update-password"
+                onClick={() => setMobileOpen(false)}
+                className="group flex w-full items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-white/60 hover:text-white hover:bg-white/[0.07] transition-all duration-200 active:scale-[0.98]"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+                Change password
+              </Link>
               <button
                 onClick={handleLogout}
                 className="group flex w-full items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-white/60 hover:text-[#ef4444] hover:bg-[#ef4444]/[0.08] transition-all duration-200 active:scale-[0.98]"
