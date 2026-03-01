@@ -111,8 +111,8 @@ export default function UpdatePasswordPage() {
         []
     );
 
-    /* ── Password strength ── */
-    const getPasswordStrength = () => {
+    /* ── Password strength (memoized — only recalculates when password changes) ── */
+    const strength = useMemo(() => {
         if (!password) return { level: 0, label: "", color: "" };
         let score = 0;
         if (password.length >= 6) score++;
@@ -126,9 +126,7 @@ export default function UpdatePasswordPage() {
         if (score <= 3) return { level: 3, label: "Good", color: "#c4a882" };
         if (score <= 4) return { level: 4, label: "Strong", color: "#22c55e" };
         return { level: 5, label: "Excellent", color: "#10b981" };
-    };
-
-    const strength = getPasswordStrength();
+    }, [password]);
 
     return (
         <div className="min-h-screen flex bg-[#f7f5f3] overflow-hidden">
