@@ -16,7 +16,7 @@ const navLinks = [
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [user, setUser] = useState<{ name: string; email: string } | null>({ name: "Demo User", email: "demo@skillbridge.com" });
+  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
