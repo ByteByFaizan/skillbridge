@@ -1,35 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAuth } from "@/lib/supabase-auth";
 import { LoginSchema } from "@/utils/validators";
-import { checkRateLimit } from "@/lib/rate-limit";
 
 /**
  * POST /api/auth/login
  *
  * Signs in a user with email + password.
- * Includes rate limiting and input validation.
+ * Rate limiting and CORS are enforced by middleware.
  */
 export async function POST(request: NextRequest) {
   try {
-    /* ── Rate limit by IP ─────────────────────────────── */
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      request.headers.get("x-real-ip") ??
-      "unknown";
-
-    const rl = checkRateLimit(`auth:${ip}`);
-    if (!rl.allowed) {
-      return NextResponse.json(
-        { error: { code: "RATE_LIMITED", message: "Too many login attempts. Please try again later." } },
-        {
-          status: 429,
-          headers: {
-            "Retry-After": String(Math.ceil((rl.retryAfterMs ?? 0) / 1000)),
-          },
-        }
-      );
-    }
-
     /* ── Parse JSON safely ────────────────────────────── */
     let body: unknown;
     try {

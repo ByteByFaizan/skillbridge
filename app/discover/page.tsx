@@ -15,11 +15,11 @@ interface FormData {
 }
 
 const EDUCATION_OPTIONS = [
-  { value: "high-school", label: "High School", icon: "🎓", description: "Currently in or completed high school" },
-  { value: "undergraduate", label: "Undergraduate", icon: "📚", description: "Pursuing a Bachelor's degree (B.Tech, B.Sc, B.Com, etc.)" },
-  { value: "graduate", label: "Graduate", icon: "🎯", description: "Completed a Bachelor's degree" },
-  { value: "postgraduate", label: "Postgraduate", icon: "🔬", description: "Pursuing or completed Master's / MBA / M.Tech" },
-  { value: "self-taught", label: "Self-Taught / Bootcamp", icon: "💡", description: "Learning through online courses and self-study" },
+  { value: "high-school", label: "High School", description: "Currently in or completed high school" },
+  { value: "undergraduate", label: "Undergraduate", description: "Pursuing a Bachelor's degree (B.Tech, B.Sc, B.Com, etc.)" },
+  { value: "graduate", label: "Graduate", description: "Completed a Bachelor's degree" },
+  { value: "postgraduate", label: "Postgraduate", description: "Pursuing or completed Master's / MBA / M.Tech" },
+  { value: "self-taught", label: "Self-Taught / Bootcamp", description: "Learning through online courses and self-study" },
 ];
 
 const SKILL_SUGGESTIONS = [
@@ -142,7 +142,7 @@ export default function DiscoverPage() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, formData.education, isSubmitting, transitioning]);
 
   /* ── Loading stage progression ───────────────────────── */
@@ -376,26 +376,23 @@ export default function DiscoverPage() {
                   <button
                     key={i}
                     onClick={() => goToStep(i)}
-                    className={`relative flex items-center justify-center transition-all duration-500 ${
-                      active
+                    className={`relative flex items-center justify-center transition-all duration-500 ${active
                         ? "w-8 h-8"
                         : "w-6 h-6"
-                    } ${
-                      i <= step || isStepComplete(i)
+                      } ${i <= step || isStepComplete(i)
                         ? "cursor-pointer"
                         : "cursor-default"
-                    }`}
+                      }`}
                     aria-label={`Go to step ${i + 1}`}
                     disabled={i > step && !canProceed()}
                   >
                     {/* Background circle */}
-                    <div className={`absolute inset-0 rounded-full transition-all duration-500 ${
-                      active
+                    <div className={`absolute inset-0 rounded-full transition-all duration-500 ${active
                         ? "bg-[#37322f] scale-100"
                         : completed
                           ? "bg-[#37322f] scale-100"
                           : "bg-[#e0dedb] scale-100 hover:bg-[#d5d2cf]"
-                    }`} />
+                      }`} />
 
                     {/* Active ring pulse */}
                     {active && (
@@ -408,9 +405,8 @@ export default function DiscoverPage() {
                         <path d="M20 6L9 17l-5-5" />
                       </svg>
                     ) : (
-                      <span className={`relative z-10 text-[11px] font-bold transition-colors duration-300 ${
-                        active ? "text-white" : "text-[#605A57]"
-                      }`}>
+                      <span className={`relative z-10 text-[11px] font-bold transition-colors duration-300 ${active ? "text-white" : "text-[#605A57]"
+                        }`}>
                         {i + 1}
                       </span>
                     )}
@@ -497,23 +493,17 @@ export default function DiscoverPage() {
                         setFormData((fd) => ({ ...fd, education: opt.value }));
                         setTimeout(goNext, 150);
                       }}
-                      className={`discover-option-enter w-full text-left px-5 py-4 rounded-xl border transition-all duration-300 group ${
-                        selected
+                      className={`discover-option-enter w-full text-left px-5 py-4 rounded-xl border transition-all duration-300 group ${selected
                           ? "border-[#37322f] bg-white shadow-[0_4px_20px_rgba(55,50,47,0.10)] scale-[1.01]"
                           : "border-[#e0dedb] bg-white/60 hover:bg-white hover:border-[#37322f]/25 hover:shadow-[0_2px_12px_rgba(55,50,47,0.06)] hover:scale-[1.005]"
-                      }`}
+                        }`}
                       style={{ animationDelay: `${i * 70 + 80}ms` }}
                     >
                       <div className="flex items-center gap-4">
-                        {/* Emoji icon */}
-                        <span className={`text-xl transition-transform duration-300 ${selected ? "scale-110" : "group-hover:scale-105"}`}>
-                          {opt.icon}
-                        </span>
 
                         {/* Radio indicator */}
-                        <div className={`w-[18px] h-[18px] rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
-                          selected ? "border-[#37322f] bg-[#37322f]" : "border-[#d0cdc9] group-hover:border-[#37322f]/50"
-                        }`}>
+                        <div className={`w-[18px] h-[18px] rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all duration-300 ${selected ? "border-[#37322f] bg-[#37322f]" : "border-[#d0cdc9] group-hover:border-[#37322f]/50"
+                          }`}>
                           {selected && (
                             <svg className="w-2.5 h-2.5 text-white discover-tag-enter" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M20 6L9 17l-5-5" />
@@ -522,14 +512,12 @@ export default function DiscoverPage() {
                         </div>
 
                         <div className="flex-1">
-                          <span className={`text-[15px] font-semibold transition-colors ${
-                            selected ? "text-[#37322f]" : "text-[#49423D] group-hover:text-[#37322f]"
-                          }`}>
+                          <span className={`text-[15px] font-semibold transition-colors ${selected ? "text-[#37322f]" : "text-[#49423D] group-hover:text-[#37322f]"
+                            }`}>
                             {opt.label}
                           </span>
-                          <p className={`text-[13px] leading-snug mt-0.5 transition-colors ${
-                            selected ? "text-[#605A57]" : "text-[#7a7572]"
-                          }`}>
+                          <p className={`text-[13px] leading-snug mt-0.5 transition-colors ${selected ? "text-[#605A57]" : "text-[#7a7572]"
+                            }`}>
                             {opt.description}
                           </p>
                         </div>
@@ -560,11 +548,10 @@ export default function DiscoverPage() {
               <div>
                 {/* Tag input container */}
                 <div
-                  className={`discover-tag-input min-h-[56px] px-4 py-3 rounded-xl border bg-white transition-all duration-300 flex flex-wrap gap-2 items-center cursor-text ${
-                    showSkillSuggestions
+                  className={`discover-tag-input min-h-[56px] px-4 py-3 rounded-xl border bg-white transition-all duration-300 flex flex-wrap gap-2 items-center cursor-text ${showSkillSuggestions
                       ? "border-[#37322f] shadow-[0_0_0_4px_rgba(55,50,47,0.06),0_4px_16px_rgba(55,50,47,0.06)]"
                       : "border-[#e0dedb] hover:border-[#37322f]/30"
-                  }`}
+                    }`}
                   onClick={() => skillInputRef.current?.focus()}
                 >
                   {formData.skills.map((skill, i) => (
@@ -648,11 +635,10 @@ export default function DiscoverPage() {
               <div>
                 {/* Tag input container */}
                 <div
-                  className={`discover-tag-input min-h-[56px] px-4 py-3 rounded-xl border bg-white transition-all duration-300 flex flex-wrap gap-2 items-center cursor-text ${
-                    showInterestSuggestions
+                  className={`discover-tag-input min-h-[56px] px-4 py-3 rounded-xl border bg-white transition-all duration-300 flex flex-wrap gap-2 items-center cursor-text ${showInterestSuggestions
                       ? "border-[#37322f] shadow-[0_0_0_4px_rgba(55,50,47,0.06),0_4px_16px_rgba(55,50,47,0.06)]"
                       : "border-[#e0dedb] hover:border-[#37322f]/30"
-                  }`}
+                    }`}
                   onClick={() => interestInputRef.current?.focus()}
                 >
                   {formData.interests.map((interest, i) => (
@@ -744,9 +730,8 @@ export default function DiscoverPage() {
                     className="w-full px-5 py-4 rounded-xl bg-white border border-[#e0dedb] ring-0 text-[#37322f] text-base leading-7 placeholder:text-[#8a8582] outline-none transition-all duration-300 focus:border-[#37322f] focus:ring-0 focus:outline-none focus:shadow-[0_0_0_4px_rgba(55,50,47,0.06),0_4px_16px_rgba(55,50,47,0.06)] resize-none"
                   />
                   {/* Character counter */}
-                  <div className={`absolute bottom-3 right-4 text-xs font-medium transition-colors ${
-                    formData.goal.length > GOAL_MAX_LENGTH * 0.9 ? "text-[#c0392b]" : "text-[#7a7572]"
-                  }`}>
+                  <div className={`absolute bottom-3 right-4 text-xs font-medium transition-colors ${formData.goal.length > GOAL_MAX_LENGTH * 0.9 ? "text-[#c0392b]" : "text-[#7a7572]"
+                    }`}>
                     {formData.goal.length}/{GOAL_MAX_LENGTH}
                   </div>
                 </div>
@@ -859,11 +844,10 @@ export default function DiscoverPage() {
             <button
               onClick={goBack}
               disabled={step === 0}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                step === 0
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${step === 0
                   ? "text-[#d0cdc9] cursor-not-allowed"
                   : "text-[#49423D] hover:text-[#37322f] hover:bg-[#37322f]/[0.04] group"
-              }`}
+                }`}
             >
               <svg
                 className={`h-4 w-4 transition-transform duration-300 ${step > 0 ? "group-hover:-translate-x-1" : ""}`}
@@ -878,11 +862,10 @@ export default function DiscoverPage() {
               <button
                 onClick={goNext}
                 disabled={!canProceed()}
-                className={`group inline-flex items-center gap-2 h-12 px-8 rounded-full text-sm font-semibold transition-all duration-300 ${
-                  canProceed()
+                className={`group inline-flex items-center gap-2 h-12 px-8 rounded-full text-sm font-semibold transition-all duration-300 ${canProceed()
                     ? "bg-[#37322f] text-white hover:bg-[#2A2520] shadow-[0_2px_8px_rgba(55,50,47,0.15),0px_0px_0px_2.5px_rgba(255,255,255,0.08)_inset] hover:shadow-[0_6px_24px_rgba(55,50,47,0.25)] hover:scale-[1.03] active:scale-[0.97]"
                     : "bg-[#e0dedb] text-[#a09d9a] cursor-not-allowed"
-                }`}
+                  }`}
               >
                 Continue
                 <svg
@@ -961,9 +944,8 @@ export default function DiscoverPage() {
               {LOADING_STAGES.map((stage, i) => (
                 <div
                   key={stage.text}
-                  className={`flex items-center gap-3 transition-all duration-500 ${
-                    i <= loadingStage ? "opacity-100" : "opacity-30"
-                  }`}
+                  className={`flex items-center gap-3 transition-all duration-500 ${i <= loadingStage ? "opacity-100" : "opacity-30"
+                    }`}
                 >
                   {i < loadingStage ? (
                     <svg className="w-4 h-4 text-[#4caf50] flex-shrink-0 discover-tag-enter" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -977,9 +959,8 @@ export default function DiscoverPage() {
                   ) : (
                     <div className="w-4 h-4 rounded-full border-2 border-[#e0dedb] flex-shrink-0" />
                   )}
-                  <span className={`text-sm font-medium ${
-                    i <= loadingStage ? "text-[#37322f]" : "text-[#b0adaa]"
-                  }`}>
+                  <span className={`text-sm font-medium ${i <= loadingStage ? "text-[#37322f]" : "text-[#b0adaa]"
+                    }`}>
                     {stage.text}
                   </span>
                 </div>

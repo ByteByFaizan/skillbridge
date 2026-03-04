@@ -4,40 +4,16 @@ import { generateCareerReport } from "@/services/ai/nvidia";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { getSupabaseAuth } from "@/lib/supabase-auth";
 import { getSessionId, setSessionCookie } from "@/lib/session";
-import { checkRateLimit } from "@/lib/rate-limit";
 
 /* ═══════════════════════════════════════════════════════
    POST /api/career
+   Authentication, rate limiting, and CORS are enforced
+   by middleware — unauthenticated requests never reach here.
    ═══════════════════════════════════════════════════════ */
 
 export async function POST(req: NextRequest) {
   try {
-    /* ── 1. Determine client IP ──────────────────────── */
-    const ip =
-      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      req.headers.get("x-real-ip") ??
-      "unknown";
-
-    /* ── 2. Rate limit (early exit) ──────────────────── */
-    const rl = checkRateLimit(ip);
-    if (!rl.allowed) {
-      return NextResponse.json(
-        {
-          error: {
-            code: "RATE_LIMITED",
-            message: `Too many requests. Try again in ${Math.ceil((rl.retryAfterMs ?? 0) / 60000)} minutes.`,
-          },
-        },
-        {
-          status: 429,
-          headers: {
-            "Retry-After": String(Math.ceil((rl.retryAfterMs ?? 0) / 1000)),
-          },
-        }
-      );
-    }
-
-    /* ── 3. Parse & validate body ────────────────────── */
+    /* ── 1. Parse & validate body ────────────────────── */
     let body: unknown;
     try {
       body = await req.json();
@@ -65,7 +41,7 @@ export async function POST(req: NextRequest) {
 
     const input = parsed.data;
 
-    /* ── 4. Session + AI call + auth user in parallel ───── */
+    /* ── 2. Session + AI call + auth user in parallel ───── */
     // Best practice (async-parallel): start independent work concurrently
     const [sessionId, reportResult, authResult] = await Promise.allSettled([
       getSessionId(),
@@ -101,7 +77,7 @@ export async function POST(req: NextRequest) {
 
     const report = reportResult.value;
 
-    /* ── 5. Persist to Supabase ──────────────────────── */
+    /* ── 3. Persist to Supabase ──────────────────────── */
     const db = getSupabaseServer();
 
     const { data: row, error: dbError } = await db
@@ -141,7 +117,7 @@ export async function POST(req: NextRequest) {
 
     const runId: string = row.id;
 
-    /* ── 6. Build response ───────────────────────────── */
+    /* ── 4. Build response ───────────────────────────── */
     const res = NextResponse.json({ runId, report }, { status: 200 });
 
     if (isNew) {
