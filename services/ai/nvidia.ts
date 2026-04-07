@@ -21,8 +21,9 @@ function getApiKey(): string {
 }
 
 function getModel(): string {
-  // Qwen3-235B on NVIDIA NIM — free tier on DGX Cloud
-  return process.env.NVIDIA_MODEL ?? "qwen/qwen3-235b-a22b";
+  // Llama 3.3 70B Instruct on NVIDIA NIM — free tier
+  // 2-4x faster than qwen3.5-122b with comparable quality
+  return process.env.NVIDIA_MODEL ?? "meta/llama-3.3-70b-instruct";
 }
 
 /* ═══════════════════════════════════════════════════════
