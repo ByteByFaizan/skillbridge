@@ -52,7 +52,7 @@ Production-grade security built in:
 | **State** | [Zustand](https://zustand.docs.pmnd.rs/) |
 | **Validation** | [Zod](https://zod.dev/) |
 | **Auth & Database** | [Supabase](https://supabase.com/) (Auth · PostgreSQL · SSR) |
-| **AI** | [NVIDIA NIM](https://build.nvidia.com/) — LLM-powered career analysis (Qwen3-235B) |
+| **AI** | [NVIDIA NIM](https://build.nvidia.com/) — LLM-powered career analysis  |
 | **Language** | TypeScript 5 |
 
 ## Getting Started
