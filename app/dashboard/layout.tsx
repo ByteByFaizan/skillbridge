@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import type { User } from "@supabase/supabase-js";
@@ -12,10 +12,11 @@ interface HistoryRun {
   careerTitles: string[];
 }
 
-const navItems = [
+const navItemsDef = [
   {
     label: "Roadmap",
     href: "/dashboard",
+    exactMatch: true,
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="4.5" r="2.5" />
@@ -25,7 +26,19 @@ const navItems = [
         <circle cx="12" cy="19.5" r="2.5" />
       </svg>
     ),
-    active: true,
+  },
+  {
+    label: "Portfolio Projects",
+    href: "/dashboard/projects",
+    exactMatch: false,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <rect x="14" y="14" width="7" height="7" rx="1" />
+      </svg>
+    ),
   },
 ];
 
@@ -47,6 +60,12 @@ export default function DashboardLayout({
   const [hoveredHistoryItem, setHoveredHistoryItem] = useState<string | null>(null);
 
   const router = useRouter();
+  const pathname = usePathname();
+
+  const navItems = navItemsDef.map((item) => ({
+    ...item,
+    active: item.exactMatch ? pathname === item.href : pathname.startsWith(item.href),
+  }));
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 50);

@@ -21,3 +21,19 @@ ALTER TABLE recommendation_runs ENABLE ROW LEVEL SECURITY;
 
 -- Allow the service role to do everything (service role inherently bypasses RLS,
 -- so we don't need an explicit policy that triggers Supabase linter warnings).
+
+-- Table: portfolio_projects
+-- Stores AI-generated portfolio project ideas per roadmap run.
+CREATE TABLE IF NOT EXISTS portfolio_projects (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  run_id        UUID NOT NULL REFERENCES recommendation_runs(id) ON DELETE CASCADE,
+  user_id       UUID,
+  projects      JSONB NOT NULL,
+  scope         TEXT NOT NULL DEFAULT 'sprint',
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_portfolio_run ON portfolio_projects(run_id);
+CREATE INDEX IF NOT EXISTS idx_portfolio_user ON portfolio_projects(user_id);
+
+ALTER TABLE portfolio_projects ENABLE ROW LEVEL SECURITY;

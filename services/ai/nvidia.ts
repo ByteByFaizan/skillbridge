@@ -1,10 +1,17 @@
-import { CareerReportSchema, type CareerReport, type CareerInput } from "@/utils/validators";
+import { CareerReportSchema, PortfolioProjectsArraySchema, type CareerReport, type CareerInput, type PortfolioProject } from "@/utils/validators";
 import {
   SYSTEM_PROMPT,
   DEVELOPER_PROMPT,
   buildUserPrompt,
   buildRepairPrompt,
 } from "./prompts";
+import {
+  PORTFOLIO_SYSTEM_PROMPT,
+  PORTFOLIO_DEVELOPER_PROMPT,
+  buildPortfolioUserPrompt,
+  buildPortfolioRepairPrompt,
+  type PortfolioPromptInput,
+} from "./portfolio-prompts";
 
 /* ═══════════════════════════════════════════════════════
    CONFIG
@@ -149,5 +156,101 @@ export async function generateCareerReport(
 
   throw new Error(
     `AI output failed validation after repair attempt: ${secondResult.error}`
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   PORTFOLIO: PARSE + VALIDATE
+   ═══════════════════════════════════════════════════════ */
+
+function parseAndValidatePortfolio(raw: string): {
+  success: true;
+  data: PortfolioProject[];
+} | {
+  success: false;
+  error: string;
+  raw: string;
+} {
+  let cleaned = raw;
+  if (cleaned.startsWith("```")) {
+    cleaned = cleaned.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "");
+  }
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(cleaned);
+  } catch {
+    return { success: false, error: "Response is not valid JSON", raw: cleaned };
+  }
+
+  // NVIDIA NIM's response_format: {type: "json_object"} forces the AI to
+  // return a JSON object (never a raw array). The AI wraps the array in
+  // an object like {"projects": [...]} or {"results": [...]}.
+  // We need to extract the array from the wrapping object.
+  let arrayCandidate: unknown = parsed;
+
+  if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+    const obj = parsed as Record<string, unknown>;
+    // Try common wrapper keys in priority order
+    const wrapperKeys = ["projects", "results", "data"];
+    for (const key of wrapperKeys) {
+      if (Array.isArray(obj[key])) {
+        arrayCandidate = obj[key];
+        break;
+      }
+    }
+    // Fallback: if there's exactly one key and its value is an array, use it
+    if (!Array.isArray(arrayCandidate)) {
+      const keys = Object.keys(obj);
+      if (keys.length === 1 && Array.isArray(obj[keys[0]])) {
+        arrayCandidate = obj[keys[0]];
+      }
+    }
+  }
+
+  const result = PortfolioProjectsArraySchema.safeParse(arrayCandidate);
+  if (result.success) {
+    return { success: true, data: result.data as PortfolioProject[] };
+  }
+
+  const errMsg = result.error?.issues
+    ? result.error.issues
+      .map((i: { path?: unknown[]; message?: string }) =>
+        `${(i.path ?? []).join(".")}: ${i.message}`
+      )
+      .join("; ")
+    : "Schema validation failed";
+  return { success: false, error: errMsg, raw: cleaned };
+}
+
+/* ═══════════════════════════════════════════════════════
+   PUBLIC: generatePortfolioProjects
+   ═══════════════════════════════════════════════════════ */
+
+export async function generatePortfolioProjects(
+  input: PortfolioPromptInput
+): Promise<PortfolioProject[]> {
+  const messages: NimMessage[] = [
+    { role: "system", content: PORTFOLIO_SYSTEM_PROMPT },
+    { role: "system", content: PORTFOLIO_DEVELOPER_PROMPT },
+    { role: "user", content: buildPortfolioUserPrompt(input) },
+  ];
+
+  // First attempt
+  const rawFirst = await callNvidaNim(messages);
+  const firstResult = parseAndValidatePortfolio(rawFirst);
+  if (firstResult.success) return firstResult.data;
+
+  // Repair retry (one chance)
+  const repairMsg = buildPortfolioRepairPrompt(firstResult.raw, firstResult.error);
+  messages.push({ role: "assistant", content: rawFirst });
+  messages.push({ role: "user", content: repairMsg });
+
+  const rawSecond = await callNvidaNim(messages);
+  const secondResult = parseAndValidatePortfolio(rawSecond);
+  if (secondResult.success) return secondResult.data;
+
+  throw new Error(
+    `Portfolio AI output failed validation after repair attempt: ${secondResult.error}`
   );
 }

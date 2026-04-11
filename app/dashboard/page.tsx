@@ -628,6 +628,20 @@ export default function DashboardPage() {
                 New Discovery
               </span>
             </Link>
+            <Link
+              href={`/dashboard/projects?runId=${runData.runId}&generate=1`}
+              className="group h-10 px-5 rounded-xl border border-[#C4956A]/40 text-[#8B6914] text-sm font-medium hover:bg-[#C4956A]/[0.08] hover:border-[#C4956A]/60 transition-all duration-200 active:scale-[0.96] flex items-center"
+            >
+              <span className="flex items-center gap-2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:scale-110 transition-transform duration-300">
+                  <rect x="3" y="3" width="7" height="7" rx="1" />
+                  <rect x="14" y="3" width="7" height="7" rx="1" />
+                  <rect x="3" y="14" width="7" height="7" rx="1" />
+                  <rect x="14" y="14" width="7" height="7" rx="1" />
+                </svg>
+                Portfolio Projects
+              </span>
+            </Link>
           </div>
         </div>
       </header>
@@ -1432,6 +1446,18 @@ export default function DashboardPage() {
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
             Start New Discovery
+          </Link>
+          <Link
+            href={`/dashboard/projects?runId=${runData.runId}&generate=1`}
+            className="group inline-flex items-center gap-2 px-7 py-3 rounded-xl border border-white/20 text-white/90 text-sm font-bold hover:bg-white/[0.08] hover:border-white/30 transition-all duration-300 active:scale-[0.97] hover:-translate-y-0.5 ml-3"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:scale-110 transition-transform">
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+            Portfolio Projects
           </Link>
         </div>
       </div>

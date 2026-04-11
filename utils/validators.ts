@@ -140,3 +140,29 @@ export const CareerReportSchema = z.object({
 });
 
 export type CareerReport = z.infer<typeof CareerReportSchema>;
+
+/* ═══════════════════════════════════════════════════════
+   PORTFOLIO PROJECT SCHEMAS
+   ═══════════════════════════════════════════════════════ */
+
+export const PortfolioProjectSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().min(1),
+  estimatedTime: z.string().min(1),
+  coreSkill: z.string().min(1),
+  featureChecklist: z.array(z.string().min(1)).min(3).max(10),
+});
+
+export const PortfolioProjectsArraySchema = z.array(PortfolioProjectSchema).length(3);
+
+export type PortfolioProject = z.infer<typeof PortfolioProjectSchema>;
+
+export const PortfolioScopeEnum = z.enum(["weekend", "sprint", "capstone"]);
+export type PortfolioScope = z.infer<typeof PortfolioScopeEnum>;
+
+export const PortfolioGenerateInputSchema = z.object({
+  runId: z.string().uuid(),
+  scope: PortfolioScopeEnum.optional().default("sprint"),
+});
+
+export type PortfolioGenerateInput = z.infer<typeof PortfolioGenerateInputSchema>;
